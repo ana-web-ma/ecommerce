@@ -8,7 +8,7 @@
     "plugin:react/recommended",
     "plugin:react/jsx-runtime",
     "airbnb-base",
-    "airbnb-typescript/base",
+    "airbnb-typescript",
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
