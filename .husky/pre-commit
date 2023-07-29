@@ -1,8 +1,5 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npm test
 npx eslint . --fix
-npx eslint . --fix
-npx eslint . --fix
-npx eslint . --fix
+npx prettier . --write

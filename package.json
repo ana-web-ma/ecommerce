@@ -19,7 +19,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "eslint": "npx eslint . --fix",
+    "prettier": "npx prettier . --write",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -44,8 +47,10 @@
     ]
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.22.5",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^6.2.0",
+    "babel-jest": "^29.6.2",
     "eslint": "^8.46.0",
     "eslint-config-airbnb-typescript": "^17.1.0",
     "eslint-config-prettier": "^8.9.0",
@@ -55,6 +60,7 @@
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.33.0",
+    "husky": "^8.0.3",
     "prettier": "^3.0.0",
     "typescript": "^5.1.6"
   }
