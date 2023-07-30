@@ -14,6 +14,22 @@ const theme = createTheme({
       main: red.A400,
     },
   },
+  components: {
+    // Name of the component
+    MuiButtonBase: {
+      defaultProps: {
+        // The props to change the default for.
+        disableRipple: true, // No more ripple, on the whole application 💣!
+      },
+    },
+    MuiContainer: {
+      styleOverrides: {
+        maxWidthXl: {
+          maxWidth: 1600,
+        },
+      },
+    },
+  },
 });
 
 export default theme;
