@@ -29,6 +29,16 @@ const theme = createTheme({
         },
       },
     },
+    MuiButton: {
+      variants: [
+        {
+          props: { variant: "contained" },
+          style: {
+            textTransform: "none",
+          },
+        },
+      ],
+    },
   },
 });
 

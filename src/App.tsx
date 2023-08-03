@@ -7,7 +7,7 @@ import RegisterPage from "./pages/register/RegisterPage";
 function App(): ReactElement {
   return (
     <Container maxWidth="xl">
-      <RegisterPage></RegisterPage>
+      <LoginPage></LoginPage>
     </Container>
   );
 }
