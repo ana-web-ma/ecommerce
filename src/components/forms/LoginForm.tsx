@@ -1,6 +1,6 @@
-import { type ReactElement } from "react";
-import { Button, Stack, Typography } from "@mui/material";
-import TextFieldComponent from "./common/text-field";
+import { type ReactElement } from 'react';
+import { Button, Stack, Typography } from '@mui/material';
+import TextFieldComponent from './common/TextField';
 
 function BoxForm(): ReactElement {
   return (
@@ -9,14 +9,14 @@ function BoxForm(): ReactElement {
         justifyContent="center"
         alignItems="center"
         spacing={2}
-        boxShadow={"5px 5px 10px #ccc"}
+        boxShadow={'5px 5px 10px #ccc'}
         padding={10}
         borderRadius={5}
       >
-        <Typography variant="h2" fontFamily={"bellota-text"}>
+        <Typography variant="h2" fontFamily={'bellota-text'}>
           Welcome
         </Typography>
-        <Typography variant="body1" fontFamily={"bellota-text"}>
+        <Typography variant="body1" fontFamily={'bellota-text'}>
           Log In your account
         </Typography>
         <TextFieldComponent label="Email" placeholder="Enter your email" />
@@ -37,17 +37,17 @@ function BoxForm(): ReactElement {
 
 function LoginForm(): ReactElement {
   function setEmail(value: string): void {
-    throw new Error("Function not implemented.");
+    throw new Error('Function not implemented.');
   }
 
   return (
     <div
       style={{
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
       <form>

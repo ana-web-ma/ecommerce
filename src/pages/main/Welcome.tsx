@@ -1,8 +1,8 @@
-import { type ReactElement } from "react";
-import { Box } from "@mui/material";
+import { type ReactElement } from 'react';
+import { Box } from '@mui/material';
 
 function Welcome(): ReactElement {
-  return <Box textAlign={"center"}>Welcome Page</Box>;
+  return <Box textAlign={'center'}>Welcome Page</Box>;
 }
 
 export default Welcome;

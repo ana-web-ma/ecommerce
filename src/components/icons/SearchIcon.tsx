@@ -1,5 +1,5 @@
-import { SvgIcon, type SvgIconProps } from "@mui/material";
-import { type ReactElement } from "react";
+import { SvgIcon, type SvgIconProps } from '@mui/material';
+import { type ReactElement } from 'react';
 
 function SearchIcon(props: SvgIconProps): ReactElement {
   return (

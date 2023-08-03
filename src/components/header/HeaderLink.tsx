@@ -1,15 +1,15 @@
-import { type ReactElement } from "react";
-import Link from "@mui/material/Link";
-import Typography from "@mui/material/Typography";
+import { type ReactElement } from 'react';
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
 
 export default function HeaderLink(props: { text: string }): ReactElement {
   return (
     <Typography
-      fontFamily={"bellota-text"}
+      fontFamily={'bellota-text'}
       fontSize={13}
-      textTransform={"uppercase"}
+      textTransform={'uppercase'}
     >
-      <Link href="#">{props.text}</Link>{" "}
+      <Link href="#">{props.text}</Link>{' '}
     </Typography>
   );
 }
