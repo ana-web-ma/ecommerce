@@ -1,7 +1,7 @@
+import React from 'react';
 import { type ReactElement } from 'react';
-import { Button, Typography } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import TextFieldComponent from './common/TextField';
-import ContainerFormComponent from './common/ContainerForm';
 
 function LoginForm(): ReactElement {
   function setEmail(value: string): void {
@@ -9,7 +9,14 @@ function LoginForm(): ReactElement {
   }
 
   return (
-    <ContainerFormComponent>
+    <Stack
+      justifyContent="center"
+      alignItems="center"
+      spacing={2}
+      boxShadow={'5px 5px 10px #ccc'}
+      padding={10}
+      borderRadius={5}
+    >
       <Typography variant="h2">Welcome</Typography>
       <Typography variant="body1">Log In your account</Typography>
       <TextFieldComponent label="Email" placeholder="Enter your email" />
@@ -25,7 +32,7 @@ function LoginForm(): ReactElement {
           Sign Up
         </span>
       </Typography>
-    </ContainerFormComponent>
+    </Stack>
   );
 }
 

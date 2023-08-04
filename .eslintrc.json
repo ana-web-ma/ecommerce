@@ -5,13 +5,13 @@
   },
   "extends": [
     "standard-with-typescript",
-    "plugin:react/recommended",
     "plugin:react/jsx-runtime",
     "airbnb-base",
     "airbnb-typescript",
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
+    "plugin:react/recommended",
     "prettier"
   ],
   "parser": "@typescript-eslint/parser",
