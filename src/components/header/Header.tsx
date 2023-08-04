@@ -1,9 +1,10 @@
-import { type ReactElement } from "react";
-import Link from "@mui/material/Link";
-import { IconButton, Stack } from "@mui/material";
-import SearchIcon from "../icons/SearchIcon";
-import HeaderLink from "./HeaderLink";
-import logo from "./img/logo.png";
+import React from 'react';
+import { type ReactElement } from 'react';
+import Link from '@mui/material/Link';
+import { IconButton, Stack } from '@mui/material';
+import SearchIcon from '../icons/SearchIcon';
+import HeaderLink from './HeaderLink';
+import logo from './img/logo.png';
 
 export default function Header(): ReactElement {
   return (

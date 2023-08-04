@@ -1,7 +1,8 @@
-import { type ReactElement } from "react";
-import { Box } from "@mui/material";
-import Header from "../../components/header/Header";
-import LoginForm from "../../components/forms/LoginForm";
+import React from 'react';
+import { type ReactElement } from 'react';
+import { Box } from '@mui/material';
+import Header from '../../components/header/Header';
+import LoginForm from '../../components/forms/LoginForm';
 
 function LoginPage(): ReactElement {
   return (
