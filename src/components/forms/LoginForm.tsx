@@ -1,20 +1,27 @@
-import React from 'react';
+import type React from 'react';
 import { type ReactElement } from 'react';
 import { Button, Typography } from '@mui/material';
 import TextFieldComponent from './common/TextField';
 
-function LoginForm(): ReactElement {
-  function setEmail(value: string): void {
-    throw new Error('Function not implemented.');
-  }
-
+function LoginForm(props: {
+  onChangeEmail: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangePassword: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}): ReactElement {
   return (
     <>
       <Typography variant="h2">Welcome</Typography>
       <Typography variant="body1">Log In your account</Typography>
-      <TextFieldComponent label="Email" placeholder="Enter your email" />
-      <TextFieldComponent label="Password" placeholder="Enter your password" />
-      <Button type="submit" className="button-test" variant="contained">
+      <TextFieldComponent
+        label="Email"
+        placeholder="Enter your email"
+        onChange={props.onChangeEmail}
+      />
+      <TextFieldComponent
+        label="Password"
+        placeholder="Enter your password"
+        onChange={props.onChangePassword}
+      />
+      <Button type="submit" variant="contained">
         Login
       </Button>
       <Typography variant="body1">

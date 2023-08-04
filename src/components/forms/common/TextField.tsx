@@ -17,6 +17,7 @@ export default function TextFieldComponent(
       label={props.label}
       variant="outlined"
       placeholder={props.placeholder}
+      onChange={props.onChange}
     />
   );
 }

@@ -1,15 +1,15 @@
-import React from 'react';
-import { FormControl, Stack } from '@mui/material';
+import type React from 'react';
+import { Stack } from '@mui/material';
 import { type ReactElement } from 'react';
 
 export default function ContainerFormComponent(props: {
   children: ReactElement | null;
-  onChange?: () => void;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }): ReactElement {
   return (
     <Stack mt={15} justifyContent="center" alignItems="center">
-      <FormControl
-        onChange={props.onChange}
+      <form
+        onSubmit={props.onSubmit}
         style={{ width: '90%', maxWidth: '640px' }}
       >
         <Stack
@@ -22,7 +22,7 @@ export default function ContainerFormComponent(props: {
         >
           {props.children}
         </Stack>
-      </FormControl>
+      </form>
     </Stack>
   );
 }

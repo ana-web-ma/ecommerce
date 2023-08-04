@@ -6,13 +6,22 @@ import LoginPage from '../../pages/login/LoginPage';
 import RegisterPage from '../../pages/register/RegisterPage';
 
 const AuthRootComponent: React.FC = (): ReactElement => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const location = useLocation();
   let page = null;
   if (location.pathname === '/login') {
-    page = <LoginPage />;
+    page = <LoginPage setEmail={setEmail} setPassword={setPassword} />;
   } else if (location.pathname === '/register') page = <RegisterPage />;
-
-  return <ContainerFormComponent>{page}</ContainerFormComponent>;
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
+    console.log(email, password);
+  };
+  return (
+    <ContainerFormComponent onSubmit={handleSubmit}>
+      {page}
+    </ContainerFormComponent>
+  );
 };
 
 export default AuthRootComponent;
