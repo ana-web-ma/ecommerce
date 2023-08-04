@@ -12,7 +12,16 @@ export default function ContainerFormComponent(props: {
         onChange={props.onChange}
         style={{ width: '90%', maxWidth: '640px' }}
       >
-        {props.children}
+        <Stack
+          justifyContent="center"
+          alignItems="center"
+          spacing={2}
+          boxShadow={'5px 5px 10px #ccc'}
+          padding={'15% 10%'}
+          borderRadius={5}
+        >
+          {props.children}
+        </Stack>
       </FormControl>
     </Stack>
   );
