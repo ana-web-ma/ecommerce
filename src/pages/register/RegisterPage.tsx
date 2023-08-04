@@ -2,7 +2,7 @@ import React from 'react';
 import { type ReactElement } from 'react';
 import { Box } from '@mui/material';
 import Header from '../../components/header/Header';
-import RegisterForm from '../../components/forms/RegisterForm';
+import RegisterForm from '../../components/register/Register';
 
 function RegisterPage(): ReactElement {
   return (
