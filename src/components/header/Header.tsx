@@ -20,6 +20,7 @@ export default function Header(): ReactElement {
           spacing={2}
         >
           <HeaderLink href="login" text="Log In"></HeaderLink>
+          <HeaderLink href="register" text="Sign Up"></HeaderLink>
         </Stack>
         <IconButton aria-label="search">
           <SearchIcon />

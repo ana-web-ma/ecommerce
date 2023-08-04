@@ -35,6 +35,22 @@ const theme = createTheme({
           props: { variant: 'contained' },
           style: {
             textTransform: 'none',
+            fontFamily: 'bellota-text',
+          },
+        },
+      ],
+    },
+    MuiTypography: {
+      styleOverrides: {
+        body1: {
+          fontFamily: 'bellota-text',
+        },
+      },
+      variants: [
+        {
+          props: { variant: 'h2' },
+          style: {
+            fontFamily: 'bellota-text',
           },
         },
       ],
