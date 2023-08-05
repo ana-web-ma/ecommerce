@@ -29,6 +29,33 @@ const theme = createTheme({
         },
       },
     },
+    MuiButton: {
+      variants: [
+        {
+          props: { variant: 'contained' },
+          style: {
+            textTransform: 'none',
+            fontFamily: 'bellota-text',
+          },
+        },
+      ],
+    },
+    MuiTypography: {
+      variants: [
+        {
+          props: { variant: 'h2' },
+          style: {
+            fontFamily: 'bellota-text',
+          },
+        },
+        {
+          props: { variant: 'body1' },
+          style: {
+            fontFamily: 'bellota-text',
+          },
+        },
+      ],
+    },
   },
 });
 
