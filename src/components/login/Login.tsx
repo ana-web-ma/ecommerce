@@ -1,19 +1,40 @@
 import type React from 'react';
-import { useState, type ReactElement } from 'react';
+import { type ReactElement } from 'react';
 import { Button, Stack, TextField, Typography } from '@mui/material';
+import { type FieldValues, type SubmitHandler, useForm } from 'react-hook-form';
+
+export function onPromise<T>(
+  // used to wrap react-hook-forms's submit handler
+  // https://github.com/react-hook-form/react-hook-form/discussions/8020#discussioncomment-3429261
+  promise: (event: React.SyntheticEvent) => Promise<T>,
+) {
+  return (event: React.SyntheticEvent) => {
+    promise(event).catch((error) => {
+      console.error('Unexpected error', error);
+    });
+  };
+}
 
 function LoginForm(): ReactElement {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
-    e.preventDefault();
-    console.log(email, password);
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm();
+  console.log(errors);
+  const handleSubmitForm: SubmitHandler<FieldValues> = (data): void => {
+    const userData = {
+      email: data.email,
+      password: data.password,
+    };
+    // const user = await instance.post('http://#', userData); // ToDo axios
+    console.log('hi', userData);
   };
   return (
     <>
       <Stack mt={15} justifyContent="center" alignItems="center">
         <form
-          onSubmit={handleSubmit}
+          onSubmit={onPromise(handleSubmit(handleSubmitForm))}
           style={{ width: '90%', maxWidth: '640px' }}
         >
           <Stack
@@ -27,24 +48,37 @@ function LoginForm(): ReactElement {
             <Typography variant="h2">Welcome</Typography>
             <Typography variant="body1">Log In your account</Typography>
             <TextField
+              error={!(errors.email == null)}
               fullWidth={true}
               margin="normal"
               label="Email"
               variant="outlined"
               placeholder="Enter your email"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setEmail(e.target.value);
-              }}
+              helperText={
+                errors.email != null ? errors.email.message?.toString() : ''
+              }
+              {...register('email', {
+                required: 'This is a required field',
+                pattern:
+                  /^(([^<>()\\[\]\\.,;:\s@"]+(\.[^<>()\\[\]\\.,;:\s@"]+)*)|(".+"))@((\[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+              })}
             />
             <TextField
+              error={!(errors.password == null)}
               fullWidth={true}
               margin="normal"
               label="Password"
               variant="outlined"
               placeholder="Enter your password"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setPassword(e.target.value);
-              }}
+              helperText={
+                errors.password != null
+                  ? errors.password.message?.toString()
+                  : ''
+              }
+              {...register('password', {
+                required: 'This is a required field',
+                minLength: 8,
+              })}
             />
             <Button type="submit" variant="contained">
               Login
