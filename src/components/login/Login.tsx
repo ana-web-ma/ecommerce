@@ -23,6 +23,7 @@ function LoginForm(): ReactElement {
     formState: { errors },
     handleSubmit,
   } = useForm({
+    mode: 'onChange',
     resolver: yupResolver(LoginSchema),
   });
   const handleSubmitForm: SubmitHandler<FieldValues> = (data): void => {
