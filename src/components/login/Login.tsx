@@ -2,6 +2,8 @@ import type React from 'react';
 import { type ReactElement } from 'react';
 import { Button, Stack, TextField, Typography } from '@mui/material';
 import { type FieldValues, type SubmitHandler, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { LoginSchema } from '../../helpers/yup/Yup';
 
 export function onPromise<T>(
   // used to wrap react-hook-forms's submit handler
@@ -20,8 +22,9 @@ function LoginForm(): ReactElement {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm();
-  console.log(errors);
+  } = useForm({
+    resolver: yupResolver(LoginSchema),
+  });
   const handleSubmitForm: SubmitHandler<FieldValues> = (data): void => {
     const userData = {
       email: data.email,
@@ -57,11 +60,7 @@ function LoginForm(): ReactElement {
               helperText={
                 errors.email != null ? errors.email.message?.toString() : ''
               }
-              {...register('email', {
-                required: 'This is a required field',
-                pattern:
-                  /^(([^<>()\\[\]\\.,;:\s@"]+(\.[^<>()\\[\]\\.,;:\s@"]+)*)|(".+"))@((\[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-              })}
+              {...register('email')}
             />
             <TextField
               error={!(errors.password == null)}
@@ -75,10 +74,7 @@ function LoginForm(): ReactElement {
                   ? errors.password.message?.toString()
                   : ''
               }
-              {...register('password', {
-                required: 'This is a required field',
-                minLength: 8,
-              })}
+              {...register('password')}
             />
             <Button type="submit" variant="contained">
               Login
