@@ -1,8 +1,17 @@
 import type React from 'react';
-import { type ReactElement } from 'react';
-import { Button, Stack, TextField, Typography } from '@mui/material';
+import { useState, type ReactElement } from 'react';
+import {
+  Button,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { type FieldValues, type SubmitHandler, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import { LoginSchema } from '../../helpers/yup/Yup';
 
 export function onPromise<T>(
@@ -18,6 +27,7 @@ export function onPromise<T>(
 }
 
 function LoginForm(): ReactElement {
+  const navigate = useNavigate();
   const {
     register,
     formState: { errors },
@@ -32,8 +42,22 @@ function LoginForm(): ReactElement {
       password: data.password,
     };
     // const user = await instance.post('http://#', userData); // ToDo axios
-    console.log('hi', userData);
+    console.log('Success', userData);
+    navigate('/');
   };
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = (): void => {
+    setShowPassword((show) => !show);
+  };
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ): void => {
+    event.preventDefault();
+  };
+
   return (
     <>
       <Stack mt={15} justifyContent="center" alignItems="center">
@@ -67,6 +91,7 @@ function LoginForm(): ReactElement {
               error={!(errors.password == null)}
               fullWidth={true}
               margin="normal"
+              type={showPassword ? 'text' : 'password'}
               label="Password"
               variant="outlined"
               placeholder="Enter your password"
@@ -75,6 +100,19 @@ function LoginForm(): ReactElement {
                   ? errors.password.message?.toString()
                   : ''
               }
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                    >
+                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
               {...register('password')}
             />
             <Button type="submit" variant="contained">
@@ -87,6 +125,9 @@ function LoginForm(): ReactElement {
                   color: '#1900D5',
                   marginLeft: '10px',
                   cursor: 'pointer',
+                }}
+                onClick={(): void => {
+                  navigate('/register');
                 }}
               >
                 Sign Up
