@@ -36,16 +36,17 @@ function LoginForm(): ReactElement {
     mode: 'onChange',
     resolver: yupResolver(LoginSchema),
   });
+
   const handleSubmitForm: SubmitHandler<FieldValues> = (data): void => {
     const userData = {
       email: data.email,
       password: data.password,
     };
-    // const user = await instance.post('http://#', userData); // ToDo axios
     console.log('Success', userData);
     navigate('/');
   };
 
+  // Show/Hide Password Functionality 👁️‍🗨️
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = (): void => {
