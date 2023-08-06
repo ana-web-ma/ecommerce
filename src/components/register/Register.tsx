@@ -36,19 +36,6 @@ function RegisterForm(): ReactElement {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   const postCodeRegex = /^\d{5}$/;
 
-  const handleSubmit = (e: { preventDefault: () => void }): void => {
-    e.preventDefault();
-    console.log(email);
-    console.log(password);
-    console.log(firstName);
-    console.log(lastName);
-    console.log(date);
-    console.log(street);
-    console.log(city);
-    console.log(postCode);
-    console.log(country);
-  };
-
   const handleEmailChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ): void => {
@@ -122,6 +109,32 @@ function RegisterForm(): ReactElement {
   const isStreetValid = streetTouched && streetRegex.test(street);
   const isCityValid = cityTouched && nameRegex.test(city);
   const isPostCodeValid = postCodeTouched && postCodeRegex.test(postCode);
+
+  const handleSubmit = (e: { preventDefault: () => void }): void => {
+    e.preventDefault();
+    if (
+      isEmailValid &&
+      isPasswordValid &&
+      isFirstNameValid &&
+      isLastNameValid &&
+      isBirthdateValid &&
+      isStreetValid &&
+      isCityValid &&
+      isPostCodeValid
+    ) {
+      console.log(email);
+      console.log(password);
+      console.log(firstName);
+      console.log(lastName);
+      console.log(date);
+      console.log(street);
+      console.log(city);
+      console.log(postCode);
+      console.log(country);
+    } else {
+      alert('There are blank fields or filleds with errors');
+    }
+  };
 
   return (
     <Container maxWidth="sm">
