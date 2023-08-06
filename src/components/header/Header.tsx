@@ -10,7 +10,7 @@ export default function Header(): ReactElement {
   return (
     <>
       <Stack direction="row" justifyContent="space-between">
-        <Link href="/">
+        <Link>
           <img src={logo} />
         </Link>
         <Stack
@@ -19,9 +19,7 @@ export default function Header(): ReactElement {
           alignItems="center"
           spacing={2}
         >
-          <HeaderLink href="/" text="Home"></HeaderLink>
-          <HeaderLink href="login" text="Log In"></HeaderLink>
-          <HeaderLink href="register" text="Sign Up"></HeaderLink>
+          <HeaderLink text="Header link"></HeaderLink>
         </Stack>
         <IconButton aria-label="search">
           <SearchIcon />
