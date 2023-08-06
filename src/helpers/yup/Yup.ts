@@ -13,10 +13,10 @@ export const LoginSchema = yup.object().shape({
   password: yup
     .string()
     .matches(/^\S*$/, 'Remove whitespace')
-    .min(8, 'Password must be at least 8 characters')
     .required('Password is a required field')
     .matches(
-      /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%&?*"])[a-zA-Z0-9!@#$%&?*]{8,30}$/,
+      /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%&?*"])[a-zA-Z0-9!@#$%&?*]{4,30}$/,
       'Password must contain at least one uppercase letter, lowercase letter, digit, special character',
-    ),
+    )
+    .min(8, 'Password must be at least 8 characters'),
 });
