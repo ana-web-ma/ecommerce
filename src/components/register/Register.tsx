@@ -33,6 +33,7 @@ function RegisterForm(): ReactElement {
   const [cityTouched, setCityTouched] = useState(false);
   const [dateTouched, setDateTouched] = useState(false);
   const [postCodeTouched, setPostCodeTouched] = useState(false);
+  const [countryTouched, setCountryTouched] = useState(false);
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
   const nameRegex = /^[a-zA-Zа-яА-ЯàâäçéèêëîïôœùûüÿÀÂÄÇÉÈÊËÎÏÔŒÙÛÜŸ]+$/;
@@ -89,6 +90,9 @@ function RegisterForm(): ReactElement {
     setPostCode(event.target.value);
     setPostCodeTouched(true);
   };
+  const handleCountryChange = (): void => {
+    setCountryTouched(true);
+  };
 
   const isUserOlderThan13Years = (dateString: string): boolean => {
     const today = new Date();
@@ -113,6 +117,7 @@ function RegisterForm(): ReactElement {
   const isStreetValid = streetTouched && streetRegex.test(street);
   const isCityValid = cityTouched && nameRegex.test(city);
   const isPostCodeValid = postCodeTouched && postCodeRegex.test(postCode);
+  const isCountryValid = Boolean(country);
 
   const handleSubmit = (e: { preventDefault: () => void }): void => {
     e.preventDefault();
@@ -124,17 +129,10 @@ function RegisterForm(): ReactElement {
       isBirthdateValid &&
       isStreetValid &&
       isCityValid &&
-      isPostCodeValid
+      isPostCodeValid &&
+      isCountryValid
     ) {
-      console.log(email);
-      console.log(password);
-      console.log(firstName);
-      console.log(lastName);
-      console.log(date);
-      console.log(street);
-      console.log(city);
-      console.log(postCode);
-      console.log(country);
+      console.log('Отправляем данные');
     } else {
       alert('There are blank fields or filleds with errors');
     }
@@ -303,13 +301,25 @@ function RegisterForm(): ReactElement {
                   sx={{ width: '100%', marginTop: '8px' }}
                   fullWidth={true}
                   options={countries}
+                  value={country}
                   onChange={(e, newValue) => {
                     if (newValue !== null) {
                       setCountry(newValue);
                     }
                   }}
+                  onBlur={handleCountryChange}
                   renderInput={(params) => (
-                    <TextField {...params} label="Country" />
+                    <TextField
+                      {...params}
+                      label="Country"
+                      onChange={handleCountryChange}
+                      error={!isCountryValid && countryTouched}
+                      helperText={
+                        !isCountryValid && countryTouched
+                          ? 'Select a country from the list'
+                          : ''
+                      }
+                    />
                   )}
                 />
               </Grid>
