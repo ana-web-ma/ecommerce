@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 // import { useNavigate } from 'react-router-dom';
 import type { ReactElement } from 'react';
+import { createCustomer } from '../../api/calls/createCustomer';
 
 function RegisterForm(): ReactElement {
   // const navigate = useNavigate();
@@ -132,7 +133,21 @@ function RegisterForm(): ReactElement {
       isPostCodeValid &&
       isCountryValid
     ) {
-      console.log('Отправляем данные');
+      createCustomer({ email: `${email}`, password: `${password}` })
+        .then((resp) => {
+          if (resp.statusCode === 201) {
+            alert('successful');
+          } else {
+            alert(resp.statusCode);
+          }
+        })
+        .catch((err) => {
+          if (err.statusCode === 400) {
+            alert('user with this email already exists');
+          } else {
+            alert(err.statusCode);
+          }
+        });
     } else {
       alert('There are blank fields or filleds with errors');
     }
