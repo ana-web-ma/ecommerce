@@ -5,11 +5,15 @@ import {
   Typography,
   InputLabel,
   Autocomplete,
-  Container,
+  Grid,
+  Box,
+  Stack,
 } from '@mui/material';
+// import { useNavigate } from 'react-router-dom';
 import type { ReactElement } from 'react';
 
 function RegisterForm(): ReactElement {
+  // const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -137,155 +141,210 @@ function RegisterForm(): ReactElement {
   };
 
   return (
-    <Container maxWidth="sm">
-      <div className="root">
-        <Typography variant="h2" textAlign={'center'}>
-          Welcome
-        </Typography>
-        <Typography variant="body1" textAlign={'center'}>
-          Register your account
-        </Typography>
-        <TextField
-          fullWidth={true}
-          margin="dense"
-          label="Email"
-          variant="outlined"
-          placeholder="Enter your email"
-          onChange={handleEmailChange}
-          error={!isEmailValid && emailTouched}
-          helperText={!isEmailValid && emailTouched ? 'Not valid Email' : ''}
-        />
-        <TextField
-          fullWidth={true}
-          margin="dense"
-          label="Password"
-          variant="outlined"
-          placeholder="Enter your password"
-          onChange={handlePasswordChange}
-          error={!isPasswordValid && passwordTouched}
-          helperText={
-            !isPasswordValid && passwordTouched
-              ? 'Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, and 1 number'
-              : ''
-          }
-        />
-        <TextField
-          fullWidth={true}
-          margin="dense"
-          label="First name"
-          variant="outlined"
-          placeholder="Enter your first name"
-          value={firstName}
-          onChange={handleFirstNameChange}
-          error={!isFirstNameValid && firstNameTouched}
-          helperText={
-            !isFirstNameValid && firstNameTouched
-              ? 'Must contain at least one character and no special characters or numbers'
-              : ''
-          }
-        />
-        <TextField
-          fullWidth={true}
-          margin="dense"
-          label="Last name"
-          variant="outlined"
-          placeholder="Enter your last name"
-          value={lastName}
-          onChange={handleLastNameChange}
-          error={!isLastNameValid && lastNameTouched}
-          helperText={
-            !isLastNameValid && lastNameTouched
-              ? 'Must contain at least one character and no special characters or numbers'
-              : ''
-          }
-        />
-        <InputLabel sx={{ marginTop: '20px' }}>Date of Birth</InputLabel>
-        <TextField
-          type="date"
-          fullWidth={true}
-          margin="dense"
-          variant="outlined"
-          placeholder="Enter your birthdate"
-          onChange={handleDateChange}
-          error={!isBirthdateValid && dateTouched}
-          helperText={
-            !isBirthdateValid && dateTouched
-              ? 'You must be at least 13 years old'
-              : ''
-          }
-        />
-        <InputLabel sx={{ marginTop: '20px' }}>Address</InputLabel>
-        <TextField
-          fullWidth={true}
-          margin="dense"
-          label="Street"
-          variant="outlined"
-          placeholder="Enter your street"
-          onChange={handleStreetChange}
-          error={!isStreetValid && streetTouched}
-          helperText={
-            !isStreetValid && streetTouched
-              ? 'Must contain at least one character'
-              : ''
-          }
-        />
-        <TextField
-          fullWidth={true}
-          margin="dense"
-          label="City"
-          variant="outlined"
-          placeholder="Enter your city"
-          onChange={handleCityChange}
-          error={!isCityValid && cityTouched}
-          helperText={
-            !isCityValid && cityTouched
-              ? 'Must contain at least one character and no special characters or numbers'
-              : ''
-          }
-        />
-        <TextField
-          fullWidth={true}
-          margin="dense"
-          label="Postal code"
-          variant="outlined"
-          placeholder="Enter your postal code"
-          onChange={handlePostCodeChange}
-          error={!isPostCodeValid && postCodeTouched}
-          helperText={
-            !isPostCodeValid && postCodeTouched
-              ? 'Must be a five digit number'
-              : ''
-          }
-        />
-        <Autocomplete
-          sx={{ width: '100%', marginTop: '17px' }}
-          fullWidth={true}
-          options={countries}
-          onChange={(e, newValue) => {
-            if (newValue !== null) {
-              setCountry(newValue);
-            }
-          }}
-          renderInput={(params) => <TextField {...params} label="Country" />}
-        />
-        <Button
-          sx={{ width: '100%', marginTop: '20px' }}
-          type="submit"
-          variant="contained"
-          onClick={handleSubmit}
-        >
-          Register
-        </Button>
-        <Typography variant="body1">
-          Dont have any acount?
-          <span
-            style={{ color: '#1900D5', marginLeft: '10px', cursor: 'pointer' }}
-          >
-            Sign In
-          </span>
-        </Typography>
-      </div>
-    </Container>
+    <>
+      <Stack mt={3} justifyContent="center" alignItems="center">
+        <form style={{ width: '90%', maxWidth: '640px' }}>
+          <Box sx={{ width: '100%' }}>
+            <Grid
+              container
+              spacing={0}
+              style={{ gridRowGap: 5 }}
+              justifyContent={'space-between'}
+              boxShadow={'5px 5px 10px #ccc'}
+              padding={'10%'}
+              borderRadius={5}
+            >
+              <Grid xs={12}>
+                <Typography variant="h2" textAlign={'left'}>
+                  Sign Up
+                </Typography>
+              </Grid>
+              <Grid xs={12}>
+                <Typography variant="body1" textAlign={'left'}>
+                  Enter your details to create your account:
+                </Typography>
+              </Grid>
+              <Grid xs={12}>
+                <TextField
+                  fullWidth={true}
+                  margin="dense"
+                  label="Email"
+                  variant="outlined"
+                  placeholder="Enter your email"
+                  onChange={handleEmailChange}
+                  error={!isEmailValid && emailTouched}
+                  helperText={
+                    !isEmailValid && emailTouched ? 'Not valid Email' : ''
+                  }
+                />
+              </Grid>
+              <Grid xs={12}>
+                <TextField
+                  fullWidth={true}
+                  margin="dense"
+                  label="Password"
+                  variant="outlined"
+                  placeholder="Enter your password"
+                  onChange={handlePasswordChange}
+                  error={!isPasswordValid && passwordTouched}
+                  helperText={
+                    !isPasswordValid && passwordTouched
+                      ? 'Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, and 1 number'
+                      : ''
+                  }
+                />
+              </Grid>
+              <Grid xs={12} md={5.8}>
+                <TextField
+                  fullWidth={true}
+                  margin="dense"
+                  label="First name"
+                  variant="outlined"
+                  placeholder="Enter your first name"
+                  value={firstName}
+                  onChange={handleFirstNameChange}
+                  error={!isFirstNameValid && firstNameTouched}
+                  helperText={
+                    !isFirstNameValid && firstNameTouched
+                      ? 'Must contain at least one character and no special characters or numbers'
+                      : ''
+                  }
+                />
+              </Grid>
+              <Grid xs={12} md={5.8}>
+                <TextField
+                  fullWidth={true}
+                  margin="dense"
+                  label="Last name"
+                  variant="outlined"
+                  placeholder="Enter your last name"
+                  value={lastName}
+                  onChange={handleLastNameChange}
+                  error={!isLastNameValid && lastNameTouched}
+                  helperText={
+                    !isLastNameValid && lastNameTouched
+                      ? 'Must contain at least one character and no special characters or numbers'
+                      : ''
+                  }
+                />
+              </Grid>
+              <Grid xs={12}>
+                <InputLabel sx={{ marginTop: '20px' }}>
+                  Date of birth
+                </InputLabel>
+                <TextField
+                  type="date"
+                  fullWidth={true}
+                  margin="dense"
+                  variant="outlined"
+                  placeholder="Enter your birthdate"
+                  onChange={handleDateChange}
+                  error={!isBirthdateValid && dateTouched}
+                  helperText={
+                    !isBirthdateValid && dateTouched
+                      ? 'You must be at least 13 years old'
+                      : ''
+                  }
+                />
+              </Grid>
+              <Grid xs={12}>
+                <InputLabel sx={{ marginTop: '20px' }}>Address</InputLabel>
+              </Grid>
+              <Grid xs={12} md={5.8}>
+                <TextField
+                  fullWidth={true}
+                  margin="dense"
+                  label="Street"
+                  variant="outlined"
+                  placeholder="Enter your street"
+                  onChange={handleStreetChange}
+                  error={!isStreetValid && streetTouched}
+                  helperText={
+                    !isStreetValid && streetTouched
+                      ? 'Must contain at least one character'
+                      : ''
+                  }
+                />
+              </Grid>
+              <Grid xs={12} md={5.8}>
+                <TextField
+                  fullWidth={true}
+                  margin="dense"
+                  label="City"
+                  variant="outlined"
+                  placeholder="Enter your city"
+                  onChange={handleCityChange}
+                  error={!isCityValid && cityTouched}
+                  helperText={
+                    !isCityValid && cityTouched
+                      ? 'Must contain at least one character and no special characters or numbers'
+                      : ''
+                  }
+                />
+              </Grid>
+              <Grid xs={12} md={5.8}>
+                <TextField
+                  fullWidth={true}
+                  margin="dense"
+                  label="Postal code"
+                  variant="outlined"
+                  placeholder="Enter your postal code"
+                  onChange={handlePostCodeChange}
+                  error={!isPostCodeValid && postCodeTouched}
+                  helperText={
+                    !isPostCodeValid && postCodeTouched
+                      ? 'Must be a five digit number'
+                      : ''
+                  }
+                />
+              </Grid>
+              <Grid xs={12} md={5.8}>
+                <Autocomplete
+                  sx={{ width: '100%', marginTop: '8px' }}
+                  fullWidth={true}
+                  options={countries}
+                  onChange={(e, newValue) => {
+                    if (newValue !== null) {
+                      setCountry(newValue);
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Country" />
+                  )}
+                />
+              </Grid>
+              <Grid xs={12}>
+                <Button
+                  sx={{ width: '100%', marginTop: '20px' }}
+                  type="submit"
+                  variant="contained"
+                  onClick={handleSubmit}
+                >
+                  Sign Up
+                </Button>
+              </Grid>
+              <Grid xs={12}>
+                <Typography variant="body1" textAlign={'center'}>
+                  Already have an account?
+                  <span
+                    style={{
+                      color: '#1900D5',
+                      marginLeft: '10px',
+                      cursor: 'pointer',
+                    }}
+                    // onClick={(): void => {
+                    //   navigate('/login');
+                    // }}
+                  >
+                    Log In
+                  </span>
+                </Typography>
+              </Grid>
+            </Grid>
+          </Box>
+        </form>
+      </Stack>
+    </>
   );
 }
 
