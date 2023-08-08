@@ -6,6 +6,7 @@ import RegisterPage from './pages/register/RegisterPage';
 import LoginPage from './pages/login/LoginPage';
 import MainPage from './pages/main/MainPage';
 import theme from './theme';
+import Layout from './components/layout/Layout';
 
 const useHash = (): [string, (newHash: string) => void] => {
   // Tracks the browser's location hash value, and allows changing it.
@@ -44,9 +45,11 @@ function App(): ReactElement {
       <CssBaseline />
       <Container maxWidth="xl">
         <Routes>
-          <Route path="/parfume" element={<MainPage />} />
-          <Route path="/parfume/login" element={<LoginPage />} />
-          <Route path="/parfume/register" element={<RegisterPage />} />
+          <Route path="/parfume" element={<Layout />}>
+            <Route index element={<MainPage />} />
+            <Route path="/parfume/login" element={<LoginPage />} />
+            <Route path="/parfume/register" element={<RegisterPage />} />
+          </Route>
         </Routes>
       </Container>
     </ThemeProvider>
