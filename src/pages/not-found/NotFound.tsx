@@ -33,12 +33,16 @@ const NotFound = (): ReactElement => {
                 alignItems: 'end',
               }}
             >
-              <Typography variant="h1">404</Typography>
-              <Typography variant="h6">Page Not Found</Typography>
-              <Typography variant="subtitle2">
+              <Typography variant="h1" fontFamily={'economica'}>
+                404
+              </Typography>
+              <Typography variant="h6" fontFamily={'economica'}>
+                Page Not Found
+              </Typography>
+              <Typography variant="subtitle1" fontFamily={'economica'}>
                 This page doesn&apos;t exist or was removed
               </Typography>
-              <Typography variant="subtitle1">
+              <Typography variant="subtitle1" fontFamily={'economica'}>
                 We suggest you back to home
               </Typography>
               <Button
