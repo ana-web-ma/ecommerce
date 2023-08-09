@@ -14,8 +14,80 @@ const theme = createTheme({
       main: red.A400,
     },
   },
+  shadows: [
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+    'none',
+  ],
+  shape: {
+    borderRadius: 0,
+  },
   components: {
     // Name of the component
+    MuiButton: {
+      variants: [
+        {
+          props: { variant: 'contained' },
+          style: {
+            textTransform: 'none',
+            fontFamily: 'bellota-text',
+            '&:hover': {
+              opacity: 0.5,
+              // transition: 'opacity 0.5s linear',
+            },
+          },
+        },
+      ],
+      styleOverrides: {
+        root: {
+          // borderRadius: 0,
+          // boxShadow: 'none',
+          // '&.Mui-disabled': {
+          //   fontSize: '15rem',
+          // },
+          transition: '0.5s',
+          '&MuiInputBase': {
+            color: 'pink',
+          },
+          '& .MuiInput-underline:after': {
+            borderBottomColor: 'pink',
+          },
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: 'pink',
+            },
+            '&:hover fieldset': {
+              borderColor: 'pink',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: 'pink',
+            },
+          },
+        },
+      },
+    },
     MuiButtonBase: {
       defaultProps: {
         // The props to change the default for.
@@ -29,16 +101,32 @@ const theme = createTheme({
         },
       },
     },
-    MuiButton: {
+    // MuiLink: {
+    //   variants: [
+    //     {
+    //       props: { underline: 'none' },
+    //       style: {},
+    //     },
+    //   ],
+    // },
+    MuiTextField: {
       variants: [
         {
-          props: { variant: 'contained' },
+          props: { variant: 'outlined' },
           style: {
-            textTransform: 'none',
-            fontFamily: 'bellota-text',
+            '&:hover': {
+              backgroundColor: '#00000025',
+              borderColor: '#00000050',
+              transition: '0.5s',
+            },
           },
         },
       ],
+      styleOverrides: {
+        root: {
+          styles: {},
+        },
+      },
     },
     MuiTypography: {
       variants: [
