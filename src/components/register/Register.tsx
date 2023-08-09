@@ -8,14 +8,14 @@ import {
   Grid,
   Box,
   Stack,
-  Snackbar,
 } from '@mui/material';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import type { ReactElement } from 'react';
 import { createCustomer } from '../../api/calls/createCustomer';
+import { CustomDialog } from './DialogModule';
 
 function RegisterForm(): ReactElement {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -44,8 +44,15 @@ function RegisterForm(): ReactElement {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   const postCodeRegex = /^\d{5}$/;
 
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
+
+  const openDialog = (title: string, content: React.ReactNode): void => {
+    setDialogTitle(title);
+    setDialogContent(content);
+    setDialogOpen(true);
+  };
 
   const handleEmailChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -146,33 +153,28 @@ function RegisterForm(): ReactElement {
       })
         .then((resp) => {
           if (resp.statusCode === 201) {
-            setSnackbarMessage('Successful');
-            setSnackbarOpen(true);
+            openDialog('Successfully', 'User registered');
           } else {
             const errorMessage =
-              resp.statusCode !== undefined && resp.statusCode !== null
-                ? `Error: ${resp.statusCode}`
+              resp.statusCode !== undefined
+                ? `Error: ${String(resp.statusCode)}`
                 : 'Unknown Error';
-            setSnackbarMessage(errorMessage);
-            setSnackbarOpen(true);
+            openDialog('Error', errorMessage);
           }
         })
         .catch((err) => {
           if (err.statusCode === 400) {
-            setSnackbarMessage('User with this email already exists');
-            setSnackbarOpen(true);
+            openDialog('Error', 'User with this email already exists');
           } else {
             const errorMessage =
               err.statusCode !== undefined
                 ? `Error: ${String(err.statusCode)}`
                 : 'Unknown Error';
-            setSnackbarMessage(errorMessage);
-            setSnackbarOpen(true);
+            openDialog('Error', errorMessage);
           }
         });
     } else {
-      setSnackbarMessage('There are blank fields or fields with errors');
-      setSnackbarOpen(true);
+      openDialog('Error', 'There are blank fields or fields with errors');
     }
   };
 
@@ -380,9 +382,9 @@ function RegisterForm(): ReactElement {
                       marginLeft: '10px',
                       cursor: 'pointer',
                     }}
-                    // onClick={(): void => {
-                    //   navigate('/login');
-                    // }}
+                    onClick={(): void => {
+                      navigate('/login');
+                    }}
                   >
                     Log In
                   </span>
@@ -391,13 +393,13 @@ function RegisterForm(): ReactElement {
             </Grid>
           </Box>
         </form>
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={3000}
+        <CustomDialog
+          open={dialogOpen}
           onClose={() => {
-            setSnackbarOpen(false);
+            setDialogOpen(false);
           }}
-          message={snackbarMessage}
+          title={dialogTitle}
+          content={dialogContent}
         />
       </Stack>
     </>
