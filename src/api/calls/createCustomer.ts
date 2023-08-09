@@ -9,6 +9,8 @@ import { apiRoot } from '../client/BuildClient';
 export const createCustomer = async (props: {
   email: string;
   password: string;
+  firstName: string;
+  lastName: string;
 }): Promise<ClientResponse<CustomerSignInResult>> => {
   return apiRoot
     .customers()
@@ -16,6 +18,8 @@ export const createCustomer = async (props: {
       body: {
         email: props.email,
         password: props.password,
+        firstName: props.firstName,
+        lastName: props.lastName,
       },
     })
     .execute();

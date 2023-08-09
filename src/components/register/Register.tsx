@@ -8,6 +8,7 @@ import {
   Grid,
   Box,
   Stack,
+  Snackbar,
 } from '@mui/material';
 // import { useNavigate } from 'react-router-dom';
 import type { ReactElement } from 'react';
@@ -36,11 +37,15 @@ function RegisterForm(): ReactElement {
   const [postCodeTouched, setPostCodeTouched] = useState(false);
   const [countryTouched, setCountryTouched] = useState(false);
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}(?<!\s)$/;
   const nameRegex = /^[a-zA-Zа-яА-ЯàâäçéèêëîïôœùûüÿÀÂÄÇÉÈÊËÎÏÔŒÙÛÜŸ]+$/;
   const streetRegex = /.+/;
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   const postCodeRegex = /^\d{5}$/;
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const handleEmailChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -133,23 +138,41 @@ function RegisterForm(): ReactElement {
       isPostCodeValid &&
       isCountryValid
     ) {
-      createCustomer({ email: `${email}`, password: `${password}` })
+      createCustomer({
+        email: `${email}`,
+        password: `${password}`,
+        firstName: `${firstName}`,
+        lastName: `${lastName}`,
+      })
         .then((resp) => {
           if (resp.statusCode === 201) {
-            alert('successful');
+            setSnackbarMessage('Successful');
+            setSnackbarOpen(true);
           } else {
-            alert(resp.statusCode);
+            const errorMessage =
+              resp.statusCode !== undefined && resp.statusCode !== null
+                ? `Error: ${resp.statusCode}`
+                : 'Unknown Error';
+            setSnackbarMessage(errorMessage);
+            setSnackbarOpen(true);
           }
         })
         .catch((err) => {
           if (err.statusCode === 400) {
-            alert('user with this email already exists');
+            setSnackbarMessage('User with this email already exists');
+            setSnackbarOpen(true);
           } else {
-            alert(err.statusCode);
+            const errorMessage =
+              err.statusCode !== undefined
+                ? `Error: ${String(err.statusCode)}`
+                : 'Unknown Error';
+            setSnackbarMessage(errorMessage);
+            setSnackbarOpen(true);
           }
         });
     } else {
-      alert('There are blank fields or filleds with errors');
+      setSnackbarMessage('There are blank fields or fields with errors');
+      setSnackbarOpen(true);
     }
   };
 
@@ -167,17 +190,17 @@ function RegisterForm(): ReactElement {
               padding={'10%'}
               borderRadius={5}
             >
-              <Grid xs={12}>
+              <Grid item xs={12}>
                 <Typography variant="h2" textAlign={'left'}>
                   Sign Up
                 </Typography>
               </Grid>
-              <Grid xs={12}>
+              <Grid item xs={12}>
                 <Typography variant="body1" textAlign={'left'}>
                   Enter your details to create your account:
                 </Typography>
               </Grid>
-              <Grid xs={12}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
@@ -191,7 +214,7 @@ function RegisterForm(): ReactElement {
                   }
                 />
               </Grid>
-              <Grid xs={12}>
+              <Grid item xs={12}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
@@ -202,12 +225,12 @@ function RegisterForm(): ReactElement {
                   error={!isPasswordValid && passwordTouched}
                   helperText={
                     !isPasswordValid && passwordTouched
-                      ? 'Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, and 1 number'
+                      ? 'Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, 1 number one special character'
                       : ''
                   }
                 />
               </Grid>
-              <Grid xs={12} md={5.8}>
+              <Grid item xs={12} md={5.8}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
@@ -224,7 +247,7 @@ function RegisterForm(): ReactElement {
                   }
                 />
               </Grid>
-              <Grid xs={12} md={5.8}>
+              <Grid item xs={12} md={5.8}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
@@ -241,7 +264,7 @@ function RegisterForm(): ReactElement {
                   }
                 />
               </Grid>
-              <Grid xs={12}>
+              <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: '20px' }}>
                   Date of birth
                 </InputLabel>
@@ -260,10 +283,10 @@ function RegisterForm(): ReactElement {
                   }
                 />
               </Grid>
-              <Grid xs={12}>
+              <Grid item xs={12}>
                 <InputLabel sx={{ marginTop: '20px' }}>Address</InputLabel>
               </Grid>
-              <Grid xs={12} md={5.8}>
+              <Grid item xs={12} md={5.8}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
@@ -279,7 +302,7 @@ function RegisterForm(): ReactElement {
                   }
                 />
               </Grid>
-              <Grid xs={12} md={5.8}>
+              <Grid item xs={12} md={5.8}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
@@ -295,7 +318,7 @@ function RegisterForm(): ReactElement {
                   }
                 />
               </Grid>
-              <Grid xs={12} md={5.8}>
+              <Grid item xs={12} md={5.8}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
@@ -311,7 +334,7 @@ function RegisterForm(): ReactElement {
                   }
                 />
               </Grid>
-              <Grid xs={12} md={5.8}>
+              <Grid item xs={12} md={5.8}>
                 <Autocomplete
                   sx={{ width: '100%', marginTop: '8px' }}
                   fullWidth={true}
@@ -338,7 +361,7 @@ function RegisterForm(): ReactElement {
                   )}
                 />
               </Grid>
-              <Grid xs={12}>
+              <Grid item xs={12}>
                 <Button
                   sx={{ width: '100%', marginTop: '20px' }}
                   type="submit"
@@ -348,7 +371,7 @@ function RegisterForm(): ReactElement {
                   Sign Up
                 </Button>
               </Grid>
-              <Grid xs={12}>
+              <Grid item xs={12}>
                 <Typography variant="body1" textAlign={'center'}>
                   Already have an account?
                   <span
@@ -368,6 +391,14 @@ function RegisterForm(): ReactElement {
             </Grid>
           </Box>
         </form>
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={3000}
+          onClose={() => {
+            setSnackbarOpen(false);
+          }}
+          message={snackbarMessage}
+        />
       </Stack>
     </>
   );
