@@ -7,6 +7,7 @@ import LoginPage from './pages/login/LoginPage';
 import MainPage from './pages/main/MainPage';
 import theme from './theme';
 import Layout from './components/layout/Layout';
+import NotFound from './pages/not-found/NotFound';
 
 const useHash = (): [string, (newHash: string) => void] => {
   // Tracks the browser's location hash value, and allows changing it.
@@ -35,10 +36,10 @@ const useHash = (): [string, (newHash: string) => void] => {
 };
 
 function App(): ReactElement {
-  const [hash, setHash] = useHash();
-  React.useEffect(() => {
-    setHash('#/parfume');
-  }, []);
+  useHash();
+  if (window.location.hash === '') {
+    window.location.hash = '#/parfume';
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -50,6 +51,7 @@ function App(): ReactElement {
             <Route path="/parfume/login" element={<LoginPage />} />
             <Route path="/parfume/register" element={<RegisterPage />} />
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Container>
     </ThemeProvider>
