@@ -9,7 +9,7 @@ const theme = createTheme({
       main: '#000000',
     },
     secondary: {
-      main: '#19857b',
+      main: '#0000020',
     },
     error: {
       main: red.A400,
@@ -102,21 +102,23 @@ const theme = createTheme({
         },
       },
     },
-    MuiInput: {
-      styleOverrides: {
-        root: {
-          '&:before': {
-            borderBottom: '1px solid #909090',
-          },
-          '&:hover:not(.Mui-disabled, .Mui-error):before': {
-            borderBottom: '1px solid #282828',
-          },
-          '&.Mui-focused:after': {
-            borderBottom: '1px solid #282828',
-          },
-        },
-      },
-    },
+
+    // MuiInput: {
+    //   styleOverrides: {
+    //     root: {
+    //       '&:before': {
+    //         borderBottom: '1px solid #909090',
+    //       },
+    //       '&:hover:not(.Mui-disabled, .Mui-error):before': {
+    //         borderBottom: '1px solid #282828',
+    //       },
+    //       '&.Mui-focused:after': {
+    //         borderBottom: '1px solid #282828',
+    //       },
+    //     },
+    //   },
+    // },
+
     // MuiLink: {
     //   variants: [
     //     {

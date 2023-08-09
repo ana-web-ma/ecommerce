@@ -8,16 +8,22 @@ import {
   Input,
   InputBase,
   OutlinedInput,
+  type OutlinedInputProps,
 } from '@mui/material';
 import { type ReactElement } from 'react';
 
-const StyledTextField = styled(TextField)({
+const StyledTextField = styled(OutlinedInput)({
+  '& .MuiOutlinedInput-input': {
+    color: '#282828',
+    opacity: '0.2',
+    fontWeight: '600',
+  },
   '& .MuiOutlinedInput-root': {
-    '& input': {
-      color: '#282828',
-      opacity: '0.2',
-      fontWeight: '600',
-    },
+    // '& input': {
+    //   color: '#282828',
+    //   opacity: '0.2',
+    //   fontWeight: '600',
+    // },
     '& fieldset': {
       borderColor: '#00000040',
       transition: '0.2s',
@@ -33,17 +39,22 @@ const StyledTextField = styled(TextField)({
         borderWidth: '1px',
       },
     },
-    '&:hover': {
-      fieldset: {
-        borderColor: '#282828',
-        transition: '0.2s',
-      },
-    },
+    // '&:hover': {
+    //   input: {
+    //     // color: '#282828',
+    //     opacity: '0.1',
+    //     fontWeight: '600',
+    //   },
+    //   fieldset: {
+    //     borderColor: 'red',
+    //     transition: '0.2s',
+    //   },
+    // },
   },
 });
 
-function OutlinedTextField(props: TextFieldProps): ReactElement {
-  return <StyledTextField {...props} defaultValue={props.variant} />;
+function OutlinedTextField(props: OutlinedInputProps): ReactElement {
+  return <StyledTextField {...props} defaultValue="outlined" />;
 }
 
 OutlinedTextField.propTypes = {};

@@ -14,9 +14,9 @@ function DemoComponent(props: SvgIconProps): ReactElement {
   return (
     <>
       <Typography variant="h2">Demo</Typography>
-      <StandardTextField variant="outlined" color="warning"></StandardTextField>
-      <FilledTextField variant="standard" color="warning"></FilledTextField>
-      <OutlinedTextField variant="filled" color="warning"></OutlinedTextField>
+      <StandardTextField variant="standard" />
+      <FilledTextField />
+      <OutlinedTextField />
     </>
   );
 }

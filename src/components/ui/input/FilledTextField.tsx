@@ -8,18 +8,25 @@ import {
   Input,
   InputBase,
   OutlinedInput,
+  type FilledTextFieldProps,
+  type FilledInputProps,
+  type InputBaseProps,
+  FilledInput,
 } from '@mui/material';
 import { type ReactElement } from 'react';
 
 const StyledTextField = styled(TextField)({
   '& .MuiFilledInput-root': {
+    hiddenLabel: true,
+    backgroundColor: '#28282805',
     '& input': {
-      color: '#282828',
-      opacity: '0.2',
+      disableUnderline: true,
+      color: '#28282820',
+      opacity: '1',
       fontWeight: '600',
     },
     '& fieldset': {
-      borderColor: '#00000040',
+      borderColor: '#99000040',
       transition: '0.2s',
     },
     '&.Mui-focused': {
@@ -43,7 +50,15 @@ const StyledTextField = styled(TextField)({
 });
 
 function FilledTextField(props: TextFieldProps): ReactElement {
-  return <StyledTextField {...props} defaultValue={props.variant} />;
+  return (
+    <StyledTextField
+      {...props}
+      variant="filled"
+      defaultValue="filled"
+      // color="error"
+      hiddenLabel
+    />
+  );
 }
 
 FilledTextField.propTypes = {};
