@@ -6,15 +6,17 @@ import {
   type SvgIconProps,
 } from '@mui/material';
 import { type ReactElement } from 'react';
-import StyledTextField from '../StyledTextField';
+import StandardTextField from '../input/StandardTextField';
+import FilledTextField from '../input/FilledTextField';
+import OutlinedTextField from '../input/OutlinedTextField';
 
 function DemoComponent(props: SvgIconProps): ReactElement {
   return (
     <>
       <Typography variant="h2">Demo</Typography>
-      <StyledTextField variant="standard" color="warning"></StyledTextField>
-      <StyledTextField variant="filled" color="warning"></StyledTextField>
-      <StyledTextField variant="outlined" color="warning"></StyledTextField>
+      <StandardTextField variant="outlined" color="warning"></StandardTextField>
+      <FilledTextField variant="standard" color="warning"></FilledTextField>
+      <OutlinedTextField variant="filled" color="warning"></OutlinedTextField>
     </>
   );
 }
