@@ -55,13 +55,33 @@ const NotFound = (): ReactElement => {
     >
       <Container sx={{ display: 'flex', justifyContent: 'center' }}>
         <LightTooltip title="To Home Page">
-          <NavLink variant="text">Home</NavLink>
+          <NavLink
+            variant="text"
+            onClick={(): void => {
+              navigate('/parfume');
+            }}
+          >
+            Home
+          </NavLink>
         </LightTooltip>
         <LightTooltip title="About Us">
-          <NavLink variant="text">About</NavLink>
+          <NavLink
+            variant="text"
+            onClick={(): void => {
+              navigate('/parfume');
+            }}
+          >
+            About
+          </NavLink>
         </LightTooltip>
         <LightTooltip title="Log In">
-          <NavLink variant="text" startIcon={<LoginIcon />}>
+          <NavLink
+            variant="text"
+            startIcon={<LoginIcon />}
+            onClick={(): void => {
+              navigate('/parfume/login');
+            }}
+          >
             LogIn
           </NavLink>
         </LightTooltip>
