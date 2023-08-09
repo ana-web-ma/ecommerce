@@ -12,9 +12,9 @@ function DemoComponent(props: SvgIconProps): ReactElement {
   return (
     <>
       <Typography variant="h2">Demo</Typography>
-      <StyledTextField variant="standard"></StyledTextField>
-      <StyledTextField variant="filled"></StyledTextField>
-      <StyledTextField variant="outlined"></StyledTextField>
+      <StyledTextField variant="standard" color="warning"></StyledTextField>
+      <StyledTextField variant="filled" color="warning"></StyledTextField>
+      <StyledTextField variant="outlined" color="warning"></StyledTextField>
     </>
   );
 }

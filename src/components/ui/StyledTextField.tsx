@@ -7,10 +7,11 @@ import {
   type SvgIconProps,
   Input,
   InputBase,
+  OutlinedInput,
 } from '@mui/material';
 import { type ReactElement } from 'react';
 
-const StandardTextField = styled(Input)({
+const StandardTextField = styled(TextField)({
   // '& .MuiStandardInput-root': {
   //   color: '#red',
   //   borderColor: '#wheat',
@@ -133,14 +134,46 @@ const StandardTextField = styled(Input)({
   // },
 });
 
+const OutlinedTextField = styled(TextField)({
+  '& .MuiOutlinedInput-root': {
+    '& input': {
+      color: '#282828',
+      opacity: '0.2',
+      fontWeight: '600',
+    },
+    '& fieldset': {
+      borderColor: '#00000040',
+      transition: '0.2s',
+    },
+    '&.Mui-focused': {
+      input: {
+        opacity: '1',
+        transition: '0.2s',
+      },
+      fieldset: {
+        borderColor: '#00000040',
+        transition: '0.2s',
+        borderWidth: '1px',
+      },
+    },
+    '&:hover': {
+      fieldset: {
+        borderColor: '#282828',
+        transition: '0.2s',
+      },
+    },
+  },
+});
+
 function StyledTextField(props: TextFieldProps): ReactElement {
   return (
     <>
-      <StandardTextField
-        // label={'}CSS validation {22}style'}
-        required
-        defaultValue={props.variant}
-      />
+      {props.variant === 'standard' && (
+        <StandardTextField {...props} defaultValue={props.variant} />
+      )}
+      {props.variant === 'outlined' && (
+        <OutlinedTextField {...props} defaultValue={props.variant} />
+      )}
     </>
   );
 }
