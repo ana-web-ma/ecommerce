@@ -164,7 +164,32 @@ function RegisterForm(): ReactElement {
         })
         .catch((err) => {
           if (err.statusCode === 400) {
-            openDialog('Error', 'User with this email already exists');
+            const content = (
+              <div>
+                User with this email already exists. Do you want to:
+                <br />
+                <Button
+                  variant="text"
+                  color="primary"
+                  onClick={() => {
+                    navigate('/login');
+                    setDialogOpen(false);
+                  }}
+                >
+                  Log In
+                </Button>
+                <Button
+                  variant="text"
+                  color="primary"
+                  onClick={() => {
+                    setDialogOpen(false);
+                  }}
+                >
+                  Use another email
+                </Button>
+              </div>
+            );
+            openDialog('Error', content);
           } else {
             const errorMessage =
               err.statusCode !== undefined
