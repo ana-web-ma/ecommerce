@@ -157,8 +157,8 @@ function RegisterForm(): ReactElement {
           } else {
             const errorMessage =
               resp.statusCode !== undefined
-                ? `Error: ${String(resp.statusCode)}`
-                : 'Unknown Error';
+                ? `Error: ${String(resp.statusCode)}, try later`
+                : 'Unknown Error, try later';
             openDialog('Error', errorMessage);
           }
         })
@@ -193,8 +193,8 @@ function RegisterForm(): ReactElement {
           } else {
             const errorMessage =
               err.statusCode !== undefined
-                ? `Error: ${String(err.statusCode)}`
-                : 'Unknown Error';
+                ? `Error: ${String(err.statusCode)}, try later`
+                : 'Unknown Error, try later';
             openDialog('Error', errorMessage);
           }
         });
