@@ -10,13 +10,27 @@ import StandardTextField from '../input/StandardTextField';
 import FilledTextField from '../input/FilledTextField';
 import OutlinedTextField from '../input/OutlinedTextField';
 
-function DemoComponent(props: SvgIconProps): ReactElement {
+function DemoComponent(): ReactElement {
   return (
     <>
       <Typography variant="h2">Demo</Typography>
-      <StandardTextField variant="standard" />
+      {/* <StandardTextField variant="standard" />
       <FilledTextField />
-      <OutlinedTextField />
+      <OutlinedTextField /> */}
+      <TextField
+        hiddenLabel
+        variant="outlined"
+        placeholder="filled"
+      ></TextField>
+      <TextField
+        hiddenLabel
+        variant="outlined"
+        placeholder="filled"
+        // color="warning"
+        // disabled
+        error
+        helperText="Incorrect entry."
+      ></TextField>
     </>
   );
 }

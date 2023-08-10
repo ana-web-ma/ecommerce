@@ -14,6 +14,7 @@ import {
   FilledInput,
 } from '@mui/material';
 import { type ReactElement } from 'react';
+import { FormatUnderlined } from '@mui/icons-material';
 
 const StyledTextField = styled(TextField)({
   '& .MuiFilledInput-root': {
@@ -51,13 +52,25 @@ const StyledTextField = styled(TextField)({
 
 function FilledTextField(props: TextFieldProps): ReactElement {
   return (
-    <StyledTextField
+    // <StyledTextField
+    //   {...props}
+    //   variant="filled"
+    //   defaultValue="filled"
+    //   // color="error"
+    //   hiddenLabel
+    // />
+    <TextField
       {...props}
-      variant="filled"
-      defaultValue="filled"
-      // color="error"
       hiddenLabel
-    />
+      variant="outlined"
+      placeholder="filled"
+      // defaultValue="filled"
+      InputProps={{
+        placeholder: 'placeholder',
+        // backgroundColor: 'pink',
+        // disableUnderline: true,
+      }}
+    ></TextField>
   );
 }
 
