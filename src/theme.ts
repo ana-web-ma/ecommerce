@@ -102,6 +102,18 @@ const theme = createTheme({
         },
       },
     },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            backgroundColor: '#00000000',
+            path: {
+              stroke: '#00000050',
+            },
+          },
+        },
+      },
+    },
 
     // MuiInput: {
     //   styleOverrides: {
