@@ -68,7 +68,7 @@ const theme = createTheme({
             fontFamily: BELLOTA_FONT,
             fontWeight: 700,
             '&:hover': {
-              backgroundColor: '#00000025',
+              backgroundColor: '#00000015',
             },
           },
         },
@@ -90,6 +90,18 @@ const theme = createTheme({
       styleOverrides: {
         maxWidthXl: {
           maxWidth: 1600,
+        },
+      },
+    },
+    MuiDivider: {
+      styleOverrides: {
+        root: {
+          '& span': {
+            fontFamily: ECONOMICA_FONT,
+            fontSize: '20px',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+          },
         },
       },
     },
@@ -122,6 +134,23 @@ const theme = createTheme({
           fontFamily: BELLOTA_FONT,
         },
       },
+    },
+    MuiPaper: {
+      variants: [
+        {
+          props: { variant: 'outlined' },
+          style: {
+            padding: '15px',
+            backgroundColor: '#F6F6F6',
+            borderColor: '#D9D9D9',
+            transition: '0.2s',
+            '&:hover': {
+              backgroundColor: '#FFFFFF',
+              transition: '0.2s',
+            },
+          },
+        },
+      ],
     },
     MuiTextField: {
       variants: [
