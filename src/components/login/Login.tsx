@@ -128,7 +128,7 @@ function LoginForm(): ReactElement {
                   cursor: 'pointer',
                 }}
                 onClick={(): void => {
-                  navigate('/register');
+                  navigate('/parfume/register');
                 }}
               >
                 Sign Up
