@@ -4,9 +4,8 @@ import { Provider } from 'react-redux';
 import { HashRouter } from 'react-router-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import '@fontsource/playfair-display/400.css';
-import '@fontsource/bellota-text/400.css';
-import '@fontsource/economica/400.css';
+import './fonts.css';
+
 import { store } from './store';
 
 const root = ReactDOM.createRoot(

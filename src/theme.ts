@@ -1,7 +1,10 @@
 import { createTheme } from '@mui/material/styles';
-import { red } from '@mui/material/colors';
+import { grey, red } from '@mui/material/colors';
 import { outlinedInputClasses } from '@mui/material';
 
+const BELLOTA_FONT = 'Bellota Text';
+const ECONOMICA_FONT = 'Economica';
+const PLAYFAIR_FONT = 'Playfair Display';
 // A custom theme for this app
 const theme = createTheme({
   palette: {
@@ -47,47 +50,80 @@ const theme = createTheme({
   },
   components: {
     // Name of the component
+    // MuiButton: {
+    //   variants: [
+    //     {
+    //       props: { variant: 'contained' },
+    //       style: {
+    //         // textTransform: 'none',
+    //         // fontFamily: BELLOTA_FONT,
+    //         '&:hover': {
+    //           opacity: 0.5,
+    //           // transition: 'opacity 0.5s linear',
+    //         },
+    //       },
+    //     },
+    //   ],
+    //   styleOverrides: {
+    //     root: {
+    //       // borderRadius: 0,
+    //       // boxShadow: 'none',
+    //       // '&.Mui-disabled': {
+    //       //   fontSize: '15rem',
+    //       // },
+    //       transition: '0.2s',
+    //       '&MuiInputBase': {
+    //         color: 'pink',
+    //       },
+    //       '& .MuiInput-underline:after': {
+    //         borderBottomColor: 'pink',
+    //       },
+    //       '& .MuiOutlinedInput-root': {
+    //         '& fieldset': {
+    //           borderColor: 'pink',
+    //         },
+    //         '&:hover fieldset': {
+    //           borderColor: 'pink',
+    //         },
+    //         '&.Mui-focused fieldset': {
+    //           borderColor: 'pink',
+    //         },
+    //       },
+    //     },
+    //   },
+    // },
+
     MuiButton: {
       variants: [
         {
           props: { variant: 'contained' },
           style: {
-            textTransform: 'none',
-            fontFamily: 'bellota-text',
+            fontFamily: BELLOTA_FONT,
+            fontWeight: 700,
+            transition: '0.3s',
             '&:hover': {
               opacity: 0.5,
-              // transition: 'opacity 0.5s linear',
+              transition: '0.3s',
             },
+          },
+        },
+        {
+          props: { variant: 'outlined' },
+          style: {
+            fontFamily: BELLOTA_FONT,
+            fontWeight: 700,
+            '&:hover': {
+              backgroundColor: '#00000025',
+            },
+          },
+        },
+        {
+          props: { variant: 'text' },
+          style: {
+            fontFamily: BELLOTA_FONT,
           },
         },
       ],
-      styleOverrides: {
-        root: {
-          // borderRadius: 0,
-          // boxShadow: 'none',
-          // '&.Mui-disabled': {
-          //   fontSize: '15rem',
-          // },
-          transition: '0.5s',
-          '&MuiInputBase': {
-            color: 'pink',
-          },
-          '& .MuiInput-underline:after': {
-            borderBottomColor: 'pink',
-          },
-          '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-              borderColor: 'pink',
-            },
-            '&:hover fieldset': {
-              borderColor: 'pink',
-            },
-            '&.Mui-focused fieldset': {
-              borderColor: 'pink',
-            },
-          },
-        },
-      },
     },
     MuiButtonBase: {
       defaultProps: {
@@ -133,6 +169,7 @@ const theme = createTheme({
     MuiInputBase: {
       styleOverrides: {
         root: {
+          fontFamily: BELLOTA_FONT,
           '& input': {
             fontWeight: '600',
           },
@@ -152,6 +189,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           margin: '5px 1px',
+          fontFamily: BELLOTA_FONT,
         },
       },
     },
@@ -160,6 +198,7 @@ const theme = createTheme({
         {
           props: { variant: 'outlined' },
           style: {
+            fontFamily: BELLOTA_FONT,
             '&:hover fieldset': {
               backgroundColor: '#00000002',
               transition: '0.2s',
@@ -219,15 +258,111 @@ const theme = createTheme({
     MuiTypography: {
       variants: [
         {
+          props: { variant: 'h1' },
+          style: {
+            fontFamily: PLAYFAIR_FONT,
+            fontSize: '60px',
+            textTransform: 'uppercase',
+          },
+        },
+        // HEADLINE 1
+        {
           props: { variant: 'h2' },
           style: {
-            fontFamily: 'bellota-text',
+            fontFamily: PLAYFAIR_FONT,
+            fontSize: '60px',
+            textTransform: 'uppercase',
+          },
+        },
+        // Form title
+        {
+          props: { variant: 'h3' },
+          style: {
+            fontFamily: BELLOTA_FONT,
+            fontSize: '20px',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+          },
+        },
+        {
+          props: { variant: 'h4' },
+          style: {
+            fontFamily: BELLOTA_FONT,
+            fontSize: '13px',
+            fontWeight: 700,
+          },
+        },
+        {
+          props: { variant: 'h5' },
+          style: {
+            fontFamily: PLAYFAIR_FONT,
+          },
+        },
+        {
+          props: { variant: 'h6' },
+          style: {
+            fontFamily: PLAYFAIR_FONT,
+          },
+        },
+        // HEADLINE 2
+        {
+          props: { variant: 'subtitle1' },
+          style: {
+            fontFamily: BELLOTA_FONT,
+            fontSize: '15px',
+            textTransform: 'uppercase',
+            fontWeight: 700,
+          },
+        },
+        // HEADLINE 3
+
+        {
+          props: { variant: 'subtitle2' },
+          style: {
+            fontFamily: ECONOMICA_FONT,
+            fontSize: '20px',
+            fontWeight: 700,
+            textTransform: 'uppercase',
           },
         },
         {
           props: { variant: 'body1' },
           style: {
-            fontFamily: 'bellota-text',
+            fontFamily: BELLOTA_FONT,
+            fontSize: '15px',
+            textTransform: 'uppercase',
+          },
+        },
+        {
+          props: { variant: 'body2' },
+          style: {
+            fontFamily: BELLOTA_FONT,
+            fontSize: '15px',
+            fontWeight: 700,
+          },
+        },
+        {
+          props: { variant: 'button' },
+          style: {
+            fontFamily: BELLOTA_FONT,
+          },
+        },
+        {
+          props: { variant: 'caption' },
+          style: {
+            fontFamily: BELLOTA_FONT,
+          },
+        },
+        {
+          props: { variant: 'overline' },
+          style: {
+            fontFamily: BELLOTA_FONT,
+          },
+        },
+        {
+          props: { variant: 'inherit' },
+          style: {
+            fontFamily: BELLOTA_FONT,
           },
         },
       ],
