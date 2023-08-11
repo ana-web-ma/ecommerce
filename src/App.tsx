@@ -35,10 +35,10 @@ const useHash = (): [string, (newHash: string) => void] => {
 };
 
 function App(): ReactElement {
-  const [hash, setHash] = useHash();
-  React.useEffect(() => {
-    setHash('#/perfume');
-  }, []);
+  useHash();
+  if (window.location.hash === '') {
+    window.location.hash = '#/perfume';
+  }
 
   return (
     <ThemeProvider theme={theme}>
