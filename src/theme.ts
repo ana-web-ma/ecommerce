@@ -1,18 +1,17 @@
 import { createTheme } from '@mui/material/styles';
-import { grey, red } from '@mui/material/colors';
-import { outlinedInputClasses } from '@mui/material';
+import { red } from '@mui/material/colors';
 
 const BELLOTA_FONT = 'Bellota Text';
 const ECONOMICA_FONT = 'Economica';
 const PLAYFAIR_FONT = 'Playfair Display';
-// A custom theme for this app
+
 const theme = createTheme({
   palette: {
     primary: {
       main: '#000000',
     },
     secondary: {
-      main: '#0000020',
+      main: '#00000020',
     },
     error: {
       main: red.A400,
@@ -49,50 +48,6 @@ const theme = createTheme({
     borderRadius: 0,
   },
   components: {
-    // Name of the component
-    // MuiButton: {
-    //   variants: [
-    //     {
-    //       props: { variant: 'contained' },
-    //       style: {
-    //         // textTransform: 'none',
-    //         // fontFamily: BELLOTA_FONT,
-    //         '&:hover': {
-    //           opacity: 0.5,
-    //           // transition: 'opacity 0.5s linear',
-    //         },
-    //       },
-    //     },
-    //   ],
-    //   styleOverrides: {
-    //     root: {
-    //       // borderRadius: 0,
-    //       // boxShadow: 'none',
-    //       // '&.Mui-disabled': {
-    //       //   fontSize: '15rem',
-    //       // },
-    //       transition: '0.2s',
-    //       '&MuiInputBase': {
-    //         color: 'pink',
-    //       },
-    //       '& .MuiInput-underline:after': {
-    //         borderBottomColor: 'pink',
-    //       },
-    //       '& .MuiOutlinedInput-root': {
-    //         '& fieldset': {
-    //           borderColor: 'pink',
-    //         },
-    //         '&:hover fieldset': {
-    //           borderColor: 'pink',
-    //         },
-    //         '&.Mui-focused fieldset': {
-    //           borderColor: 'pink',
-    //         },
-    //       },
-    //     },
-    //   },
-    // },
-
     MuiButton: {
       variants: [
         {
@@ -150,22 +105,6 @@ const theme = createTheme({
         },
       },
     },
-
-    // MuiInput: {
-    //   styleOverrides: {
-    //     root: {
-    //       '&:before': {
-    //         borderBottom: '1px solid #909090',
-    //       },
-    //       '&:hover:not(.Mui-disabled, .Mui-error):before': {
-    //         borderBottom: '1px solid #282828',
-    //       },
-    //       '&.Mui-focused:after': {
-    //         borderBottom: '1px solid #282828',
-    //       },
-    //     },
-    //   },
-    // },
     MuiInputBase: {
       styleOverrides: {
         root: {
@@ -176,15 +115,6 @@ const theme = createTheme({
         },
       },
     },
-
-    // MuiLink: {
-    //   variants: [
-    //     {
-    //       props: { underline: 'none' },
-    //       style: {},
-    //     },
-    //   ],
-    // },
     MuiFormHelperText: {
       styleOverrides: {
         root: {
@@ -208,53 +138,10 @@ const theme = createTheme({
               borderColor: '#00000000',
               transition: '0.2s',
             },
-            // '&:hover': {
-            //   // backgroundColor: 'white',
-            //   // borderColor: 'green',
-            //   // transition: '0.2s',
-            //   // '& fieldset': {
-            //   //   // backgroundColor: 'pink',
-            //   //   // borderColor: 'pink',
-            //   //   // transition: '0.2s',
-            //   // },
-            //   // '& .MuiOutlinedInput-notchedOutline': {
-            //   //   borderColor: 'pink',
-            //   // },
-            // },
           },
         },
       ],
-      // styleOverrides: {
-      //   root: {
-      //     styles: {
-      //       '--TextField-brandBorderColor': 'blue',
-      //       '--TextField-brandBorderHoverColor': 'red',
-      //       '--TextField-brandBorderFocusedColor': 'green',
-      //       '& label.Mui-focused': {
-      //         color: 'var(--TextField-brandBorderFocusedColor)',
-      //       },
-      //     },
-      //   },
-      // },
     },
-    // MuiOutlinedInput: {
-    //   styleOverrides: {
-    //     notchedOutline: {
-    //       borderColor: '#00000040',
-    //       cursor: 'default',
-    //     },
-    //     root: {
-    //       [`&:hover .${outlinedInputClasses.notchedOutline}`]: {
-    //         borderColor: '#00000040',
-    //         backgroundColor: '#FFFFFF',
-    //       },
-    //       [`&.Mui-focused .${outlinedInputClasses.notchedOutline}`]: {
-    //         borderColor: '#00000040',
-    //         borderWeight: '2px',
-    //       },
-    //     },
-    //   },
-    // },
     MuiTypography: {
       variants: [
         {
@@ -288,8 +175,6 @@ const theme = createTheme({
           props: { variant: 'h4' },
           style: {
             fontFamily: BELLOTA_FONT,
-            fontSize: '13px',
-            fontWeight: 700,
           },
         },
         {
@@ -315,7 +200,6 @@ const theme = createTheme({
           },
         },
         // HEADLINE 3
-
         {
           props: { variant: 'subtitle2' },
           style: {

@@ -1,16 +1,6 @@
 import React from 'react';
-import {
-  Button,
-  Stack,
-  SvgIcon,
-  TextField,
-  Typography,
-  type SvgIconProps,
-} from '@mui/material';
+import { Button, Stack, TextField, Typography } from '@mui/material';
 import { type ReactElement } from 'react';
-import StandardTextField from '../input/StandardTextField';
-import FilledTextField from '../input/FilledTextField';
-import OutlinedTextField from '../input/OutlinedTextField';
 
 function DemoComponent(): ReactElement {
   return (
@@ -31,8 +21,6 @@ function DemoComponent(): ReactElement {
           hiddenLabel
           variant="outlined"
           placeholder="Placeholder"
-          // color="warning"
-          // disabled
           error
           helperText="Incorrect entry."
         ></TextField>

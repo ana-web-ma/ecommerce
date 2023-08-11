@@ -37,7 +37,7 @@ const useHash = (): [string, (newHash: string) => void] => {
 function App(): ReactElement {
   const [hash, setHash] = useHash();
   React.useEffect(() => {
-    setHash('#/parfume');
+    setHash('#/perfume');
   }, []);
 
   return (
@@ -45,10 +45,10 @@ function App(): ReactElement {
       <CssBaseline />
       <Container maxWidth="xl">
         <Routes>
-          <Route path="/parfume" element={<Layout />}>
+          <Route path="/perfume" element={<Layout />}>
             <Route index element={<MainPage />} />
-            <Route path="/parfume/login" element={<LoginPage />} />
-            <Route path="/parfume/register" element={<RegisterPage />} />
+            <Route path="/perfume/login" element={<LoginPage />} />
+            <Route path="/perfume/register" element={<RegisterPage />} />
           </Route>
         </Routes>
       </Container>
