@@ -25,7 +25,7 @@ function RegisterForm(): ReactElement {
   const [city, setCity] = useState('');
   const [postCode, setPostCode] = useState('');
   const [country, setCountry] = useState('');
-  const countries = ['U.S.', 'France'];
+  const countries = ['US', 'FR'];
 
   const [emailTouched, setEmailTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
@@ -150,6 +150,15 @@ function RegisterForm(): ReactElement {
         password: `${password}`,
         firstName: `${firstName}`,
         lastName: `${lastName}`,
+        dateOfBirth: date,
+        addresses: [
+          {
+            country,
+            city,
+            streetName: street,
+            postalCode: postCode,
+          },
+        ],
       })
         .then((resp) => {
           if (resp.statusCode === 201) {

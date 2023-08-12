@@ -1,4 +1,5 @@
 import {
+  type Address,
   type ClientResponse,
   type CustomerSignInResult,
 } from '@commercetools/platform-sdk';
@@ -11,6 +12,8 @@ export const createCustomer = async (props: {
   password: string;
   firstName: string;
   lastName: string;
+  dateOfBirth: string;
+  addresses: Address[];
 }): Promise<ClientResponse<CustomerSignInResult>> => {
   return apiRoot
     .customers()
@@ -20,6 +23,8 @@ export const createCustomer = async (props: {
         password: props.password,
         firstName: props.firstName,
         lastName: props.lastName,
+        dateOfBirth: props.dateOfBirth,
+        addresses: props.addresses,
       },
     })
     .execute();
