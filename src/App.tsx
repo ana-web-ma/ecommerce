@@ -38,7 +38,7 @@ const useHash = (): [string, (newHash: string) => void] => {
 function App(): ReactElement {
   useHash();
   if (window.location.hash === '') {
-    window.location.hash = '#/perfume';
+    window.location.hash = '#/eperfume';
   }
 
   return (
@@ -46,10 +46,10 @@ function App(): ReactElement {
       <CssBaseline />
       <Container maxWidth="xl">
         <Routes>
-          <Route path="/perfume" element={<Layout />}>
+          <Route path="/eperfume" element={<Layout />}>
             <Route index element={<MainPage />} />
-            <Route path="/perfume/login" element={<LoginPage />} />
-            <Route path="/perfume/register" element={<RegisterPage />} />
+            <Route path="/eperfume/login" element={<LoginPage />} />
+            <Route path="/eperfume/register" element={<RegisterPage />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

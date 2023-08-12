@@ -23,18 +23,18 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: 'transparent',
     color: 'rgba(0, 0, 0, 0.87)',
     boxShadow: theme.shadows[1],
     fontSize: 15,
-    fontFamily: 'economica',
+    fontFamily: 'Economica',
   },
 }));
 
 const NavLink = styled(Button)<ButtonProps>(() => ({
   textTransform: 'none',
   fontSize: '22px',
-  fontFamily: 'economica',
+  fontFamily: 'Economica',
 }));
 
 const NotFound = (): ReactElement => {
@@ -58,7 +58,7 @@ const NotFound = (): ReactElement => {
           <NavLink
             variant="text"
             onClick={(): void => {
-              navigate('/parfume');
+              navigate('/eperfume');
             }}
           >
             Home
@@ -68,7 +68,7 @@ const NotFound = (): ReactElement => {
           <NavLink
             variant="text"
             onClick={(): void => {
-              navigate('/parfume');
+              navigate('/eperfume');
             }}
           >
             About
@@ -79,7 +79,7 @@ const NotFound = (): ReactElement => {
             variant="text"
             startIcon={<LoginIcon />}
             onClick={(): void => {
-              navigate('/parfume/login');
+              navigate('/eperfume/login');
             }}
           >
             LogIn
@@ -124,28 +124,28 @@ const NotFound = (): ReactElement => {
                 gap: '10px',
               }}
             >
-              <Typography variant="h1" fontFamily={'economica'}>
+              <Typography variant="h1" fontFamily={'Economica'}>
                 {title.map((letter, index) => {
                   return <TextSpan key={index} child={letter}></TextSpan>;
                 })}
               </Typography>
-              <Typography variant="h3" fontFamily={'economica'}>
+              <Typography variant="h3" fontFamily={'Economica'}>
                 Page Not Found
               </Typography>
-              <Typography variant="subtitle1" fontFamily={'economica'}>
+              <Typography variant="subtitle1" fontFamily={'Economica'}>
                 This page doesn&apos;t exist or was removed
               </Typography>
-              <Typography variant="subtitle1" fontFamily={'economica'}>
+              <Typography variant="subtitle1" fontFamily={'Economica'}>
                 We suggest you back to home
               </Typography>
               <LightTooltip title="To Home Page">
                 <Button
                   variant="contained"
                   onClick={(): void => {
-                    navigate('/parfume');
+                    navigate('/eperfume');
                   }}
                   style={{
-                    fontFamily: 'economica',
+                    fontFamily: 'Economica',
                     fontSize: '20px',
                   }}
                 >
