@@ -15,6 +15,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { LoginSchema } from '../../helpers/yup/Yup';
 import { authCustomer } from '../../api/calls/authCustomer';
+import theme from '../../theme';
 
 export function onPromise<T>(
   // used to wrap react-hook-forms's submit handler
@@ -30,6 +31,7 @@ export function onPromise<T>(
 
 function LoginForm(): ReactElement {
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState('');
   const {
     register,
     formState: { errors },
@@ -51,7 +53,7 @@ function LoginForm(): ReactElement {
         console.log(customer.body.customer);
       })
       .catch((err) => {
-        console.log(err.message);
+        setErrorMessage(err.message);
       });
   };
 
@@ -84,27 +86,42 @@ function LoginForm(): ReactElement {
             borderRadius={5}
           >
             <Typography variant="h2">Welcome</Typography>
-            <Typography variant="body1">Log In your account</Typography>
+            <Typography
+              variant="body1"
+              textAlign={'center'}
+              height={'45px'}
+              color={errorMessage !== '' ? theme.palette.error.main : 'inherit'}
+            >
+              {errorMessage !== ''
+                ? `⚠️ ${errorMessage} Please check your email, password and try again`
+                : 'Log In your account'}
+            </Typography>
             <TextField
-              error={!(errors.email == null)}
+              error={!(errors.email == null) || errorMessage !== ''}
               fullWidth={true}
               margin="normal"
               label="Email"
               variant="outlined"
               placeholder="Enter your email"
+              onInput={() => {
+                setErrorMessage('');
+              }}
               helperText={
                 errors.email != null ? errors.email.message?.toString() : ''
               }
               {...register('email')}
             />
             <TextField
-              error={!(errors.password == null)}
+              error={!(errors.password == null) || errorMessage !== ''}
               fullWidth={true}
               margin="normal"
               type={showPassword ? 'text' : 'password'}
               label="Password"
               variant="outlined"
               placeholder="Enter your password"
+              onInput={() => {
+                setErrorMessage('');
+              }}
               helperText={
                 errors.password != null
                   ? errors.password.message?.toString()
