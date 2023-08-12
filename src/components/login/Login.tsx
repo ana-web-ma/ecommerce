@@ -152,7 +152,7 @@ function LoginForm(): ReactElement {
                   marginLeft: '10px',
                 }}
                 onClick={(): void => {
-                  navigate('/eperfume/register');
+                  navigate('/register');
                 }}
               >
                 Sign Up
