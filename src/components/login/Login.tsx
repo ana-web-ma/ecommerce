@@ -14,6 +14,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { LoginSchema } from '../../helpers/yup/Yup';
+import { authCustomer } from '../../api/calls/authCustomer';
 
 export function onPromise<T>(
   // used to wrap react-hook-forms's submit handler
@@ -38,13 +39,20 @@ function LoginForm(): ReactElement {
     resolver: yupResolver(LoginSchema),
   });
 
-  const handleSubmitForm: SubmitHandler<FieldValues> = (data): void => {
-    const userData = {
+  const handleSubmitForm: SubmitHandler<FieldValues> = async (
+    data,
+  ): Promise<void> => {
+    const customerData = {
       email: data.email,
       password: data.password,
     };
-    console.log('Success', userData);
-    navigate('/eperfume');
+    await authCustomer(customerData)
+      .then(async (customer): Promise<void> => {
+        console.log(customer.body.customer);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   };
 
   // Show/Hide Password Functionality 👁️‍🗨️
