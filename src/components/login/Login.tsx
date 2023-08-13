@@ -16,6 +16,8 @@ import { useNavigate } from 'react-router-dom';
 import { LoginSchema } from '../../helpers/yup/Yup';
 import { authCustomer } from '../../api/calls/authCustomer';
 import theme from '../../theme';
+import { useAppDispatch } from '../../helpers/hooks/Hooks';
+import { login } from '../../store/reducers/CustomerSlice';
 
 export function onPromise<T>(
   // used to wrap react-hook-forms's submit handler
@@ -31,6 +33,7 @@ export function onPromise<T>(
 
 function LoginForm(): ReactElement {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [errorMessage, setErrorMessage] = useState('');
   const {
     register,
@@ -49,8 +52,9 @@ function LoginForm(): ReactElement {
       password: data.password,
     };
     await authCustomer(customerData)
-      .then(async (customer): Promise<void> => {
-        console.log(customer.body.customer);
+      .then(async (response): Promise<void> => {
+        dispatch(login(JSON.stringify(response.body.customer.id)));
+        navigate('/');
       })
       .catch((err) => {
         setErrorMessage(err.message);
@@ -72,7 +76,7 @@ function LoginForm(): ReactElement {
 
   return (
     <>
-      <Stack mt={15} justifyContent="center" alignItems="center">
+      <Stack justifyContent="center" alignItems="center">
         <form
           onSubmit={onPromise(handleSubmit(handleSubmitForm))}
           style={{ width: '90%', maxWidth: '640px' }}
