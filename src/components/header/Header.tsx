@@ -9,7 +9,7 @@ import logo from './img/logo.png';
 export default function Header(): ReactElement {
   return (
     <>
-      <Stack direction="row" justifyContent="space-between">
+      <Stack direction="row" width="100%" justifyContent="space-between">
         <Link>
           <img src={logo} />
         </Link>
