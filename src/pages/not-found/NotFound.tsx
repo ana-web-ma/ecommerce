@@ -58,7 +58,7 @@ const NotFound = (): ReactElement => {
           <NavLink
             variant="text"
             onClick={(): void => {
-              navigate('/eperfume');
+              navigate('/');
             }}
           >
             Home
@@ -68,7 +68,7 @@ const NotFound = (): ReactElement => {
           <NavLink
             variant="text"
             onClick={(): void => {
-              navigate('/eperfume');
+              navigate('/');
             }}
           >
             About
@@ -79,7 +79,7 @@ const NotFound = (): ReactElement => {
             variant="text"
             startIcon={<LoginIcon />}
             onClick={(): void => {
-              navigate('/eperfume/login');
+              navigate('/login');
             }}
           >
             LogIn
@@ -142,7 +142,7 @@ const NotFound = (): ReactElement => {
                 <Button
                   variant="contained"
                   onClick={(): void => {
-                    navigate('/eperfume');
+                    navigate('/');
                   }}
                   style={{
                     fontFamily: 'Economica',
