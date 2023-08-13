@@ -4,6 +4,7 @@ import {
   Button,
   IconButton,
   InputAdornment,
+  Link,
   Stack,
   TextField,
   Typography,
@@ -43,7 +44,7 @@ function LoginForm(): ReactElement {
       password: data.password,
     };
     console.log('Success', userData);
-    navigate('/');
+    navigate('/eperfume');
   };
 
   // Show/Hide Password Functionality 👁️‍🗨️
@@ -121,18 +122,16 @@ function LoginForm(): ReactElement {
             </Button>
             <Typography variant="body1">
               Dont have any acount?
-              <span
+              <Link
                 style={{
-                  color: '#1900D5',
                   marginLeft: '10px',
-                  cursor: 'pointer',
                 }}
                 onClick={(): void => {
-                  navigate('/parfume/register');
+                  navigate('/eperfume/register');
                 }}
               >
                 Sign Up
-              </span>
+              </Link>
             </Typography>
           </Stack>
         </form>
