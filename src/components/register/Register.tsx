@@ -16,6 +16,7 @@ import { CustomDialog } from './DialogModule';
 
 function RegisterForm(): ReactElement {
   const navigate = useNavigate();
+  const countries = ['US', 'FR'];
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -24,8 +25,7 @@ function RegisterForm(): ReactElement {
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
   const [postCode, setPostCode] = useState('');
-  const [country, setCountry] = useState('');
-  const countries = ['US', 'FR'];
+  const [country, setCountry] = useState(countries[0]);
 
   const [emailTouched, setEmailTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
@@ -36,6 +36,7 @@ function RegisterForm(): ReactElement {
   const [dateTouched, setDateTouched] = useState(false);
   const [postCodeTouched, setPostCodeTouched] = useState(false);
   const [countryTouched, setCountryTouched] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}(?<!\s)$/;
@@ -162,6 +163,7 @@ function RegisterForm(): ReactElement {
       })
         .then((resp) => {
           if (resp.statusCode === 201) {
+            setRegistrationSuccess(true);
             openDialog('Successfully', 'User registered');
           } else {
             const errorMessage =
@@ -181,7 +183,7 @@ function RegisterForm(): ReactElement {
                   variant="text"
                   color="primary"
                   onClick={() => {
-                    navigate('/eperfume/login');
+                    navigate('/login');
                     setDialogOpen(false);
                   }}
                 >
@@ -417,7 +419,7 @@ function RegisterForm(): ReactElement {
                       cursor: 'pointer',
                     }}
                     onClick={(): void => {
-                      navigate('/eperfume/login');
+                      navigate('/login');
                     }}
                   >
                     Log In
@@ -431,6 +433,9 @@ function RegisterForm(): ReactElement {
           open={dialogOpen}
           onClose={() => {
             setDialogOpen(false);
+            if (registrationSuccess) {
+              navigate('/');
+            }
           }}
           title={dialogTitle}
           content={dialogContent}
