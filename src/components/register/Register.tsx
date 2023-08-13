@@ -181,7 +181,7 @@ function RegisterForm(): ReactElement {
                   variant="text"
                   color="primary"
                   onClick={() => {
-                    navigate('/login');
+                    navigate('/eperfume/login');
                     setDialogOpen(false);
                   }}
                 >
@@ -417,7 +417,7 @@ function RegisterForm(): ReactElement {
                       cursor: 'pointer',
                     }}
                     onClick={(): void => {
-                      navigate('/login');
+                      navigate('/eperfume/login');
                     }}
                   >
                     Log In
