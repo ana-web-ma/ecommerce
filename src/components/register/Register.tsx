@@ -8,14 +8,18 @@ import {
   Grid,
   Box,
   Stack,
+  Link,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import type { ReactElement } from 'react';
 import { createCustomer } from '../../api/calls/createCustomer';
 import { CustomDialog } from './DialogModule';
+import { useAppDispatch } from '../../helpers/hooks/Hooks';
+import { login } from '../../store/reducers/CustomerSlice';
 
 function RegisterForm(): ReactElement {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const countries = ['US', 'FR'];
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -163,6 +167,7 @@ function RegisterForm(): ReactElement {
       })
         .then((resp) => {
           if (resp.statusCode === 201) {
+            dispatch(login(JSON.stringify(resp.body.customer.id)));
             setRegistrationSuccess(true);
             openDialog('Successfully', 'User registered');
           } else {
@@ -412,18 +417,16 @@ function RegisterForm(): ReactElement {
               <Grid item xs={12}>
                 <Typography variant="body1" textAlign={'center'}>
                   Already have an account?
-                  <span
+                  <Link
                     style={{
-                      color: '#1900D5',
                       marginLeft: '10px',
-                      cursor: 'pointer',
                     }}
                     onClick={(): void => {
                       navigate('/login');
                     }}
                   >
-                    Log In
-                  </span>
+                    Log IN
+                  </Link>
                 </Typography>
               </Grid>
             </Grid>
@@ -434,6 +437,7 @@ function RegisterForm(): ReactElement {
           onClose={() => {
             setDialogOpen(false);
             if (registrationSuccess) {
+              localStorage.setItem('isLogged', 'LOGGED');
               navigate('/');
             }
           }}
