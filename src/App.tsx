@@ -1,59 +1,17 @@
 import React from 'react';
 import { type ReactElement } from 'react';
-import { Container, CssBaseline, ThemeProvider } from '@mui/material';
-import { Routes, Route } from 'react-router-dom';
-import RegisterPage from './pages/register/RegisterPage';
-import LoginPage from './pages/login/LoginPage';
-import MainPage from './pages/main/MainPage';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import { RouterProvider } from 'react-router-dom';
 import theme from './theme';
-import Layout from './components/layout/Layout';
-import NotFound from './pages/not-found/NotFound';
-
-const useHash = (): [string, (newHash: string) => void] => {
-  // Tracks the browser's location hash value, and allows changing it.
-  // https://www.30secondsofcode.org/react/s/use-hash/
-  const [hash, setHash] = React.useState(() => window.location.hash);
-
-  const hashChangeHandler = React.useCallback(() => {
-    setHash(window.location.hash);
-  }, []);
-
-  React.useEffect(() => {
-    window.addEventListener('hashchange', hashChangeHandler);
-    return () => {
-      window.removeEventListener('hashchange', hashChangeHandler);
-    };
-  }, []);
-
-  const updateHash = React.useCallback(
-    (newHash: string) => {
-      if (newHash !== hash) window.location.hash = newHash;
-    },
-    [hash],
-  );
-
-  return [hash, updateHash];
-};
+import router, { useHash } from './router/Router';
 
 function App(): ReactElement {
   useHash();
-  if (window.location.hash === '') {
-    window.location.hash = '#/';
-  }
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container maxWidth="xl">
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<MainPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Container>
+      <RouterProvider router={router} />
     </ThemeProvider>
   );
 }
