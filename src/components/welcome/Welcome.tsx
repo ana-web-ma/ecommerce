@@ -8,11 +8,10 @@ function Welcome(): ReactElement {
     <Box textAlign={'center'}>
       <Typography variant="h1">Welcome Page</Typography>
       <Typography variant="h4">
-        {
-          <h4>
-            {useAppSelector((state) => state.customerReducer.customer.id)}
-          </h4>
-        }
+        {useAppSelector((state) => state.customerReducer.customer.id)}
+      </Typography>
+      <Typography variant="h4">
+        {useAppSelector((state) => state.customerReducer.isLogged).toString()}
       </Typography>
     </Box>
   );

@@ -1,10 +1,18 @@
-import { createHashRouter } from 'react-router-dom';
+import { createHashRouter, redirect } from 'react-router-dom';
 import React from 'react';
 import NotFound from '../pages/not-found/NotFound';
 import Layout from '../components/layout/Layout';
 import LoginPage from '../pages/login/LoginPage';
 import MainPage from '../pages/main/MainPage';
 import RegisterPage from '../pages/register/RegisterPage';
+
+const isLogged = (): Response | null => {
+  const customerData = localStorage.getItem('isLogged');
+  if (customerData !== null) {
+    return redirect('/');
+  }
+  return null;
+};
 
 const router = createHashRouter([
   {
@@ -19,10 +27,12 @@ const router = createHashRouter([
       {
         path: '/login',
         element: <LoginPage />,
+        loader: isLogged,
       },
       {
         path: '/register',
         element: <RegisterPage />,
+        loader: isLogged,
       },
     ],
   },

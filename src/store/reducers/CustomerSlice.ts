@@ -13,7 +13,7 @@ const initialState: ICustomerState = {
   customer: {
     id: null,
   },
-  isLogged: false,
+  isLogged: !(localStorage.getItem('isLogged') == null),
 };
 
 export const customerSlice = createSlice({
@@ -21,9 +21,11 @@ export const customerSlice = createSlice({
   initialState,
   reducers: {
     login(state: ICustomerState, action: PayloadAction<string>) {
-      const newState = { ...state };
-      newState.customer.id = action.payload;
-      newState.isLogged = true;
+      // eslint-disable-next-line no-param-reassign
+      state.isLogged = true;
+      // eslint-disable-next-line no-param-reassign
+      state.customer.id = action.payload;
+      localStorage.setItem('isLogged', 'LOGGED');
     },
   },
 });
