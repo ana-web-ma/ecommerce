@@ -437,7 +437,6 @@ function RegisterForm(): ReactElement {
           onClose={() => {
             setDialogOpen(false);
             if (registrationSuccess) {
-              localStorage.setItem('isLogged', 'LOGGED');
               navigate('/');
             }
           }}
