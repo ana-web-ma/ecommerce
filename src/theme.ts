@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import { red } from '@mui/material/colors';
+import { blue, red } from '@mui/material/colors';
 
 const BELLOTA_FONT = 'Bellota Text';
 const ECONOMICA_FONT = 'Economica';
@@ -283,8 +283,16 @@ const theme = createTheme({
     MuiLink: {
       styleOverrides: {
         root: {
+          color: blue.A400,
           textDecoration: 'none',
           cursor: 'pointer',
+          transition: '.3s',
+          '&:hover': {
+            opacity: 0.3,
+          },
+          '&:active': {
+            textDecoration: 'underline',
+          },
         },
       },
     },
