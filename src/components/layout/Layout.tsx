@@ -9,7 +9,6 @@ const Layout = (): ReactElement => {
       maxWidth="xl"
       sx={{
         py: 2,
-        height: '100vh',
         minHeight: '600px',
         display: 'flex',
         flexDirection: 'column',
