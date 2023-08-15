@@ -2,7 +2,7 @@ import {
   type ClientResponse,
   type CustomerSignInResult,
 } from '@commercetools/platform-sdk';
-import { apiRoot } from '../clients/BuildClient';
+import { apiRoot } from '../clients/PasswordFlowClient';
 
 // Пользователь найден: statusCode: 200
 // Неправильный email или пароль: statusCode: 400
