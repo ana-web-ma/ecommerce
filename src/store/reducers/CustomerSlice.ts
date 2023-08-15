@@ -27,8 +27,13 @@ export const customerSlice = createSlice({
       state.customer.id = action.payload;
       localStorage.setItem('isLogged', 'LOGGED');
     },
+    logout(state: ICustomerState) {
+      // eslint-disable-next-line no-param-reassign
+      state.isLogged = false;
+      localStorage.removeItem('isLogged');
+    },
   },
 });
 
-export const { login } = customerSlice.actions;
+export const { login, logout } = customerSlice.actions;
 export default customerSlice.reducer;

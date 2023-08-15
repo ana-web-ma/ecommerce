@@ -14,6 +14,7 @@ import {
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
+import { useIsLogged } from '../../helpers/hooks/Hooks';
 
 const TextSpan = (props: { child: string }): ReactElement => {
   return <span>{props.child}</span>;
@@ -74,20 +75,32 @@ const NotFound = (): ReactElement => {
             About
           </NavLink>
         </LightTooltip>
-        <LightTooltip title="Log In">
-          <NavLink
-            variant="text"
-            startIcon={<LoginIcon />}
-            onClick={(): void => {
-              navigate('/login');
-            }}
-          >
-            LogIn
-          </NavLink>
-        </LightTooltip>
-        <LightTooltip title="You aren't authorized">
+        <LightTooltip title={useIsLogged() ? "You're logged in" : 'Log In'}>
           <span>
-            <NavLink variant="text" startIcon={<LogoutIcon />} disabled>
+            <NavLink
+              variant="text"
+              startIcon={<LoginIcon />}
+              disabled={useIsLogged()}
+              onClick={(): void => {
+                navigate('/login');
+              }}
+            >
+              LogIn
+            </NavLink>
+          </span>
+        </LightTooltip>
+        <LightTooltip
+          title={useIsLogged() ? 'Log Out' : "You aren't authorized"}
+        >
+          <span>
+            <NavLink
+              variant="text"
+              startIcon={<LogoutIcon />}
+              disabled={!useIsLogged()}
+              onClick={(): void => {
+                navigate('/register');
+              }}
+            >
               LogOut
             </NavLink>
           </span>
