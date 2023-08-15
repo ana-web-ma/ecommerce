@@ -8,14 +8,19 @@ import {
   Grid,
   Box,
   Stack,
+  Link,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import type { ReactElement } from 'react';
 import { createCustomer } from '../../api/calls/createCustomer';
 import { CustomDialog } from './DialogModule';
+import { useAppDispatch } from '../../helpers/hooks/Hooks';
+import { login } from '../../store/reducers/CustomerSlice';
 
 function RegisterForm(): ReactElement {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const countries = ['US', 'FR'];
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -24,8 +29,7 @@ function RegisterForm(): ReactElement {
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
   const [postCode, setPostCode] = useState('');
-  const [country, setCountry] = useState('');
-  const countries = ['US', 'FR'];
+  const [country, setCountry] = useState(countries[0]);
 
   const [emailTouched, setEmailTouched] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
@@ -36,6 +40,7 @@ function RegisterForm(): ReactElement {
   const [dateTouched, setDateTouched] = useState(false);
   const [postCodeTouched, setPostCodeTouched] = useState(false);
   const [countryTouched, setCountryTouched] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}(?<!\s)$/;
@@ -162,6 +167,8 @@ function RegisterForm(): ReactElement {
       })
         .then((resp) => {
           if (resp.statusCode === 201) {
+            dispatch(login(JSON.stringify(resp.body.customer.id)));
+            setRegistrationSuccess(true);
             openDialog('Successfully', 'User registered');
           } else {
             const errorMessage =
@@ -181,7 +188,7 @@ function RegisterForm(): ReactElement {
                   variant="text"
                   color="primary"
                   onClick={() => {
-                    navigate('/eperfume/login');
+                    navigate('/login');
                     setDialogOpen(false);
                   }}
                 >
@@ -410,18 +417,16 @@ function RegisterForm(): ReactElement {
               <Grid item xs={12}>
                 <Typography variant="body1" textAlign={'center'}>
                   Already have an account?
-                  <span
+                  <Link
                     style={{
-                      color: '#1900D5',
                       marginLeft: '10px',
-                      cursor: 'pointer',
                     }}
                     onClick={(): void => {
-                      navigate('/eperfume/login');
+                      navigate('/login');
                     }}
                   >
-                    Log In
-                  </span>
+                    Log IN
+                  </Link>
                 </Typography>
               </Grid>
             </Grid>
@@ -431,6 +436,9 @@ function RegisterForm(): ReactElement {
           open={dialogOpen}
           onClose={() => {
             setDialogOpen(false);
+            if (registrationSuccess) {
+              navigate('/');
+            }
           }}
           title={dialogTitle}
           content={dialogContent}
