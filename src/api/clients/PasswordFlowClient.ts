@@ -1,43 +1,59 @@
 import {
   ClientBuilder,
   type PasswordAuthMiddlewareOptions,
-  type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
+  type UserAuthOptions,
 } from '@commercetools/sdk-client-v2';
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
+import { type ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
+import { tokenCache } from '../tokenCache';
 
-const projectKey = 'eperfume';
-const scopes = [
-  'view_categories:eperfume manage_my_profile:eperfume manage_my_payments:eperfume view_published_products:eperfume manage_my_business_units:eperfume view_products:eperfume manage_my_shopping_lists:eperfume manage_my_quote_requests:eperfume manage_my_quotes:eperfume manage_my_orders:eperfume create_anonymous_token:eperfume',
-];
+export const apiPasswordFlowRoot = (
+  user: UserAuthOptions,
+): ByProjectKeyRequestBuilder => {
+  const projectKey = 'eperfume';
+  // const scopes = ['manage_project:eperfume'];
+  // const scopes = [
+  //   'view_categories:eperfume manage_my_profile:eperfume manage_my_payments:eperfume view_published_products:eperfume manage_my_business_units:eperfume view_products:eperfume manage_my_shopping_lists:eperfume manage_my_quote_requests:eperfume manage_my_quotes:eperfume manage_my_orders:eperfume create_anonymous_token:eperfume',
+  // ];
+  const scopes = [
+    'view_categories:eperfume manage_my_profile:eperfume manage_my_payments:eperfume view_published_products:eperfume manage_my_business_units:eperfume view_products:eperfume manage_my_shopping_lists:eperfume manage_customers:eperfume manage_my_quote_requests:eperfume manage_my_quotes:eperfume view_product_selections:eperfume manage_my_orders:eperfume create_anonymous_token:eperfume',
+  ];
 
-const httpMiddlewareOptions: HttpMiddlewareOptions = {
-  host: 'https://api.europe-west1.gcp.commercetools.com',
-  fetch,
-};
+  const httpMiddlewareOptions: HttpMiddlewareOptions = {
+    host: 'https://api.europe-west1.gcp.commercetools.com',
+    fetch,
+  };
 
-const passwordAuthMiddlewareOptions: PasswordAuthMiddlewareOptions = {
-  host: 'https://auth.europe-west1.gcp.commercetools.com',
-  projectKey,
-  credentials: {
-    clientId: 'hBpfTYcInBB_kE9FWrx9SFjV',
-    clientSecret: 'rqI8pXPJigZoPyB7pyhaNx9NeL2cIhmh',
-    user: {
-      username: 'name',
-      password: 'password',
+  const passwordAuthMiddlewareOptions: PasswordAuthMiddlewareOptions = {
+    host: 'https://auth.europe-west1.gcp.commercetools.com',
+    projectKey,
+    credentials: {
+      clientId: '8YObslvhK1uQiOEz2FhcaDNO',
+      clientSecret: 'ZHe9UcSrOk7bVKPAJRRjS5FK7kgKsvp0',
+      // clientId: 'hBpfTYcInBB_kE9FWrx9SFjV',
+      // clientSecret: 'rqI8pXPJigZoPyB7pyhaNx9NeL2cIhmh',
+      // clientId: 'KJ0zTHvxPFSLQqqbhM_g_sLn',
+      // clientSecret: '4VyKB2P1U2lJzZMRsOI-1gXGEzlUbTkl',
+
+      user: {
+        username: user.username,
+        password: user.password,
+      },
     },
-  },
-  scopes,
-  fetch,
+    tokenCache,
+    scopes,
+    fetch,
+  };
+
+  const ctpClient = new ClientBuilder()
+    .withProjectKey(projectKey)
+    .withPasswordFlow(passwordAuthMiddlewareOptions)
+    .withHttpMiddleware(httpMiddlewareOptions)
+    .withLoggerMiddleware()
+    .build();
+
+  return createApiBuilderFromCtpClient(ctpClient).withProjectKey({
+    projectKey,
+  });
 };
-
-export const ctpClient = new ClientBuilder()
-  .withProjectKey(projectKey)
-  .withPasswordFlow(passwordAuthMiddlewareOptions)
-  .withHttpMiddleware(httpMiddlewareOptions)
-  .withLoggerMiddleware()
-  .build();
-
-export const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
-  projectKey,
-});
