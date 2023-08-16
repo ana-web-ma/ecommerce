@@ -6,12 +6,12 @@ import { apiRootCreateByToken } from '../clients/ExistingTokenFlowClient';
 
 // Запрашивает данные авторизованного пользователя
 // Токен подходит: statusCode: 200
-export const meGet = async (): Promise<ClientResponse<Customer>> =>
+export const getMe = async (): Promise<ClientResponse<Customer>> =>
   apiRootCreateByToken().me().get().execute();
 
 // Пример использования:
 
-//   meGet()
+//   getMe()
 //     .then((loggedUserData) => {
 //       console.log('loggedUserData', loggedUserData);
 //     })
@@ -24,7 +24,7 @@ export const meGet = async (): Promise<ClientResponse<Customer>> =>
 // authPasswordCustomer(user)
 // .then((userData) => {
 //   console.log('userData', userData);
-//   meGet()
+//   getMe()
 //     .then((loggedUserData) => {
 //       console.log('loggedUserData', loggedUserData);
 //     })
