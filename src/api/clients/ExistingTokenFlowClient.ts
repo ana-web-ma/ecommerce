@@ -1,4 +1,5 @@
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
+import { type ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import {
   ClientBuilder,
   type HttpMiddlewareOptions,
@@ -6,31 +7,38 @@ import {
 } from '@commercetools/sdk-client-v2';
 import { tokenCache } from '../tokenCache';
 
-const authorization = `Bearer ${tokenCache.get().token}`;
-console.log('authorization', authorization);
+const authorization = `${tokenCache.get().token}`;
 const options: ExistingTokenMiddlewareOptions = {
   force: true,
 };
 
 const projectKey = 'eperfume';
-const scopes = [
-  'view_categories:eperfume manage_my_profile:eperfume manage_my_payments:eperfume view_published_products:eperfume manage_my_business_units:eperfume view_products:eperfume manage_my_shopping_lists:eperfume manage_customers:eperfume manage_my_quote_requests:eperfume manage_my_quotes:eperfume view_product_selections:eperfume manage_my_orders:eperfume create_anonymous_token:eperfume',
-];
 
 const httpMiddlewareOptions: HttpMiddlewareOptions = {
   host: 'https://api.europe-west1.gcp.commercetools.com',
   fetch,
 };
 
-const ctpClient = new ClientBuilder()
-  .withProjectKey(projectKey)
-  .withExistingTokenFlow(authorization, options)
-  .withHttpMiddleware(httpMiddlewareOptions)
-  .withLoggerMiddleware()
-  .build();
-
 export const apiExistingTokenRoot = createApiBuilderFromCtpClient(
-  ctpClient,
+  new ClientBuilder()
+    .withProjectKey(projectKey)
+    .withHttpMiddleware(httpMiddlewareOptions)
+    .withExistingTokenFlow(`Bearer ${tokenCache.get().token}`, options)
+    .withLoggerMiddleware()
+    .build(),
 ).withProjectKey({
   projectKey: 'eperfume',
 });
+
+export const apiRootCreateByToken = (): ByProjectKeyRequestBuilder => {
+  return createApiBuilderFromCtpClient(
+    new ClientBuilder()
+      .withProjectKey(projectKey)
+      .withHttpMiddleware(httpMiddlewareOptions)
+      .withExistingTokenFlow(`Bearer ${tokenCache.get().token}`, options)
+      .withLoggerMiddleware()
+      .build(),
+  ).withProjectKey({
+    projectKey: 'eperfume',
+  });
+};

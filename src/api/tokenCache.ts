@@ -3,7 +3,7 @@ import { type TokenStore, type TokenCache } from '@commercetools/sdk-client-v2';
 
 let tokenStore: TokenStore = {
   expirationTime: 0,
-  token: 'pfBIX9biKLF91lyh-EVp8DbYDKPHYjLZ',
+  token: '',
 };
 
 export const tokenCache: TokenCache = {
