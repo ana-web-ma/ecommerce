@@ -33,6 +33,5 @@ export const authPasswordCustomer = async (props: {
 // })
 //   .then((data) => {
 //     console.log('data', data);
-//     console.log('token', tokenCache.get());
 //   })
 //   .catch(console.error);
