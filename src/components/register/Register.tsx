@@ -9,6 +9,7 @@ import {
   Box,
   Stack,
   Link,
+  Checkbox,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import type { ReactElement } from 'react';
@@ -227,6 +228,7 @@ function RegisterForm(): ReactElement {
             <Grid
               container
               spacing={0}
+              columnSpacing={2}
               style={{ gridRowGap: 5 }}
               justifyContent={'space-between'}
               boxShadow={'5px 5px 10px #ccc'}
@@ -273,7 +275,7 @@ function RegisterForm(): ReactElement {
                   }
                 />
               </Grid>
-              <Grid item xs={12} md={5.8}>
+              <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
@@ -290,7 +292,7 @@ function RegisterForm(): ReactElement {
                   }
                 />
               </Grid>
-              <Grid item xs={12} md={5.8}>
+              <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
@@ -316,6 +318,10 @@ function RegisterForm(): ReactElement {
                   fullWidth={true}
                   margin="dense"
                   variant="outlined"
+                  defaultValue="2000-01-01"
+                  sx={{
+                    cursor: 'pointer',
+                  }}
                   placeholder="Enter your birthdate"
                   onChange={handleDateChange}
                   error={!isBirthdateValid && dateTouched}
@@ -326,10 +332,29 @@ function RegisterForm(): ReactElement {
                   }
                 />
               </Grid>
-              <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: '20px' }}>Address</InputLabel>
+              <Grid item xs={12} sm={6}>
+                <InputLabel sx={{ marginTop: '20px' }}>
+                  Shipping address*:
+                </InputLabel>
               </Grid>
-              <Grid item xs={12} md={5.8}>
+              <Grid item xs={12} sm={6}>
+                <Typography
+                  variant="inherit"
+                  sx={{ marginTop: { sm: '13px' }, textAlign: { sm: 'end' } }}
+                >
+                  <Checkbox
+                    size="small"
+                    sx={{
+                      top: '-1px',
+                    }}
+                    onChange={() => {
+                      console.log('aaaa');
+                    }}
+                  />
+                  Set as default
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
@@ -345,7 +370,7 @@ function RegisterForm(): ReactElement {
                   }
                 />
               </Grid>
-              <Grid item xs={12} md={5.8}>
+              <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
@@ -361,7 +386,7 @@ function RegisterForm(): ReactElement {
                   }
                 />
               </Grid>
-              <Grid item xs={12} md={5.8}>
+              <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
@@ -377,7 +402,118 @@ function RegisterForm(): ReactElement {
                   }
                 />
               </Grid>
-              <Grid item xs={12} md={5.8}>
+              <Grid item xs={12} md={6}>
+                <Autocomplete
+                  sx={{ width: '100%', marginTop: '8px' }}
+                  fullWidth={true}
+                  options={countries}
+                  value={country}
+                  onChange={(e, newValue) => {
+                    if (newValue !== null) {
+                      setCountry(newValue);
+                    }
+                  }}
+                  onBlur={handleCountryChange}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Country"
+                      onChange={handleCountryChange}
+                      error={!isCountryValid && countryTouched}
+                      helperText={
+                        !isCountryValid && countryTouched
+                          ? 'Select a country from the list'
+                          : ''
+                      }
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Typography variant="inherit">
+                  <Checkbox
+                    size="small"
+                    sx={{
+                      top: '-1px',
+                    }}
+                    onChange={() => {
+                      console.log('aaaa');
+                    }}
+                  />
+                  Make billing details same as shipping
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <InputLabel sx={{ marginTop: '20px' }}>
+                  Billing address:
+                </InputLabel>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography
+                  variant="inherit"
+                  sx={{ marginTop: { sm: '13px' }, textAlign: { sm: 'end' } }}
+                >
+                  <Checkbox
+                    size="small"
+                    sx={{
+                      top: '-1px',
+                    }}
+                    onChange={() => {
+                      console.log('aaaa');
+                    }}
+                  />
+                  Set as default
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth={true}
+                  margin="dense"
+                  label="Street"
+                  variant="outlined"
+                  placeholder="Enter your street"
+                  onChange={handleStreetChange}
+                  error={!isStreetValid && streetTouched}
+                  helperText={
+                    !isStreetValid && streetTouched
+                      ? 'Must contain at least one character'
+                      : ''
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth={true}
+                  margin="dense"
+                  label="City"
+                  variant="outlined"
+                  placeholder="Enter your city"
+                  onChange={handleCityChange}
+                  error={!isCityValid && cityTouched}
+                  helperText={
+                    !isCityValid && cityTouched
+                      ? 'Must contain at least one character and no special characters or numbers'
+                      : ''
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth={true}
+                  margin="dense"
+                  label="Postal code"
+                  variant="outlined"
+                  placeholder="Enter your postal code"
+                  onChange={handlePostCodeChange}
+                  error={!isPostCodeValid && postCodeTouched}
+                  helperText={
+                    !isPostCodeValid && postCodeTouched
+                      ? 'Must be a five digit number'
+                      : ''
+                  }
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
                 <Autocomplete
                   sx={{ width: '100%', marginTop: '8px' }}
                   fullWidth={true}
