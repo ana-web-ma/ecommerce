@@ -15,7 +15,7 @@ export const getMyCart = async (): Promise<
 // Пример использования:
 
 //   getMyCart()
-//     .then((loggedUserData) => {
-//       console.log('loggedUserData', loggedUserData);
+//     .then((userCartData) => {
+//       console.log('userCartData', userCartData);
 //     })
 //     .catch(console.error);
