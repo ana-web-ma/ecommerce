@@ -7,7 +7,6 @@ import {
 } from '@commercetools/sdk-client-v2';
 import { tokenCache } from '../tokenCache';
 
-const authorization = `${tokenCache.get().token}`;
 const options: ExistingTokenMiddlewareOptions = {
   force: true,
 };
