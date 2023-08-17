@@ -3,7 +3,7 @@ import {
   type ClientResponse,
   type CustomerSignInResult,
 } from '@commercetools/platform-sdk';
-import { apiRoot } from '../client/BuildClient';
+import { apiRoot } from '../clients/BuildClient';
 
 // Пользователь создан: statusCode: 201
 // Пользователь уже существует: statusCode: 400
