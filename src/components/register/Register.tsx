@@ -10,17 +10,34 @@ import {
   Stack,
   Link,
   Checkbox,
+  FormControl,
+  MenuItem,
+  Select,
+  FormHelperText,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import type { ReactElement } from 'react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { type FieldValues, type SubmitHandler, useForm } from 'react-hook-form';
 import { createCustomer } from '../../api/calls/createCustomer';
 import { CustomDialog } from './DialogModule';
 import { useAppDispatch } from '../../helpers/hooks/Hooks';
 import { login } from '../../store/reducers/CustomerSlice';
+import { RegisterSchema } from '../../helpers/yup/Yup';
+import { onPromise } from '../login/Login';
+import theme from '../../theme';
 
 function RegisterForm(): ReactElement {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm({
+    mode: 'onChange',
+    resolver: yupResolver(RegisterSchema),
+  });
   const countries = ['US', 'FR'];
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -138,92 +155,17 @@ function RegisterForm(): ReactElement {
   const isPostCodeValid = postCodeTouched && postCodeRegex.test(postCode);
   const isCountryValid = Boolean(country);
 
-  const handleSubmit = (e: { preventDefault: () => void }): void => {
-    e.preventDefault();
-    if (
-      isEmailValid &&
-      isPasswordValid &&
-      isFirstNameValid &&
-      isLastNameValid &&
-      isBirthdateValid &&
-      isStreetValid &&
-      isCityValid &&
-      isPostCodeValid &&
-      isCountryValid
-    ) {
-      createCustomer({
-        email: `${email}`,
-        password: `${password}`,
-        firstName: `${firstName}`,
-        lastName: `${lastName}`,
-        dateOfBirth: date,
-        addresses: [
-          {
-            country,
-            city,
-            streetName: street,
-            postalCode: postCode,
-          },
-        ],
-      })
-        .then((resp) => {
-          if (resp.statusCode === 201) {
-            dispatch(login(JSON.stringify(resp.body.customer.id)));
-            setRegistrationSuccess(true);
-            openDialog('Successfully', 'User registered');
-          } else {
-            const errorMessage =
-              resp.statusCode !== undefined
-                ? `Error: ${String(resp.statusCode)}, try later`
-                : 'Unknown Error, try later';
-            openDialog('Error', errorMessage);
-          }
-        })
-        .catch((err) => {
-          if (err.statusCode === 400) {
-            const content = (
-              <div>
-                User with this email already exists. Do you want to:
-                <br />
-                <Button
-                  variant="text"
-                  color="primary"
-                  onClick={() => {
-                    navigate('/login');
-                    setDialogOpen(false);
-                  }}
-                >
-                  Log In
-                </Button>
-                <Button
-                  variant="text"
-                  color="primary"
-                  onClick={() => {
-                    setDialogOpen(false);
-                  }}
-                >
-                  Use another email
-                </Button>
-              </div>
-            );
-            openDialog('Error', content);
-          } else {
-            const errorMessage =
-              err.statusCode !== undefined
-                ? `Error: ${String(err.statusCode)}, try later`
-                : 'Unknown Error, try later';
-            openDialog('Error', errorMessage);
-          }
-        });
-    } else {
-      openDialog('Error', 'There are blank fields or fields with errors');
-    }
+  const handleSubmitForm: SubmitHandler<FieldValues> = (data): void => {
+    console.log(data);
   };
 
   return (
     <>
       <Stack mt={3} justifyContent="center" alignItems="center">
-        <form style={{ width: '90%', maxWidth: '640px' }}>
+        <form
+          onSubmit={onPromise(handleSubmit(handleSubmitForm))}
+          style={{ width: '90%', maxWidth: '640px' }}
+        >
           <Box sx={{ width: '100%' }}>
             <Grid
               container
@@ -252,11 +194,11 @@ function RegisterForm(): ReactElement {
                   label="Email"
                   variant="outlined"
                   placeholder="Enter your email"
-                  onChange={handleEmailChange}
-                  error={!isEmailValid && emailTouched}
+                  error={!(errors.email == null)}
                   helperText={
-                    !isEmailValid && emailTouched ? 'Not valid Email' : ''
+                    errors.email != null ? errors.email.message?.toString() : ''
                   }
+                  {...register('email')}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -266,13 +208,13 @@ function RegisterForm(): ReactElement {
                   label="Password"
                   variant="outlined"
                   placeholder="Enter your password"
-                  onChange={handlePasswordChange}
-                  error={!isPasswordValid && passwordTouched}
+                  error={!(errors.password == null)}
                   helperText={
-                    !isPasswordValid && passwordTouched
-                      ? 'Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, 1 number one special character'
+                    errors.password != null
+                      ? errors.password.message?.toString()
                       : ''
                   }
+                  {...register('password')}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -282,14 +224,13 @@ function RegisterForm(): ReactElement {
                   label="First name"
                   variant="outlined"
                   placeholder="Enter your first name"
-                  value={firstName}
-                  onChange={handleFirstNameChange}
-                  error={!isFirstNameValid && firstNameTouched}
+                  error={!(errors.firstName == null)}
                   helperText={
-                    !isFirstNameValid && firstNameTouched
-                      ? 'Must contain at least one character and no special characters or numbers'
+                    errors.firstName != null
+                      ? errors.firstName.message?.toString()
                       : ''
                   }
+                  {...register('firstName')}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -299,14 +240,13 @@ function RegisterForm(): ReactElement {
                   label="Last name"
                   variant="outlined"
                   placeholder="Enter your last name"
-                  value={lastName}
-                  onChange={handleLastNameChange}
-                  error={!isLastNameValid && lastNameTouched}
+                  error={!(errors.lastName == null)}
                   helperText={
-                    !isLastNameValid && lastNameTouched
-                      ? 'Must contain at least one character and no special characters or numbers'
+                    errors.lastName != null
+                      ? errors.lastName.message?.toString()
                       : ''
                   }
+                  {...register('lastName')}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -318,18 +258,16 @@ function RegisterForm(): ReactElement {
                   fullWidth={true}
                   margin="dense"
                   variant="outlined"
-                  defaultValue="2000-01-01"
+                  defaultValue="2023-01-01"
                   sx={{
                     cursor: 'pointer',
                   }}
                   placeholder="Enter your birthdate"
-                  onChange={handleDateChange}
-                  error={!isBirthdateValid && dateTouched}
+                  error={!(errors.date == null)}
                   helperText={
-                    !isBirthdateValid && dateTouched
-                      ? 'You must be at least 13 years old'
-                      : ''
+                    errors.date != null ? errors.date.message?.toString() : ''
                   }
+                  {...register('date')}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -348,7 +286,7 @@ function RegisterForm(): ReactElement {
                       top: '-1px',
                     }}
                     onChange={() => {
-                      console.log('aaaa');
+                      console.log('check');
                     }}
                   />
                   Set as default
@@ -361,13 +299,13 @@ function RegisterForm(): ReactElement {
                   label="Street"
                   variant="outlined"
                   placeholder="Enter your street"
-                  onChange={handleStreetChange}
-                  error={!isStreetValid && streetTouched}
+                  error={!(errors.street1 == null)}
                   helperText={
-                    !isStreetValid && streetTouched
-                      ? 'Must contain at least one character'
+                    errors.street1 != null
+                      ? errors.street1.message?.toString()
                       : ''
                   }
+                  {...register('street1')}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -377,13 +315,11 @@ function RegisterForm(): ReactElement {
                   label="City"
                   variant="outlined"
                   placeholder="Enter your city"
-                  onChange={handleCityChange}
-                  error={!isCityValid && cityTouched}
+                  error={!(errors.city1 == null)}
                   helperText={
-                    !isCityValid && cityTouched
-                      ? 'Must contain at least one character and no special characters or numbers'
-                      : ''
+                    errors.city1 != null ? errors.city1.message?.toString() : ''
                   }
+                  {...register('city1')}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -393,41 +329,35 @@ function RegisterForm(): ReactElement {
                   label="Postal code"
                   variant="outlined"
                   placeholder="Enter your postal code"
-                  onChange={handlePostCodeChange}
-                  error={!isPostCodeValid && postCodeTouched}
+                  error={!(errors.post1 == null)}
                   helperText={
-                    !isPostCodeValid && postCodeTouched
-                      ? 'Must be a five digit number'
-                      : ''
+                    errors.post1 != null ? errors.post1.message?.toString() : ''
                   }
+                  {...register('post1')}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
-                <Autocomplete
-                  sx={{ width: '100%', marginTop: '8px' }}
-                  fullWidth={true}
-                  options={countries}
-                  value={country}
-                  onChange={(e, newValue) => {
-                    if (newValue !== null) {
-                      setCountry(newValue);
-                    }
-                  }}
-                  onBlur={handleCountryChange}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Country"
-                      onChange={handleCountryChange}
-                      error={!isCountryValid && countryTouched}
-                      helperText={
-                        !isCountryValid && countryTouched
-                          ? 'Select a country from the list'
-                          : ''
-                      }
-                    />
-                  )}
-                />
+                <FormControl
+                  fullWidth
+                  variant="filled"
+                  sx={{ marginTop: '8px' }}
+                >
+                  <InputLabel>Country</InputLabel>
+                  <Select
+                    defaultValue=""
+                    label="Country"
+                    error={!(errors.country1 == null)}
+                    {...register('country1')}
+                  >
+                    <MenuItem value={'US'}>USA</MenuItem>
+                    <MenuItem value={'FR'}>France</MenuItem>
+                  </Select>
+                  <FormHelperText sx={{ color: theme.palette.error.main }}>
+                    {errors.country1 != null
+                      ? errors.country1.message?.toString()
+                      : ''}
+                  </FormHelperText>
+                </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="inherit">
@@ -437,7 +367,7 @@ function RegisterForm(): ReactElement {
                       top: '-1px',
                     }}
                     onChange={() => {
-                      console.log('aaaa');
+                      console.log('check');
                     }}
                   />
                   Make billing details same as shipping
@@ -459,7 +389,7 @@ function RegisterForm(): ReactElement {
                       top: '-1px',
                     }}
                     onChange={() => {
-                      console.log('aaaa');
+                      console.log('check');
                     }}
                   />
                   Set as default
@@ -472,13 +402,13 @@ function RegisterForm(): ReactElement {
                   label="Street"
                   variant="outlined"
                   placeholder="Enter your street"
-                  onChange={handleStreetChange}
-                  error={!isStreetValid && streetTouched}
+                  error={!(errors.street2 == null)}
                   helperText={
-                    !isStreetValid && streetTouched
-                      ? 'Must contain at least one character'
+                    errors.street2 != null
+                      ? errors.street2.message?.toString()
                       : ''
                   }
+                  {...register('street2')}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -488,13 +418,11 @@ function RegisterForm(): ReactElement {
                   label="City"
                   variant="outlined"
                   placeholder="Enter your city"
-                  onChange={handleCityChange}
-                  error={!isCityValid && cityTouched}
+                  error={!(errors.city2 == null)}
                   helperText={
-                    !isCityValid && cityTouched
-                      ? 'Must contain at least one character and no special characters or numbers'
-                      : ''
+                    errors.city2 != null ? errors.city2.message?.toString() : ''
                   }
+                  {...register('city2')}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -504,48 +432,41 @@ function RegisterForm(): ReactElement {
                   label="Postal code"
                   variant="outlined"
                   placeholder="Enter your postal code"
-                  onChange={handlePostCodeChange}
-                  error={!isPostCodeValid && postCodeTouched}
+                  error={!(errors.post2 == null)}
                   helperText={
-                    !isPostCodeValid && postCodeTouched
-                      ? 'Must be a five digit number'
-                      : ''
+                    errors.post2 != null ? errors.post2.message?.toString() : ''
                   }
+                  {...register('post2')}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
-                <Autocomplete
-                  sx={{ width: '100%', marginTop: '8px' }}
-                  fullWidth={true}
-                  options={countries}
-                  value={country}
-                  onChange={(e, newValue) => {
-                    if (newValue !== null) {
-                      setCountry(newValue);
-                    }
-                  }}
-                  onBlur={handleCountryChange}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Country"
-                      onChange={handleCountryChange}
-                      error={!isCountryValid && countryTouched}
-                      helperText={
-                        !isCountryValid && countryTouched
-                          ? 'Select a country from the list'
-                          : ''
-                      }
-                    />
-                  )}
-                />
+                <FormControl
+                  fullWidth
+                  variant="filled"
+                  sx={{ marginTop: '8px' }}
+                >
+                  <InputLabel id="demo-simple-select-label">Country</InputLabel>
+                  <Select
+                    defaultValue=""
+                    label="Country"
+                    error={!(errors.country2 == null)}
+                    {...register('country2')}
+                  >
+                    <MenuItem value={'US'}>USA</MenuItem>
+                    <MenuItem value={'FR'}>France</MenuItem>
+                  </Select>
+                  <FormHelperText>
+                    {errors.country2 != null
+                      ? errors.country2.message?.toString()
+                      : ''}
+                  </FormHelperText>
+                </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <Button
                   sx={{ width: '100%', marginTop: '20px' }}
                   type="submit"
                   variant="contained"
-                  onClick={handleSubmit}
                 >
                   Sign Up
                 </Button>
