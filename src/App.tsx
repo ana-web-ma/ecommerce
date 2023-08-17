@@ -3,11 +3,9 @@ import { type ReactElement } from 'react';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { RouterProvider } from 'react-router-dom';
 import theme from './theme';
-import router, { useHash } from './router/Router';
+import router from './router/Router';
 
 function App(): ReactElement {
-  useHash();
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
