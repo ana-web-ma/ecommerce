@@ -4,7 +4,6 @@ import {
   TextField,
   Typography,
   InputLabel,
-  Autocomplete,
   Grid,
   Box,
   Stack,
@@ -19,17 +18,13 @@ import { useNavigate } from 'react-router-dom';
 import type { ReactElement } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { type FieldValues, type SubmitHandler, useForm } from 'react-hook-form';
-import { createCustomer } from '../../api/calls/createCustomer';
 import { CustomDialog } from './DialogModule';
-import { useAppDispatch } from '../../helpers/hooks/Hooks';
-import { login } from '../../store/reducers/CustomerSlice';
 import { RegisterSchema } from '../../helpers/yup/Yup';
 import { onPromise } from '../login/Login';
 import theme from '../../theme';
 
 function RegisterForm(): ReactElement {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const {
     register,
     formState: { errors },
@@ -38,122 +33,12 @@ function RegisterForm(): ReactElement {
     mode: 'onChange',
     resolver: yupResolver(RegisterSchema),
   });
-  const countries = ['US', 'FR'];
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [date, setDate] = useState('');
-  const [street, setStreet] = useState('');
-  const [city, setCity] = useState('');
-  const [postCode, setPostCode] = useState('');
-  const [country, setCountry] = useState(countries[0]);
 
-  const [emailTouched, setEmailTouched] = useState(false);
-  const [passwordTouched, setPasswordTouched] = useState(false);
-  const [firstNameTouched, setFirstNameTouched] = useState(false);
-  const [lastNameTouched, setLastNameTouched] = useState(false);
-  const [streetTouched, setStreetTouched] = useState(false);
-  const [cityTouched, setCityTouched] = useState(false);
-  const [dateTouched, setDateTouched] = useState(false);
-  const [postCodeTouched, setPostCodeTouched] = useState(false);
-  const [countryTouched, setCountryTouched] = useState(false);
-  const [registrationSuccess, setRegistrationSuccess] = useState(false);
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}(?<!\s)$/;
-  const nameRegex = /^[a-zA-Zа-яА-ЯàâäçéèêëîïôœùûüÿÀÂÄÇÉÈÊËÎÏÔŒÙÛÜŸ]+$/;
-  const streetRegex = /.+/;
-  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  const postCodeRegex = /^\d{5}$/;
+  const [registrationSuccess] = useState(false);
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogTitle, setDialogTitle] = useState('');
-  const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
-
-  const openDialog = (title: string, content: React.ReactNode): void => {
-    setDialogTitle(title);
-    setDialogContent(content);
-    setDialogOpen(true);
-  };
-
-  const handleEmailChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setEmail(event.target.value);
-    setEmailTouched(true);
-  };
-  const handlePasswordChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setPassword(event.target.value);
-    setPasswordTouched(true);
-  };
-  const handleFirstNameChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setFirstName(event.target.value);
-    setFirstNameTouched(true);
-  };
-
-  const handleLastNameChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setLastName(event.target.value);
-    setLastNameTouched(true);
-  };
-  const handleDateChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setDate(event.target.value);
-    setDateTouched(true);
-  };
-  const handleStreetChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setStreet(event.target.value);
-    setStreetTouched(true);
-  };
-  const handleCityChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setCity(event.target.value);
-    setCityTouched(true);
-  };
-  const handlePostCodeChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setPostCode(event.target.value);
-    setPostCodeTouched(true);
-  };
-  const handleCountryChange = (): void => {
-    setCountryTouched(true);
-  };
-
-  const isUserOlderThan13Years = (dateString: string): boolean => {
-    const today = new Date();
-    const birthdate = new Date(dateString);
-    let age = today.getFullYear() - birthdate.getFullYear();
-    const monthDiff = today.getMonth() - birthdate.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthdate.getDate())
-    ) {
-      age -= 1;
-    }
-    return age >= 13;
-  };
-
-  const isEmailValid = emailTouched && emailRegex.test(email);
-  const isPasswordValid = passwordTouched && passwordRegex.test(password);
-  const isFirstNameValid = firstNameTouched && nameRegex.test(firstName);
-  const isLastNameValid = lastNameTouched && nameRegex.test(lastName);
-  const isBirthdateValid =
-    dateTouched && dateRegex.test(date) && isUserOlderThan13Years(date);
-  const isStreetValid = streetTouched && streetRegex.test(street);
-  const isCityValid = cityTouched && nameRegex.test(city);
-  const isPostCodeValid = postCodeTouched && postCodeRegex.test(postCode);
-  const isCountryValid = Boolean(country);
+  const [dialogTitle] = useState('');
+  const [dialogContent] = useState<React.ReactNode>(null);
 
   const handleSubmitForm: SubmitHandler<FieldValues> = (data): void => {
     console.log(data);
