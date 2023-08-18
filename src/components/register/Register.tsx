@@ -405,8 +405,8 @@ function RegisterForm(): ReactElement {
                       top: '-1px',
                     }}
                     onChange={(event) => {
-                      if (event.target.checked) setIsCheckedShipping(true);
-                      else setIsCheckedShipping(false);
+                      if (event.target.checked) setIsCheckedBilling(true);
+                      else setIsCheckedBilling(false);
                     }}
                   />
                   Set as default
