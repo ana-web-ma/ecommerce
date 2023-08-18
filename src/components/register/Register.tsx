@@ -29,25 +29,50 @@ function RegisterForm(): ReactElement {
     register,
     formState: { errors },
     handleSubmit,
+    getValues,
+    setValue,
   } = useForm({
     mode: 'onChange',
     resolver: yupResolver(RegisterSchema),
   });
 
-  const [registrationSuccess] = useState(false);
+  const [isCheckedCopyCheckBox, setIsCheckedCopyCheckBox] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogTitle] = useState('');
-  const [dialogContent] = useState<React.ReactNode>(null);
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
 
+  const openDialog = (title: string, content: React.ReactNode): void => {
+    setDialogTitle(title);
+    setDialogContent(content);
+    setDialogOpen(true);
+  };
   const handleSubmitForm: SubmitHandler<FieldValues> = (data): void => {
     console.log(data);
+  };
+
+  const onChangeCheckedBoxCopy = (
+    target: EventTarget & HTMLInputElement,
+  ): void => {
+    if (target.checked) {
+      setValue('city2', getValues('city1'));
+      setValue('street2', getValues('street1'));
+      setValue('country2', getValues('country1'));
+      setValue('post2', getValues('post1'));
+    } else {
+      setValue('city2', '');
+      setValue('street2', '');
+      setValue('country2', '');
+      setValue('post2', '');
+    }
   };
 
   return (
     <>
       <Stack mt={3} justifyContent="center" alignItems="center">
         <form
+          autoComplete="off"
           onSubmit={onPromise(handleSubmit(handleSubmitForm))}
           style={{ width: '90%', maxWidth: '640px' }}
         >
@@ -157,7 +182,7 @@ function RegisterForm(): ReactElement {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <InputLabel sx={{ marginTop: '20px' }}>
-                  Shipping address*:
+                  Shipping address:
                 </InputLabel>
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -183,6 +208,12 @@ function RegisterForm(): ReactElement {
                   margin="dense"
                   label="Street"
                   variant="outlined"
+                  onInput={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    if (isCheckedCopyCheckBox) {
+                      setValue('street2', target.value);
+                    }
+                  }}
                   placeholder="Enter your street"
                   error={!(errors.street1 == null)}
                   helperText={
@@ -199,6 +230,12 @@ function RegisterForm(): ReactElement {
                   margin="dense"
                   label="City"
                   variant="outlined"
+                  onInput={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    if (isCheckedCopyCheckBox) {
+                      setValue('city2', target.value);
+                    }
+                  }}
                   placeholder="Enter your city"
                   error={!(errors.city1 == null)}
                   helperText={
@@ -213,6 +250,12 @@ function RegisterForm(): ReactElement {
                   margin="dense"
                   label="Postal code"
                   variant="outlined"
+                  onInput={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    if (isCheckedCopyCheckBox) {
+                      setValue('post2', target.value);
+                    }
+                  }}
                   placeholder="Enter your postal code"
                   error={!(errors.post1 == null)}
                   helperText={
@@ -229,8 +272,13 @@ function RegisterForm(): ReactElement {
                 >
                   <InputLabel>Country</InputLabel>
                   <Select
-                    defaultValue=""
                     label="Country"
+                    defaultValue=""
+                    onClose={() => {
+                      if (isCheckedCopyCheckBox) {
+                        setValue('country2', getValues('country1'));
+                      }
+                    }}
                     error={!(errors.country1 == null)}
                     {...register('country1')}
                   >
@@ -251,8 +299,10 @@ function RegisterForm(): ReactElement {
                     sx={{
                       top: '-1px',
                     }}
-                    onChange={() => {
-                      console.log('check');
+                    onChange={(event) => {
+                      onChangeCheckedBoxCopy(event.target);
+                      if (event.target.checked) setIsCheckedCopyCheckBox(true);
+                      else setIsCheckedCopyCheckBox(false);
                     }}
                   />
                   Make billing details same as shipping
@@ -285,9 +335,12 @@ function RegisterForm(): ReactElement {
                   fullWidth={true}
                   margin="dense"
                   label="Street"
+                  style={{
+                    display: isCheckedCopyCheckBox ? 'none' : 'block',
+                  }}
                   variant="outlined"
                   placeholder="Enter your street"
-                  error={!(errors.street2 == null)}
+                  error={!(errors.street2 == null) && !isCheckedCopyCheckBox}
                   helperText={
                     errors.street2 != null
                       ? errors.street2.message?.toString()
@@ -301,9 +354,12 @@ function RegisterForm(): ReactElement {
                   fullWidth={true}
                   margin="dense"
                   label="City"
+                  style={{
+                    display: isCheckedCopyCheckBox ? 'none' : 'block',
+                  }}
                   variant="outlined"
                   placeholder="Enter your city"
-                  error={!(errors.city2 == null)}
+                  error={!(errors.city2 == null) && !isCheckedCopyCheckBox}
                   helperText={
                     errors.city2 != null ? errors.city2.message?.toString() : ''
                   }
@@ -315,9 +371,12 @@ function RegisterForm(): ReactElement {
                   fullWidth={true}
                   margin="dense"
                   label="Postal code"
+                  style={{
+                    display: isCheckedCopyCheckBox ? 'none' : 'block',
+                  }}
                   variant="outlined"
                   placeholder="Enter your postal code"
-                  error={!(errors.post2 == null)}
+                  error={!(errors.post2 == null) && !isCheckedCopyCheckBox}
                   helperText={
                     errors.post2 != null ? errors.post2.message?.toString() : ''
                   }
@@ -328,12 +387,15 @@ function RegisterForm(): ReactElement {
                 <FormControl
                   fullWidth
                   variant="filled"
-                  sx={{ marginTop: '8px' }}
+                  sx={{
+                    marginTop: '8px',
+                    display: isCheckedCopyCheckBox ? 'none' : 'inline-flex',
+                  }}
                 >
                   <InputLabel id="demo-simple-select-label">Country</InputLabel>
                   <Select
-                    defaultValue=""
                     label="Country"
+                    defaultValue=""
                     error={!(errors.country2 == null)}
                     {...register('country2')}
                   >
