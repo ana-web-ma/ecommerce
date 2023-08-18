@@ -22,9 +22,13 @@ import { CustomDialog } from './DialogModule';
 import { RegisterSchema } from '../../helpers/yup/Yup';
 import { onPromise } from '../login/Login';
 import theme from '../../theme';
+import { createCustomer } from '../../api/calls/createCustomer';
+import { login } from '../../store/reducers/CustomerSlice';
+import { useAppDispatch } from '../../helpers/hooks/Hooks';
 
 function RegisterForm(): ReactElement {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const {
     register,
     formState: { errors },
@@ -37,6 +41,9 @@ function RegisterForm(): ReactElement {
   });
 
   const [isCheckedCopyCheckBox, setIsCheckedCopyCheckBox] = useState(false);
+  const [isCheckedShipping, setIsCheckedShipping] = useState(false);
+  const [isCheckedBilling, setIsCheckedBilling] = useState(false);
+
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -49,7 +56,80 @@ function RegisterForm(): ReactElement {
     setDialogOpen(true);
   };
   const handleSubmitForm: SubmitHandler<FieldValues> = (data): void => {
-    console.log(data);
+    const dateParse = new Date(data.date);
+    const dateInput = `${dateParse.getFullYear()}-${
+      dateParse.getMonth() + 1
+    }-${dateParse.getDate()}`;
+    createCustomer({
+      email: data.email,
+      password: data.password,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      dateOfBirth: dateInput,
+      addresses: [
+        {
+          country: data.country1,
+          city: data.city1,
+          streetName: data.street1,
+          postalCode: data.post1,
+        },
+        {
+          country: data.country2,
+          city: data.city2,
+          streetName: data.street2,
+          postalCode: data.post2,
+        },
+      ],
+    })
+      .then((resp) => {
+        if (resp.statusCode === 201) {
+          dispatch(login(JSON.stringify(resp.body.customer.id)));
+          setRegistrationSuccess(true);
+          openDialog('Successfully', 'User registered');
+        } else {
+          const errorMessage =
+            resp.statusCode !== undefined
+              ? `Error: ${String(resp.statusCode)}, try later`
+              : 'Unknown Error, try later';
+          openDialog('Error', errorMessage);
+        }
+      })
+      .catch((err) => {
+        if (err.statusCode === 400) {
+          const content = (
+            <div>
+              User with this email already exists. Do you want to:
+              <br />
+              <Button
+                variant="text"
+                color="primary"
+                onClick={() => {
+                  navigate('/login');
+                  setDialogOpen(false);
+                }}
+              >
+                Log In
+              </Button>
+              <Button
+                variant="text"
+                color="primary"
+                onClick={() => {
+                  setDialogOpen(false);
+                }}
+              >
+                Use another email
+              </Button>
+            </div>
+          );
+          openDialog('Error', content);
+        } else {
+          const errorMessage =
+            err.statusCode !== undefined
+              ? `Error: ${String(err.statusCode)}, try later`
+              : 'Unknown Error, try later';
+          openDialog('Error', errorMessage);
+        }
+      });
   };
 
   const onChangeCheckedBoxCopy = (
@@ -195,8 +275,9 @@ function RegisterForm(): ReactElement {
                     sx={{
                       top: '-1px',
                     }}
-                    onChange={() => {
-                      console.log('check');
+                    onChange={(event) => {
+                      if (event.target.checked) setIsCheckedShipping(true);
+                      else setIsCheckedShipping(false);
                     }}
                   />
                   Set as default
@@ -323,8 +404,9 @@ function RegisterForm(): ReactElement {
                     sx={{
                       top: '-1px',
                     }}
-                    onChange={() => {
-                      console.log('check');
+                    onChange={(event) => {
+                      if (event.target.checked) setIsCheckedShipping(true);
+                      else setIsCheckedShipping(false);
                     }}
                   />
                   Set as default
