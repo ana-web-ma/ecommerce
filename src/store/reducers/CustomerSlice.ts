@@ -13,7 +13,7 @@ const initialState: ICustomerState = {
   customer: {
     id: null,
   },
-  isLogged: !(localStorage.getItem('isLogged') == null),
+  isLogged: !(localStorage.getItem('EPERFUME_IS_LOGGED') == null),
 };
 
 export const customerSlice = createSlice({
@@ -25,12 +25,12 @@ export const customerSlice = createSlice({
       state.isLogged = true;
       // eslint-disable-next-line no-param-reassign
       state.customer.id = action.payload;
-      localStorage.setItem('isLogged', 'LOGGED');
+      localStorage.setItem('EPERFUME_IS_LOGGED', 'LOGGED');
     },
     logout(state: ICustomerState) {
       // eslint-disable-next-line no-param-reassign
       state.isLogged = false;
-      localStorage.removeItem('isLogged');
+      localStorage.removeItem('EPERFUME_IS_LOGGED');
     },
   },
 });

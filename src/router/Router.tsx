@@ -7,7 +7,7 @@ import MainPage from '../pages/main/MainPage';
 import RegisterPage from '../pages/register/RegisterPage';
 
 const isLogged = (): Response | null => {
-  const customerData = localStorage.getItem('isLogged');
+  const customerData = localStorage.getItem('EPERFUME_IS_LOGGED');
   if (customerData !== null) {
     return redirect('/');
   }
@@ -18,7 +18,6 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <Layout />,
-    errorElement: <NotFound />,
     children: [
       {
         path: '/',
@@ -35,6 +34,10 @@ const router = createBrowserRouter([
         loader: isLogged,
       },
     ],
+  },
+  {
+    path: '*',
+    element: <NotFound />,
   },
 ]);
 

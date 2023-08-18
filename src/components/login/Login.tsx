@@ -14,10 +14,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { LoginSchema } from '../../helpers/yup/Yup';
-import { authCustomer } from '../../api/calls/authCustomer';
 import theme from '../../theme';
 import { useAppDispatch } from '../../helpers/hooks/Hooks';
 import { login } from '../../store/reducers/CustomerSlice';
+import { authPasswordCustomer } from '../../api/calls/authPasswordCustomer';
 
 export function onPromise<T>(
   // used to wrap react-hook-forms's submit handler
@@ -51,7 +51,7 @@ function LoginForm(): ReactElement {
       email: data.email,
       password: data.password,
     };
-    await authCustomer(customerData)
+    await authPasswordCustomer(customerData)
       .then(async (response): Promise<void> => {
         dispatch(login(JSON.stringify(response.body.customer.id)));
         navigate('/');

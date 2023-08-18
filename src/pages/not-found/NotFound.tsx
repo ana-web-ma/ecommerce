@@ -14,7 +14,8 @@ import {
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
-import { useIsLogged } from '../../helpers/hooks/Hooks';
+import { useAppDispatch, useIsLogged } from '../../helpers/hooks/Hooks';
+import { logout } from '../../store/reducers/CustomerSlice';
 
 const TextSpan = (props: { child: string }): ReactElement => {
   return <span>{props.child}</span>;
@@ -40,6 +41,7 @@ const NavLink = styled(Button)<ButtonProps>(() => ({
 
 const NotFound = (): ReactElement => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const title = '404'.split('');
 
   return (
@@ -98,7 +100,8 @@ const NotFound = (): ReactElement => {
               startIcon={<LogoutIcon />}
               disabled={!useIsLogged()}
               onClick={(): void => {
-                navigate('/register');
+                dispatch(logout());
+                navigate('/login');
               }}
             >
               LogOut
