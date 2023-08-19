@@ -1,31 +1,95 @@
-import React from 'react';
-import { type ReactElement } from 'react';
-import { Box, IconButton, Stack } from '@mui/material';
-import { Link } from 'react-router-dom';
+import {
+  Box,
+  Checkbox,
+  IconButton,
+  Link,
+  Stack,
+  Typography,
+} from '@mui/material';
+import React, { type ReactElement } from 'react';
+import { useNavigate } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
+import MenuIcon from '@mui/icons-material/Menu';
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '../ui/icons/SearchIcon';
-import HeaderLink from './HeaderLink';
 import logo from './img/logo.png';
 import { useAppDispatch, useIsLogged } from '../../helpers/hooks/Hooks';
 import { logout } from '../../store/reducers/CustomerSlice';
 
-export default function Header(): ReactElement {
+function HeaderLink(props: {
+  text: string;
+  path: string;
+  icon: ReactElement;
+}): ReactElement {
+  const navigate = useNavigate();
+
+  return (
+    <Typography>
+      <Link
+        onClick={(): void => {
+          navigate(props.path);
+        }}
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '5px',
+        }}
+      >
+        {props.icon}
+        {props.text}
+      </Link>
+    </Typography>
+  );
+}
+
+const Header = (): ReactElement => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [checkedMenu, setCheckedMenu] = React.useState(false);
 
   return (
     <>
-      <Stack direction="row" width="100%" justifyContent="space-between">
-        <IconButton component={Link} to="/">
+      <Stack
+        direction="row"
+        width="100%"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <IconButton
+          component={Link}
+          onClick={(): void => {
+            navigate('/');
+          }}
+        >
           <img src={logo} />
         </IconButton>
+        <Checkbox
+          sx={{ display: { md: 'none' } }}
+          icon={<MenuIcon />}
+          checkedIcon={<MenuOpenIcon />}
+          checked={checkedMenu}
+          onChange={(event): void => {
+            setCheckedMenu(event.target.checked);
+            console.log(checkedMenu);
+          }}
+        />
         <Stack
           direction="row"
           justifyContent="center"
           alignItems="center"
           spacing={2}
+          sx={{ display: { md: 'flex', xs: 'none' } }}
+          role="presentation"
+          onClick={() => {
+            setCheckedMenu(false);
+          }}
+          onKeyDown={() => {
+            setCheckedMenu(false);
+          }}
         >
           <HeaderLink text="Home" path="/" icon={<HomeIcon />} />
           {!useIsLogged() ? (
@@ -54,10 +118,19 @@ export default function Header(): ReactElement {
             )}
           </Box>
         </Stack>
-        <IconButton aria-label="search">
-          <SearchIcon />
-        </IconButton>
+        <Box>
+          <IconButton
+            component={Link}
+            onClick={(): void => {
+              navigate('/');
+            }}
+          >
+            <SearchIcon />
+          </IconButton>
+        </Box>
       </Stack>
     </>
   );
-}
+};
+
+export default Header;

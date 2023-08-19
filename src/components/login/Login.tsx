@@ -79,21 +79,22 @@ function LoginForm(): ReactElement {
       <Stack justifyContent="center" alignItems="center">
         <form
           onSubmit={onPromise(handleSubmit(handleSubmitForm))}
-          style={{ width: '90%', maxWidth: '640px' }}
+          style={{ width: '98%', maxWidth: '640px' }}
         >
           <Stack
             justifyContent="center"
             alignItems="center"
             spacing={2}
             boxShadow={'5px 5px 10px #ccc'}
-            padding={'15% 10%'}
-            borderRadius={5}
+            sx={{
+              padding: { md: '15% 10%', xs: '10% 4%' },
+            }}
           >
             <Typography variant="h2">Welcome</Typography>
             <Typography
               variant="body1"
               textAlign={'center'}
-              height={'45px'}
+              minHeight={'45px'}
               color={errorMessage !== '' ? theme.palette.error.main : 'inherit'}
             >
               {errorMessage !== ''

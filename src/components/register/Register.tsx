@@ -154,26 +154,17 @@ function RegisterForm(): ReactElement {
         <form
           autoComplete="off"
           onSubmit={onPromise(handleSubmit(handleSubmitForm))}
-          style={{ width: '90%', maxWidth: '640px' }}
+          style={{ width: '98%', maxWidth: '640px' }}
         >
           <Box sx={{ width: '100%' }}>
-            <Grid
-              container
-              spacing={0}
-              columnSpacing={2}
-              style={{ gridRowGap: 5 }}
-              justifyContent={'space-between'}
-              boxShadow={'5px 5px 10px #ccc'}
-              padding={'10%'}
-              borderRadius={5}
-            >
+            <Grid container columnSpacing={2}>
               <Grid item xs={12}>
-                <Typography variant="h2" textAlign={'left'}>
+                <Typography variant="h2" textAlign={'center'}>
                   Sign Up
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography variant="body1" textAlign={'left'}>
+                <Typography variant="body1" textAlign={'center'}>
                   Enter your details to create your account:
                 </Typography>
               </Grid>
