@@ -2,15 +2,19 @@ import {
   type ClientResponse,
   type CustomerSignInResult,
 } from '@commercetools/platform-sdk';
-import { apiRoot } from '../clients/BuildClient';
+import { apiPasswordFlowRoot } from '../../clients/PasswordFlowClient';
 
 // Пользователь найден: statusCode: 200
 // Неправильный email или пароль: statusCode: 400
-export const authCustomer = async (props: {
+// Возвращает данные пользователя и сохраняет токен
+export const authPasswordCustomer = async (props: {
   email: string;
   password: string;
 }): Promise<ClientResponse<CustomerSignInResult>> => {
-  return apiRoot
+  return apiPasswordFlowRoot({
+    username: props.email,
+    password: props.password,
+  })
     .login()
     .post({
       body: {
@@ -23,6 +27,11 @@ export const authCustomer = async (props: {
 
 // Пример использования:
 
-// authCustomer({ email: 'example-email.example.com', password: 'password' })
-//   .then(console.log)
+// authPasswordCustomer({
+//   email: 'example-email.example.com',
+//   password: 'password',
+// })
+//   .then((data) => {
+//     console.log('data', data);
+//   })
 //   .catch(console.error);
