@@ -11,13 +11,58 @@ import {
   Typography,
 } from '@mui/material';
 import { type ReactElement } from 'react';
+import { createCustomer } from '../../../api/calls/customer/createCustomer';
+import { firstUpdateAddress } from '../../../api/calls/customer/update/firstUpdateAddress';
 
 function DemoComponent(): ReactElement {
+  const user = {
+    email: 'test5@e.e',
+    password: 'password',
+    firstName: 'f',
+    lastName: 'l',
+    dateOfBirth: '2000-01-01',
+    addresses: [
+      {
+        country: 'US',
+        city: 'co',
+        streetName: 'so',
+        postalCode: '11111',
+        key: 'firstShippingAddress',
+      },
+      {
+        country: 'FR',
+        city: 'ct',
+        streetName: 'st',
+        postalCode: '22222',
+        key: 'firstBillingAddress',
+      },
+    ],
+  };
+
+  const handleSubmit = (e: { preventDefault: () => void }): void => {
+    createCustomer(user)
+      .then((resp) => {
+        console.log('resp', resp);
+        firstUpdateAddress({
+          userId: resp.body.customer.id,
+          isCheckedShipping: true,
+          isCheckedBilling: true,
+        })
+          .then((updateResp) => {
+            console.log('updateResp', updateResp);
+          })
+          .catch(console.log);
+      })
+      .catch(console.log);
+  };
   return (
     <>
       <Container>
+        <Button variant="contained" onClick={handleSubmit}>
+          ADD USER
+        </Button>
         <Grid container>
-          <Grid item xs>
+          <Grid item>
             <Paper variant="outlined">
               <Typography variant="h2">HEADLINE 1 h1/h2</Typography>
               <Typography variant="h3">Form title h3</Typography>
