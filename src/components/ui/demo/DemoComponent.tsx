@@ -47,9 +47,6 @@ function DemoComponent(): ReactElement {
       .then((resp) => {
         console.log('resp', resp);
         firstUpdateAddress({
-          isCheckedCopyCheckBox,
-          isCheckedShipping,
-          isCheckedBilling,
           userId: resp.body.customer.id,
           isCheckedShipping: true,
           isCheckedBilling: true,

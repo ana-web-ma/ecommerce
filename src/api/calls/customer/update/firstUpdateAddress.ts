@@ -51,18 +51,6 @@ export const firstUpdateAddress = async (props: {
         ? 'firstBothAddress'
         : 'firstBillingAddress',
     });
-    if (props.isCheckedShipping) {
-      actions.push({
-        action: 'setDefaultShippingAddress',
-        addressKey: 'firstShippingAddress',
-      });
-    }
-    if (props.isCheckedBilling) {
-      actions.push({
-        action: 'setDefaultBillingAddress',
-        addressKey: 'firstBillingAddress',
-      });
-    }
   }
   return apiRoot
     .customers()

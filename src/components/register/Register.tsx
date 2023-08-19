@@ -98,6 +98,7 @@ function RegisterForm(): ReactElement {
       lastName: data.lastName,
       dateOfBirth: getDateFromString(data.date),
       addresses: addressArray,
+      isCheckedCopyCheckBox,
     };
 
     createCustomer(customer)
