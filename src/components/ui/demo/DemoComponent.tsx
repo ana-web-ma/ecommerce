@@ -47,6 +47,7 @@ function DemoComponent(): ReactElement {
           userId: resp.body.customer.id,
           isCheckedShipping: true,
           isCheckedBilling: true,
+          isCheckedCopyCheckBox: false,
         })
           .then((updateResp) => {
             console.log('updateResp', updateResp);

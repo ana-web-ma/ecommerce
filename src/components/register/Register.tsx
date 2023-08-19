@@ -22,9 +22,17 @@ import { CustomDialog } from './DialogModule';
 import { RegisterSchema } from '../../helpers/yup/Yup';
 import { onPromise } from '../login/Login';
 import theme from '../../theme';
-import { createCustomer } from '../../api/calls/createCustomer';
 import { login } from '../../store/reducers/CustomerSlice';
 import { useAppDispatch } from '../../helpers/hooks/Hooks';
+import { createCustomer } from '../../api/calls/customer/createCustomer';
+import { firstUpdateAddress } from '../../api/calls/customer/update/firstUpdateAddress';
+
+function getDateFromString(dataInput: string): string {
+  const dateParse = new Date(dataInput);
+  return `${dateParse.getFullYear()}-${
+    dateParse.getMonth() + 1
+  }-${dateParse.getDate()}`;
+}
 
 function RegisterForm(): ReactElement {
   const navigate = useNavigate();
@@ -56,36 +64,55 @@ function RegisterForm(): ReactElement {
     setDialogOpen(true);
   };
   const handleSubmitForm: SubmitHandler<FieldValues> = (data): void => {
-    const dateParse = new Date(data.date);
-    const dateInput = `${dateParse.getFullYear()}-${
-      dateParse.getMonth() + 1
-    }-${dateParse.getDate()}`;
-    createCustomer({
+    const addressArray = isCheckedCopyCheckBox
+      ? [
+          {
+            country: data.country1,
+            city: data.city1,
+            streetName: data.street1,
+            postalCode: data.post1,
+            key: 'firstBothAddress',
+          },
+        ]
+      : [
+          {
+            country: data.country1,
+            city: data.city1,
+            streetName: data.street1,
+            postalCode: data.post1,
+            key: 'firstShippingAddress',
+          },
+          {
+            country: data.country2,
+            city: data.city2,
+            streetName: data.street2,
+            postalCode: data.post2,
+            key: 'firstBillingAddress',
+          },
+        ];
+
+    const customer = {
       email: data.email,
       password: data.password,
       firstName: data.firstName,
       lastName: data.lastName,
-      dateOfBirth: dateInput,
-      addresses: [
-        {
-          country: data.country1,
-          city: data.city1,
-          streetName: data.street1,
-          postalCode: data.post1,
-        },
-        {
-          country: data.country2,
-          city: data.city2,
-          streetName: data.street2,
-          postalCode: data.post2,
-        },
-      ],
-    })
+      dateOfBirth: getDateFromString(data.date),
+      addresses: addressArray,
+    };
+
+    createCustomer(customer)
       .then((resp) => {
         if (resp.statusCode === 201) {
-          dispatch(login(JSON.stringify(resp.body.customer.id)));
-          setRegistrationSuccess(true);
-          openDialog('Successfully', 'User registered');
+          firstUpdateAddress({
+            userId: resp.body.customer.id,
+            isCheckedShipping,
+            isCheckedBilling,
+            isCheckedCopyCheckBox,
+          })
+            .then((updateResp) => {
+              console.log('updateResp', updateResp);
+            })
+            .catch(console.log);
         } else {
           const errorMessage =
             resp.statusCode !== undefined
@@ -373,8 +400,7 @@ function RegisterForm(): ReactElement {
                     }}
                     onChange={(event) => {
                       onChangeCheckedBoxCopy(event.target);
-                      if (event.target.checked) setIsCheckedCopyCheckBox(true);
-                      else setIsCheckedCopyCheckBox(false);
+                      setIsCheckedCopyCheckBox(event.target.checked);
                     }}
                   />
                   Make billing details same as shipping
@@ -469,7 +495,7 @@ function RegisterForm(): ReactElement {
                   <Select
                     label="Country"
                     defaultValue=""
-                    error={!(errors.country2 == null)}
+                    error={!(errors.country2 == null) && !isCheckedCopyCheckBox}
                     {...register('country2')}
                   >
                     <MenuItem value={'US'}>USA</MenuItem>

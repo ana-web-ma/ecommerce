@@ -17,7 +17,7 @@ import { LoginSchema } from '../../helpers/yup/Yup';
 import theme from '../../theme';
 import { useAppDispatch } from '../../helpers/hooks/Hooks';
 import { login } from '../../store/reducers/CustomerSlice';
-import { authPasswordCustomer } from '../../api/calls/authPasswordCustomer';
+import { authPasswordCustomer } from '../../api/calls/customer/authPasswordCustomer';
 
 export function onPromise<T>(
   // used to wrap react-hook-forms's submit handler

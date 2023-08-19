@@ -19,22 +19,37 @@ export const firstUpdateAddress = async (props: {
   userId: string;
   isCheckedShipping: boolean;
   isCheckedBilling: boolean;
+  isCheckedCopyCheckBox: boolean;
 }): Promise<ClientResponse<Customer>> => {
   const actions: CustomerUpdateAction[] = [
-    { action: 'addShippingAddressId', addressKey: 'firstShippingAddress' },
-    { action: 'addBillingAddressId', addressKey: 'firstBillingAddress' },
+    {
+      action: 'addShippingAddressId',
+      addressKey: props.isCheckedCopyCheckBox
+        ? 'firstBothAddress'
+        : 'firstShippingAddress',
+    },
+    {
+      action: 'addBillingAddressId',
+      addressKey: props.isCheckedCopyCheckBox
+        ? 'firstBothAddress'
+        : 'firstBillingAddress',
+    },
   ];
 
   if (props.isCheckedShipping) {
     actions.push({
       action: 'setDefaultShippingAddress',
-      addressKey: 'firstShippingAddress',
+      addressKey: props.isCheckedCopyCheckBox
+        ? 'firstBothAddress'
+        : 'firstShippingAddress',
     });
   }
   if (props.isCheckedBilling) {
     actions.push({
       action: 'setDefaultBillingAddress',
-      addressKey: 'firstBillingAddress',
+      addressKey: props.isCheckedCopyCheckBox
+        ? 'firstBothAddress'
+        : 'firstBillingAddress',
     });
   }
 
@@ -78,14 +93,14 @@ export const firstUpdateAddress = async (props: {
 
 // createCustomer(user)
 // .then((resp) => {
-//   firstUpdateAddress({
-//     userId: resp.body.customer.id,
-//     isCheckedShipping: true,
-//     isCheckedBilling: false,
+// firstUpdateAddress({
+//   userId: resp.body.customer.id,
+//   isCheckedShipping: true,
+//   isCheckedBilling: false,
+// })
+//   .then((updateResp) => {
+//     console.log('updateResp', updateResp);
 //   })
-//     .then((updateResp) => {
-//       console.log('updateResp', updateResp);
-//     })
-//     .catch(console.log);
+//   .catch(console.log);
 // })
 // .catch(console.log);
