@@ -22,7 +22,7 @@ import { CustomDialog } from './DialogModule';
 import { RegisterSchema } from '../../helpers/yup/Yup';
 import { onPromise } from '../login/Login';
 import theme from '../../theme';
-import { createCustomer } from '../../api/calls/createCustomer';
+import { createCustomer } from '../../api/calls/customer/createCustomer';
 import { login } from '../../store/reducers/CustomerSlice';
 import { useAppDispatch } from '../../helpers/hooks/Hooks';
 
@@ -61,6 +61,7 @@ function RegisterForm(): ReactElement {
       dateParse.getMonth() + 1
     }-${dateParse.getDate()}`;
     createCustomer({
+      isCheckedCopyCheckBox,
       email: data.email,
       password: data.password,
       firstName: data.firstName,
@@ -68,12 +69,14 @@ function RegisterForm(): ReactElement {
       dateOfBirth: dateInput,
       addresses: [
         {
+          key: 'firstShippingAddress',
           country: data.country1,
           city: data.city1,
           streetName: data.street1,
           postalCode: data.post1,
         },
         {
+          key: 'firstBillingAddress',
           country: data.country2,
           city: data.city2,
           streetName: data.street2,

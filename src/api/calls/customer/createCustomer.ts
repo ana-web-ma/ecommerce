@@ -16,6 +16,7 @@ export interface CustomAddress extends Address {
 // Пользователь создан: statusCode: 201
 // Пользователь уже существует: statusCode: 400
 export const createCustomer = async (props: {
+  isCheckedCopyCheckBox: boolean;
   email: string;
   password: string;
   firstName: string;
@@ -23,10 +24,40 @@ export const createCustomer = async (props: {
   dateOfBirth: string;
   addresses: CustomAddress[];
 }): Promise<ClientResponse<CustomerSignInResult>> => {
+  const {
+    isCheckedCopyCheckBox,
+    email,
+    password,
+    firstName,
+    lastName,
+    dateOfBirth,
+    addresses,
+  } = props;
+
+  if (isCheckedCopyCheckBox) {
+    return apiRoot
+      .customers()
+      .post({
+        body: {
+          email,
+          password,
+          firstName,
+          lastName,
+          addresses: [addresses[0]],
+        },
+      })
+      .execute();
+  }
   return apiRoot
     .customers()
     .post({
-      body: props,
+      body: {
+        email,
+        password,
+        firstName,
+        lastName,
+        addresses,
+      },
     })
     .execute();
 };
@@ -34,7 +65,7 @@ export const createCustomer = async (props: {
 // Пример использования:
 
 // const user = {
-//   email: 'test4@e.e',
+//   email: 'test9@e.e',
 //   password: 'password',
 //   firstName: 'f',
 //   lastName: 'l',
@@ -57,16 +88,18 @@ export const createCustomer = async (props: {
 //   ],
 // };
 
-// createCustomer(user)
-// .then((resp) => {
-//   firstUpdateAddress({
-//     userId: resp.body.customer.id,
-//     isCheckedShipping: true,
-//     isCheckedBilling: false,
-//   })
-//     .then((updateResp) => {
-//       console.log('updateResp', updateResp);
-//     })
-//     .catch(console.log);
-// })
-// .catch(console.log);
+// createCustomer({ isCheckedCopyCheckBox, ...user })
+//   .then((resp) => {
+//      console.log('resp', resp);
+//      firstUpdateAddress({
+//        isCheckedCopyCheckBox,
+//        isCheckedShipping,
+//        isCheckedBilling,
+//        userId: resp.body.customer.id,
+//      })
+//        .then((updateResp) => {
+//          console.log('updateResp', updateResp);
+//        })
+//        .catch(console.log);
+//    })
+//    .catch(console.log);
