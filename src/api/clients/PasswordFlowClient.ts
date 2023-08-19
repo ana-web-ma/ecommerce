@@ -12,10 +12,6 @@ export const apiPasswordFlowRoot = (
   user: UserAuthOptions,
 ): ByProjectKeyRequestBuilder => {
   const projectKey = 'eperfume';
-  // const scopes = ['manage_project:eperfume'];
-  // const scopes = [
-  //   'view_categories:eperfume manage_my_profile:eperfume manage_my_payments:eperfume view_published_products:eperfume manage_my_business_units:eperfume view_products:eperfume manage_my_shopping_lists:eperfume manage_my_quote_requests:eperfume manage_my_quotes:eperfume manage_my_orders:eperfume create_anonymous_token:eperfume',
-  // ];
   const scopes = [
     'view_categories:eperfume manage_my_profile:eperfume manage_my_payments:eperfume view_published_products:eperfume manage_my_business_units:eperfume view_products:eperfume manage_my_shopping_lists:eperfume manage_customers:eperfume manage_my_quote_requests:eperfume manage_my_quotes:eperfume view_product_selections:eperfume manage_my_orders:eperfume create_anonymous_token:eperfume',
   ];
@@ -31,11 +27,6 @@ export const apiPasswordFlowRoot = (
     credentials: {
       clientId: '8YObslvhK1uQiOEz2FhcaDNO',
       clientSecret: 'ZHe9UcSrOk7bVKPAJRRjS5FK7kgKsvp0',
-      // clientId: 'hBpfTYcInBB_kE9FWrx9SFjV',
-      // clientSecret: 'rqI8pXPJigZoPyB7pyhaNx9NeL2cIhmh',
-      // clientId: 'KJ0zTHvxPFSLQqqbhM_g_sLn',
-      // clientSecret: '4VyKB2P1U2lJzZMRsOI-1gXGEzlUbTkl',
-
       user: {
         username: user.username,
         password: user.password,

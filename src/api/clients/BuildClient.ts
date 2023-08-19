@@ -5,6 +5,7 @@ import {
   type HttpMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
+import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 
 const projectKey = 'eperfume';
 const scopes = ['manage_project:eperfume'];
@@ -31,6 +32,8 @@ export const ctpClient = new ClientBuilder()
   .withHttpMiddleware(httpMiddlewareOptions)
   .withLoggerMiddleware()
   .build();
+
+// const a: ByProjectKeyRequestBuilder = 1;
 
 export const apiRoot = createApiBuilderFromCtpClient(ctpClient).withProjectKey({
   projectKey: 'eperfume',
