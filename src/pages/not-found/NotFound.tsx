@@ -67,16 +67,6 @@ const NotFound = (): ReactElement => {
             Home
           </NavLink>
         </LightTooltip>
-        <LightTooltip title="About Us">
-          <NavLink
-            variant="text"
-            onClick={(): void => {
-              navigate('/');
-            }}
-          >
-            About
-          </NavLink>
-        </LightTooltip>
         <LightTooltip title={useIsLogged() ? "You're logged in" : 'Log In'}>
           <span>
             <NavLink
@@ -88,6 +78,21 @@ const NotFound = (): ReactElement => {
               }}
             >
               LogIn
+            </NavLink>
+          </span>
+        </LightTooltip>
+        <LightTooltip
+          title={useIsLogged() ? "You're logged in" : 'Registration'}
+        >
+          <span>
+            <NavLink
+              variant="text"
+              disabled={useIsLogged()}
+              onClick={(): void => {
+                navigate('/register');
+              }}
+            >
+              Sign Up
             </NavLink>
           </span>
         </LightTooltip>

@@ -23,7 +23,7 @@ function Welcome(): ReactElement {
             navigate('/register');
           }}
         >
-          Sign In
+          Sign Up
         </Link>
       </Typography>
     </Box>
