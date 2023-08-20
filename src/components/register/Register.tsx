@@ -13,7 +13,10 @@ import {
   MenuItem,
   Select,
   FormHelperText,
+  InputAdornment,
+  IconButton,
 } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import type { ReactElement } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -59,6 +62,18 @@ function RegisterForm(): ReactElement {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogTitle, setDialogTitle] = useState('');
   const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = (): void => {
+    setShowPassword((show) => !show);
+  };
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ): void => {
+    event.preventDefault();
+  };
 
   const openDialog = (title: string, content: React.ReactNode): void => {
     setDialogTitle(title);
@@ -232,6 +247,7 @@ function RegisterForm(): ReactElement {
                   margin="dense"
                   label="Password"
                   variant="outlined"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
                   error={!(errors.password == null)}
                   helperText={
@@ -239,6 +255,19 @@ function RegisterForm(): ReactElement {
                       ? errors.password.message?.toString()
                       : ''
                   }
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                   {...register('password')}
                 />
               </Grid>
