@@ -111,6 +111,8 @@ function RegisterForm(): ReactElement {
             isCheckedCopyCheckBox,
           })
             .then((updateResp) => {
+              setRegistrationSuccess(true);
+              openDialog('Successfully', 'User registered');
               console.log('updateResp', updateResp);
             })
             .catch(console.log);
