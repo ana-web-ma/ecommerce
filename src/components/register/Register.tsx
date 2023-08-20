@@ -26,6 +26,8 @@ import { login } from '../../store/reducers/CustomerSlice';
 import { useAppDispatch } from '../../helpers/hooks/Hooks';
 import { createCustomer } from '../../api/calls/customer/createCustomer';
 import { firstUpdateAddress } from '../../api/calls/customer/update/firstUpdateAddress';
+import { authPasswordCustomer } from '../../api/calls/customer/authPasswordCustomer';
+import { tokenCache } from '../../api/tokenCache';
 
 function getDateFromString(dataInput: string): string {
   const dateParse = new Date(dataInput);
@@ -110,10 +112,22 @@ function RegisterForm(): ReactElement {
             isCheckedBilling,
             isCheckedCopyCheckBox,
           })
-            .then((updateResp) => {
-              setRegistrationSuccess(true);
-              openDialog('Successfully', 'User registered');
+            .then(async (updateResp) => {
               console.log('updateResp', updateResp);
+              await authPasswordCustomer({
+                email: data.email,
+                password: data.password,
+              }).then((response) => {
+                console.log(response);
+                dispatch(
+                  login({
+                    customerId: JSON.stringify(response.body.customer.id),
+                    token: tokenCache.get().token,
+                  }),
+                );
+                setRegistrationSuccess(true);
+                openDialog('Successfully', 'User registered');
+              });
             })
             .catch(console.log);
         } else {

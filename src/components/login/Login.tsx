@@ -18,6 +18,7 @@ import theme from '../../theme';
 import { useAppDispatch } from '../../helpers/hooks/Hooks';
 import { login } from '../../store/reducers/CustomerSlice';
 import { authPasswordCustomer } from '../../api/calls/customer/authPasswordCustomer';
+import { tokenCache } from '../../api/tokenCache';
 
 export function onPromise<T>(
   // used to wrap react-hook-forms's submit handler
@@ -53,7 +54,12 @@ function LoginForm(): ReactElement {
     };
     await authPasswordCustomer(customerData)
       .then(async (response): Promise<void> => {
-        dispatch(login(JSON.stringify(response.body.customer.id)));
+        dispatch(
+          login({
+            customerId: JSON.stringify(response.body.customer.id),
+            token: tokenCache.get().token,
+          }),
+        );
         navigate('/');
       })
       .catch((err) => {

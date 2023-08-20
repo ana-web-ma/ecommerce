@@ -113,7 +113,6 @@ const Header = (): ReactElement => {
           checked={checkedMenu}
           onChange={(event): void => {
             setCheckedMenu(event.target.checked);
-            console.log(checkedMenu);
           }}
         />
         <Stack

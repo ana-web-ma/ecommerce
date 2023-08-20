@@ -7,7 +7,7 @@ import MainPage from '../pages/main/MainPage';
 import RegisterPage from '../pages/register/RegisterPage';
 
 const isLogged = (): Response | null => {
-  const customerData = localStorage.getItem('EPERFUME_IS_LOGGED');
+  const customerData = localStorage.getItem('EPERFUME_CUSTOMER_TOKEN');
   if (customerData !== null) {
     return redirect('/');
   }
