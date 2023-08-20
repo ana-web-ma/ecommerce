@@ -1,6 +1,7 @@
 import {
   Box,
   Checkbox,
+  Drawer,
   IconButton,
   Link,
   Stack,
@@ -51,6 +52,44 @@ const Header = (): ReactElement => {
   const dispatch = useAppDispatch();
   const [checkedMenu, setCheckedMenu] = React.useState(false);
 
+  const handleDrawerToggle = (action: boolean): void => {
+    setCheckedMenu(action);
+  };
+
+  const drawer = (
+    <Stack height="100%" justifyContent="center" alignItems="center">
+      <Stack
+        gap={1}
+        onClick={() => {
+          handleDrawerToggle(false);
+        }}
+      >
+        <HeaderLink text="Home" path="/" icon={<HomeIcon />} />
+        {!useIsLogged() ? (
+          <HeaderLink text="Log in" path="/login" icon={<LoginIcon />} />
+        ) : (
+          ''
+        )}
+        {!useIsLogged() ? (
+          <HeaderLink text="Registration" path="/register" icon={<AddIcon />} />
+        ) : (
+          ''
+        )}
+        <Box
+          onClick={() => {
+            dispatch(logout());
+          }}
+        >
+          {useIsLogged() ? (
+            <HeaderLink text="Log out" path="/" icon={<LogoutIcon />} />
+          ) : (
+            ''
+          )}
+        </Box>
+      </Stack>
+    </Stack>
+  );
+
   return (
     <>
       <Stack
@@ -68,7 +107,7 @@ const Header = (): ReactElement => {
           <img src={logo} />
         </IconButton>
         <Checkbox
-          sx={{ display: { md: 'none' } }}
+          sx={{ display: { md: 'none', zIndex: '2000' } }}
           icon={<MenuIcon />}
           checkedIcon={<MenuOpenIcon />}
           checked={checkedMenu}
@@ -129,6 +168,24 @@ const Header = (): ReactElement => {
           </IconButton>
         </Box>
       </Stack>
+      <Box component="nav">
+        <Drawer
+          variant="temporary"
+          open={checkedMenu}
+          onClose={(): void => {
+            handleDrawerToggle(false);
+          }}
+          sx={{
+            display: { md: 'none' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: '100%',
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
+      </Box>
     </>
   );
 };
