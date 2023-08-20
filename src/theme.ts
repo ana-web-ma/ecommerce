@@ -127,6 +127,14 @@ const theme = createTheme({
         },
       },
     },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          fontFamily: BELLOTA_FONT,
+          fontWeight: 700,
+        },
+      },
+    },
     MuiFormHelperText: {
       styleOverrides: {
         root: {
