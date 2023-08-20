@@ -43,7 +43,7 @@ function DemoComponent(): ReactElement {
   };
 
   const handleSubmit = (e: { preventDefault: () => void }): void => {
-    createCustomer({ isCheckedCopyCheckBox, ...user })
+    createCustomer({ ...user })
       .then((resp) => {
         console.log('resp', resp);
         firstUpdateAddress({

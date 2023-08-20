@@ -16,7 +16,6 @@ export interface CustomAddress extends Address {
 // Пользователь создан: statusCode: 201
 // Пользователь уже существует: statusCode: 400
 export const createCustomer = async (props: {
-  isCheckedCopyCheckBox: boolean;
   email: string;
   password: string;
   firstName: string;
@@ -24,30 +23,9 @@ export const createCustomer = async (props: {
   dateOfBirth: string;
   addresses: CustomAddress[];
 }): Promise<ClientResponse<CustomerSignInResult>> => {
-  const {
-    isCheckedCopyCheckBox,
-    email,
-    password,
-    firstName,
-    lastName,
-    dateOfBirth,
-    addresses,
-  } = props;
+  const { email, password, firstName, lastName, dateOfBirth, addresses } =
+    props;
 
-  if (isCheckedCopyCheckBox) {
-    return apiRoot
-      .customers()
-      .post({
-        body: {
-          email,
-          password,
-          firstName,
-          lastName,
-          addresses: [addresses[0]],
-        },
-      })
-      .execute();
-  }
   return apiRoot
     .customers()
     .post({
@@ -56,6 +34,7 @@ export const createCustomer = async (props: {
         password,
         firstName,
         lastName,
+        dateOfBirth,
         addresses,
       },
     })
