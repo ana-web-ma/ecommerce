@@ -14,10 +14,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { LoginSchema } from '../../helpers/yup/Yup';
-import { authCustomer } from '../../api/calls/authCustomer';
 import theme from '../../theme';
 import { useAppDispatch } from '../../helpers/hooks/Hooks';
 import { login } from '../../store/reducers/CustomerSlice';
+import { authPasswordCustomer } from '../../api/calls/customer/authPasswordCustomer';
+import { tokenCache } from '../../api/tokenCache';
 
 export function onPromise<T>(
   // used to wrap react-hook-forms's submit handler
@@ -51,9 +52,14 @@ function LoginForm(): ReactElement {
       email: data.email,
       password: data.password,
     };
-    await authCustomer(customerData)
+    await authPasswordCustomer(customerData)
       .then(async (response): Promise<void> => {
-        dispatch(login(JSON.stringify(response.body.customer.id)));
+        dispatch(
+          login({
+            customerId: JSON.stringify(response.body.customer.id),
+            token: tokenCache.get().token,
+          }),
+        );
         navigate('/');
       })
       .catch((err) => {
@@ -79,21 +85,22 @@ function LoginForm(): ReactElement {
       <Stack justifyContent="center" alignItems="center">
         <form
           onSubmit={onPromise(handleSubmit(handleSubmitForm))}
-          style={{ width: '90%', maxWidth: '640px' }}
+          style={{ width: '98%', maxWidth: '640px' }}
         >
           <Stack
             justifyContent="center"
             alignItems="center"
             spacing={2}
             boxShadow={'5px 5px 10px #ccc'}
-            padding={'15% 10%'}
-            borderRadius={5}
+            sx={{
+              padding: { md: '15% 10%', xs: '10% 4%' },
+            }}
           >
             <Typography variant="h2">Welcome</Typography>
             <Typography
               variant="body1"
               textAlign={'center'}
-              height={'45px'}
+              minHeight={'45px'}
               color={errorMessage !== '' ? theme.palette.error.main : 'inherit'}
             >
               {errorMessage !== ''

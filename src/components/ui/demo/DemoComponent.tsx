@@ -15,8 +15,11 @@ import { createCustomer } from '../../../api/calls/customer/createCustomer';
 import { firstUpdateAddress } from '../../../api/calls/customer/update/firstUpdateAddress';
 
 function DemoComponent(): ReactElement {
+  const isCheckedCopyCheckBox = true;
+  const isCheckedShipping = true;
+  const isCheckedBilling = true;
   const user = {
-    email: 'test5@e.e',
+    email: 'test9@e.e',
     password: 'password',
     firstName: 'f',
     lastName: 'l',
@@ -40,13 +43,14 @@ function DemoComponent(): ReactElement {
   };
 
   const handleSubmit = (e: { preventDefault: () => void }): void => {
-    createCustomer(user)
+    createCustomer({ ...user })
       .then((resp) => {
         console.log('resp', resp);
         firstUpdateAddress({
           userId: resp.body.customer.id,
           isCheckedShipping: true,
           isCheckedBilling: true,
+          isCheckedCopyCheckBox: false,
         })
           .then((updateResp) => {
             console.log('updateResp', updateResp);

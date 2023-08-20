@@ -19,25 +19,39 @@ export const firstUpdateAddress = async (props: {
   userId: string;
   isCheckedShipping: boolean;
   isCheckedBilling: boolean;
+  isCheckedCopyCheckBox: boolean;
 }): Promise<ClientResponse<Customer>> => {
   const actions: CustomerUpdateAction[] = [
-    { action: 'addShippingAddressId', addressKey: 'firstShippingAddress' },
-    { action: 'addBillingAddressId', addressKey: 'firstBillingAddress' },
+    {
+      action: 'addShippingAddressId',
+      addressKey: props.isCheckedCopyCheckBox
+        ? 'firstBothAddress'
+        : 'firstShippingAddress',
+    },
+    {
+      action: 'addBillingAddressId',
+      addressKey: props.isCheckedCopyCheckBox
+        ? 'firstBothAddress'
+        : 'firstBillingAddress',
+    },
   ];
 
   if (props.isCheckedShipping) {
     actions.push({
       action: 'setDefaultShippingAddress',
-      addressKey: 'firstShippingAddress',
+      addressKey: props.isCheckedCopyCheckBox
+        ? 'firstBothAddress'
+        : 'firstShippingAddress',
     });
   }
   if (props.isCheckedBilling) {
     actions.push({
       action: 'setDefaultBillingAddress',
-      addressKey: 'firstBillingAddress',
+      addressKey: props.isCheckedCopyCheckBox
+        ? 'firstBothAddress'
+        : 'firstBillingAddress',
     });
   }
-
   return apiRoot
     .customers()
     .withId({ ID: props.userId })
@@ -53,7 +67,7 @@ export const firstUpdateAddress = async (props: {
 // Пример использования:
 
 // const user = {
-//   email: 'test4@e.e',
+//   email: 'test9@e.e',
 //   password: 'password',
 //   firstName: 'f',
 //   lastName: 'l',
@@ -76,16 +90,18 @@ export const firstUpdateAddress = async (props: {
 //   ],
 // };
 
-// createCustomer(user)
-// .then((resp) => {
-//   firstUpdateAddress({
-//     userId: resp.body.customer.id,
-//     isCheckedShipping: true,
-//     isCheckedBilling: false,
-//   })
-//     .then((updateResp) => {
-//       console.log('updateResp', updateResp);
-//     })
-//     .catch(console.log);
-// })
-// .catch(console.log);
+// createCustomer({ isCheckedCopyCheckBox, ...user })
+//   .then((resp) => {
+//      console.log('resp', resp);
+//      firstUpdateAddress({
+//        isCheckedCopyCheckBox,
+//        isCheckedShipping,
+//        isCheckedBilling,
+//        userId: resp.body.customer.id,
+//      })
+//        .then((updateResp) => {
+//          console.log('updateResp', updateResp);
+//        })
+//        .catch(console.log);
+//    })
+//    .catch(console.log);

@@ -23,10 +23,20 @@ export const createCustomer = async (props: {
   dateOfBirth: string;
   addresses: CustomAddress[];
 }): Promise<ClientResponse<CustomerSignInResult>> => {
+  const { email, password, firstName, lastName, dateOfBirth, addresses } =
+    props;
+
   return apiRoot
     .customers()
     .post({
-      body: props,
+      body: {
+        email,
+        password,
+        firstName,
+        lastName,
+        dateOfBirth,
+        addresses,
+      },
     })
     .execute();
 };
@@ -34,7 +44,7 @@ export const createCustomer = async (props: {
 // Пример использования:
 
 // const user = {
-//   email: 'test4@e.e',
+//   email: 'test9@e.e',
 //   password: 'password',
 //   firstName: 'f',
 //   lastName: 'l',
@@ -57,16 +67,18 @@ export const createCustomer = async (props: {
 //   ],
 // };
 
-// createCustomer(user)
-// .then((resp) => {
-//   firstUpdateAddress({
-//     userId: resp.body.customer.id,
-//     isCheckedShipping: true,
-//     isCheckedBilling: false,
-//   })
-//     .then((updateResp) => {
-//       console.log('updateResp', updateResp);
-//     })
-//     .catch(console.log);
-// })
-// .catch(console.log);
+// createCustomer({ isCheckedCopyCheckBox, ...user })
+//   .then((resp) => {
+//      console.log('resp', resp);
+//      firstUpdateAddress({
+//        isCheckedCopyCheckBox,
+//        isCheckedShipping,
+//        isCheckedBilling,
+//        userId: resp.body.customer.id,
+//      })
+//        .then((updateResp) => {
+//          console.log('updateResp', updateResp);
+//        })
+//        .catch(console.log);
+//    })
+//    .catch(console.log);

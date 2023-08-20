@@ -4,242 +4,226 @@ import {
   TextField,
   Typography,
   InputLabel,
-  Autocomplete,
   Grid,
   Box,
   Stack,
   Link,
+  Checkbox,
+  FormControl,
+  MenuItem,
+  Select,
+  FormHelperText,
+  InputAdornment,
+  IconButton,
 } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import type { ReactElement } from 'react';
-import { createCustomer } from '../../api/calls/createCustomer';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { type FieldValues, type SubmitHandler, useForm } from 'react-hook-form';
 import { CustomDialog } from './DialogModule';
-import { useAppDispatch } from '../../helpers/hooks/Hooks';
+import { RegisterSchema } from '../../helpers/yup/Yup';
+import { onPromise } from '../login/Login';
+import theme from '../../theme';
 import { login } from '../../store/reducers/CustomerSlice';
+import { useAppDispatch } from '../../helpers/hooks/Hooks';
+import { createCustomer } from '../../api/calls/customer/createCustomer';
+import { firstUpdateAddress } from '../../api/calls/customer/update/firstUpdateAddress';
+import { authPasswordCustomer } from '../../api/calls/customer/authPasswordCustomer';
+import { tokenCache } from '../../api/tokenCache';
+
+function getDateFromString(dataInput: string): string {
+  const dateParse = new Date(dataInput);
+  return `${dateParse.getFullYear()}-${
+    dateParse.getMonth() + 1
+  }-${dateParse.getDate()}`;
+}
 
 function RegisterForm(): ReactElement {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const countries = ['US', 'FR'];
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [date, setDate] = useState('');
-  const [street, setStreet] = useState('');
-  const [city, setCity] = useState('');
-  const [postCode, setPostCode] = useState('');
-  const [country, setCountry] = useState(countries[0]);
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    getValues,
+    setValue,
+  } = useForm({
+    mode: 'onChange',
+    resolver: yupResolver(RegisterSchema),
+  });
 
-  const [emailTouched, setEmailTouched] = useState(false);
-  const [passwordTouched, setPasswordTouched] = useState(false);
-  const [firstNameTouched, setFirstNameTouched] = useState(false);
-  const [lastNameTouched, setLastNameTouched] = useState(false);
-  const [streetTouched, setStreetTouched] = useState(false);
-  const [cityTouched, setCityTouched] = useState(false);
-  const [dateTouched, setDateTouched] = useState(false);
-  const [postCodeTouched, setPostCodeTouched] = useState(false);
-  const [countryTouched, setCountryTouched] = useState(false);
+  const [isCheckedCopyCheckBox, setIsCheckedCopyCheckBox] = useState(false);
+  const [isCheckedShipping, setIsCheckedShipping] = useState(false);
+  const [isCheckedBilling, setIsCheckedBilling] = useState(false);
+
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}(?<!\s)$/;
-  const nameRegex = /^[a-zA-Zа-яА-ЯàâäçéèêëîïôœùûüÿÀÂÄÇÉÈÊËÎÏÔŒÙÛÜŸ]+$/;
-  const streetRegex = /.+/;
-  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  const postCodeRegex = /^\d{5}$/;
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogTitle, setDialogTitle] = useState('');
   const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = (): void => {
+    setShowPassword((show) => !show);
+  };
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ): void => {
+    event.preventDefault();
+  };
 
   const openDialog = (title: string, content: React.ReactNode): void => {
     setDialogTitle(title);
     setDialogContent(content);
     setDialogOpen(true);
   };
-
-  const handleEmailChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setEmail(event.target.value);
-    setEmailTouched(true);
-  };
-  const handlePasswordChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setPassword(event.target.value);
-    setPasswordTouched(true);
-  };
-  const handleFirstNameChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setFirstName(event.target.value);
-    setFirstNameTouched(true);
-  };
-
-  const handleLastNameChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setLastName(event.target.value);
-    setLastNameTouched(true);
-  };
-  const handleDateChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setDate(event.target.value);
-    setDateTouched(true);
-  };
-  const handleStreetChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setStreet(event.target.value);
-    setStreetTouched(true);
-  };
-  const handleCityChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setCity(event.target.value);
-    setCityTouched(true);
-  };
-  const handlePostCodeChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ): void => {
-    setPostCode(event.target.value);
-    setPostCodeTouched(true);
-  };
-  const handleCountryChange = (): void => {
-    setCountryTouched(true);
-  };
-
-  const isUserOlderThan13Years = (dateString: string): boolean => {
-    const today = new Date();
-    const birthdate = new Date(dateString);
-    let age = today.getFullYear() - birthdate.getFullYear();
-    const monthDiff = today.getMonth() - birthdate.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthdate.getDate())
-    ) {
-      age -= 1;
-    }
-    return age >= 13;
-  };
-
-  const isEmailValid = emailTouched && emailRegex.test(email);
-  const isPasswordValid = passwordTouched && passwordRegex.test(password);
-  const isFirstNameValid = firstNameTouched && nameRegex.test(firstName);
-  const isLastNameValid = lastNameTouched && nameRegex.test(lastName);
-  const isBirthdateValid =
-    dateTouched && dateRegex.test(date) && isUserOlderThan13Years(date);
-  const isStreetValid = streetTouched && streetRegex.test(street);
-  const isCityValid = cityTouched && nameRegex.test(city);
-  const isPostCodeValid = postCodeTouched && postCodeRegex.test(postCode);
-  const isCountryValid = Boolean(country);
-
-  const handleSubmit = (e: { preventDefault: () => void }): void => {
-    e.preventDefault();
-    if (
-      isEmailValid &&
-      isPasswordValid &&
-      isFirstNameValid &&
-      isLastNameValid &&
-      isBirthdateValid &&
-      isStreetValid &&
-      isCityValid &&
-      isPostCodeValid &&
-      isCountryValid
-    ) {
-      createCustomer({
-        email: `${email}`,
-        password: `${password}`,
-        firstName: `${firstName}`,
-        lastName: `${lastName}`,
-        dateOfBirth: date,
-        addresses: [
+  const handleSubmitForm: SubmitHandler<FieldValues> = (data): void => {
+    const addressArray = isCheckedCopyCheckBox
+      ? [
           {
-            country,
-            city,
-            streetName: street,
-            postalCode: postCode,
+            country: data.country1,
+            city: data.city1,
+            streetName: data.street1,
+            postalCode: data.post1,
+            key: 'firstBothAddress',
           },
-        ],
+        ]
+      : [
+          {
+            country: data.country1,
+            city: data.city1,
+            streetName: data.street1,
+            postalCode: data.post1,
+            key: 'firstShippingAddress',
+          },
+          {
+            country: data.country2,
+            city: data.city2,
+            streetName: data.street2,
+            postalCode: data.post2,
+            key: 'firstBillingAddress',
+          },
+        ];
+
+    const customer = {
+      email: data.email,
+      password: data.password,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      dateOfBirth: getDateFromString(data.date),
+      addresses: addressArray,
+      isCheckedCopyCheckBox,
+    };
+
+    createCustomer(customer)
+      .then((resp) => {
+        if (resp.statusCode === 201) {
+          firstUpdateAddress({
+            userId: resp.body.customer.id,
+            isCheckedShipping,
+            isCheckedBilling,
+            isCheckedCopyCheckBox,
+          })
+            .then(async (updateResp) => {
+              console.log('updateResp', updateResp);
+              await authPasswordCustomer({
+                email: data.email,
+                password: data.password,
+              }).then((response) => {
+                console.log(response);
+                dispatch(
+                  login({
+                    customerId: JSON.stringify(response.body.customer.id),
+                    token: tokenCache.get().token,
+                  }),
+                );
+                setRegistrationSuccess(true);
+                openDialog('Successfully', 'User registered');
+              });
+            })
+            .catch(console.log);
+        } else {
+          const errorMessage =
+            resp.statusCode !== undefined
+              ? `Error: ${String(resp.statusCode)}, try later`
+              : 'Unknown Error, try later';
+          openDialog('Error', errorMessage);
+        }
       })
-        .then((resp) => {
-          if (resp.statusCode === 201) {
-            dispatch(login(JSON.stringify(resp.body.customer.id)));
-            setRegistrationSuccess(true);
-            openDialog('Successfully', 'User registered');
-          } else {
-            const errorMessage =
-              resp.statusCode !== undefined
-                ? `Error: ${String(resp.statusCode)}, try later`
-                : 'Unknown Error, try later';
-            openDialog('Error', errorMessage);
-          }
-        })
-        .catch((err) => {
-          if (err.statusCode === 400) {
-            const content = (
-              <div>
-                User with this email already exists. Do you want to:
-                <br />
-                <Button
-                  variant="text"
-                  color="primary"
-                  onClick={() => {
-                    navigate('/login');
-                    setDialogOpen(false);
-                  }}
-                >
-                  Log In
-                </Button>
-                <Button
-                  variant="text"
-                  color="primary"
-                  onClick={() => {
-                    setDialogOpen(false);
-                  }}
-                >
-                  Use another email
-                </Button>
-              </div>
-            );
-            openDialog('Error', content);
-          } else {
-            const errorMessage =
-              err.statusCode !== undefined
-                ? `Error: ${String(err.statusCode)}, try later`
-                : 'Unknown Error, try later';
-            openDialog('Error', errorMessage);
-          }
-        });
+      .catch((err) => {
+        if (err.statusCode === 400) {
+          const content = (
+            <div>
+              User with this email already exists. Do you want to:
+              <br />
+              <Button
+                variant="text"
+                color="primary"
+                onClick={() => {
+                  navigate('/login');
+                  setDialogOpen(false);
+                }}
+              >
+                Log In
+              </Button>
+              <Button
+                variant="text"
+                color="primary"
+                onClick={() => {
+                  setDialogOpen(false);
+                }}
+              >
+                Use another email
+              </Button>
+            </div>
+          );
+          openDialog('Error', content);
+        } else {
+          const errorMessage =
+            err.statusCode !== undefined
+              ? `Error: ${String(err.statusCode)}, try later`
+              : 'Unknown Error, try later';
+          openDialog('Error', errorMessage);
+        }
+      });
+  };
+
+  const onChangeCheckedBoxCopy = (
+    target: EventTarget & HTMLInputElement,
+  ): void => {
+    if (target.checked) {
+      setValue('city2', getValues('city1'));
+      setValue('street2', getValues('street1'));
+      setValue('country2', getValues('country1'));
+      setValue('post2', getValues('post1'));
     } else {
-      openDialog('Error', 'There are blank fields or fields with errors');
+      setValue('city2', '');
+      setValue('street2', '');
+      setValue('country2', '');
+      setValue('post2', '');
     }
   };
 
   return (
     <>
       <Stack mt={3} justifyContent="center" alignItems="center">
-        <form style={{ width: '90%', maxWidth: '640px' }}>
+        <form
+          autoComplete="off"
+          onSubmit={onPromise(handleSubmit(handleSubmitForm))}
+          style={{ width: '98%', maxWidth: '640px' }}
+        >
           <Box sx={{ width: '100%' }}>
-            <Grid
-              container
-              spacing={0}
-              style={{ gridRowGap: 5 }}
-              justifyContent={'space-between'}
-              boxShadow={'5px 5px 10px #ccc'}
-              padding={'10%'}
-              borderRadius={5}
-            >
+            <Grid container columnSpacing={2}>
               <Grid item xs={12}>
-                <Typography variant="h2" textAlign={'left'}>
+                <Typography variant="h2" textAlign={'center'}>
                   Sign Up
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography variant="body1" textAlign={'left'}>
+                <Typography variant="body1" textAlign={'center'}>
                   Enter your details to create your account:
                 </Typography>
               </Grid>
@@ -250,11 +234,11 @@ function RegisterForm(): ReactElement {
                   label="Email"
                   variant="outlined"
                   placeholder="Enter your email"
-                  onChange={handleEmailChange}
-                  error={!isEmailValid && emailTouched}
+                  error={!(errors.email == null)}
                   helperText={
-                    !isEmailValid && emailTouched ? 'Not valid Email' : ''
+                    errors.email != null ? errors.email.message?.toString() : ''
                   }
+                  {...register('email')}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -263,48 +247,60 @@ function RegisterForm(): ReactElement {
                   margin="dense"
                   label="Password"
                   variant="outlined"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
-                  onChange={handlePasswordChange}
-                  error={!isPasswordValid && passwordTouched}
+                  error={!(errors.password == null)}
                   helperText={
-                    !isPasswordValid && passwordTouched
-                      ? 'Minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, 1 number one special character'
+                    errors.password != null
+                      ? errors.password.message?.toString()
                       : ''
                   }
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {showPassword ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  {...register('password')}
                 />
               </Grid>
-              <Grid item xs={12} md={5.8}>
+              <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
                   label="First name"
                   variant="outlined"
                   placeholder="Enter your first name"
-                  value={firstName}
-                  onChange={handleFirstNameChange}
-                  error={!isFirstNameValid && firstNameTouched}
+                  error={!(errors.firstName == null)}
                   helperText={
-                    !isFirstNameValid && firstNameTouched
-                      ? 'Must contain at least one character and no special characters or numbers'
+                    errors.firstName != null
+                      ? errors.firstName.message?.toString()
                       : ''
                   }
+                  {...register('firstName')}
                 />
               </Grid>
-              <Grid item xs={12} md={5.8}>
+              <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
                   label="Last name"
                   variant="outlined"
                   placeholder="Enter your last name"
-                  value={lastName}
-                  onChange={handleLastNameChange}
-                  error={!isLastNameValid && lastNameTouched}
+                  error={!(errors.lastName == null)}
                   helperText={
-                    !isLastNameValid && lastNameTouched
-                      ? 'Must contain at least one character and no special characters or numbers'
+                    errors.lastName != null
+                      ? errors.lastName.message?.toString()
                       : ''
                   }
+                  {...register('lastName')}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -316,100 +312,253 @@ function RegisterForm(): ReactElement {
                   fullWidth={true}
                   margin="dense"
                   variant="outlined"
+                  defaultValue="2023-01-01"
+                  sx={{
+                    cursor: 'pointer',
+                  }}
                   placeholder="Enter your birthdate"
-                  onChange={handleDateChange}
-                  error={!isBirthdateValid && dateTouched}
+                  error={!(errors.date == null)}
                   helperText={
-                    !isBirthdateValid && dateTouched
-                      ? 'You must be at least 13 years old'
-                      : ''
+                    errors.date != null ? errors.date.message?.toString() : ''
                   }
+                  {...register('date')}
                 />
               </Grid>
-              <Grid item xs={12}>
-                <InputLabel sx={{ marginTop: '20px' }}>Address</InputLabel>
+              <Grid item xs={12} sm={6}>
+                <InputLabel sx={{ marginTop: '20px' }}>
+                  Shipping address:
+                </InputLabel>
               </Grid>
-              <Grid item xs={12} md={5.8}>
+              <Grid item xs={12} sm={6}>
+                <Typography
+                  variant="inherit"
+                  sx={{ marginTop: { sm: '13px' }, textAlign: { sm: 'end' } }}
+                >
+                  <Checkbox
+                    size="small"
+                    sx={{
+                      top: '-1px',
+                    }}
+                    onChange={(event) => {
+                      if (event.target.checked) setIsCheckedShipping(true);
+                      else setIsCheckedShipping(false);
+                    }}
+                  />
+                  Set as default
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
                   label="Street"
                   variant="outlined"
+                  onInput={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    if (isCheckedCopyCheckBox) {
+                      setValue('street2', target.value);
+                    }
+                  }}
                   placeholder="Enter your street"
-                  onChange={handleStreetChange}
-                  error={!isStreetValid && streetTouched}
+                  error={!(errors.street1 == null)}
                   helperText={
-                    !isStreetValid && streetTouched
-                      ? 'Must contain at least one character'
+                    errors.street1 != null
+                      ? errors.street1.message?.toString()
                       : ''
                   }
+                  {...register('street1')}
                 />
               </Grid>
-              <Grid item xs={12} md={5.8}>
+              <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
                   label="City"
                   variant="outlined"
+                  onInput={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    if (isCheckedCopyCheckBox) {
+                      setValue('city2', target.value);
+                    }
+                  }}
                   placeholder="Enter your city"
-                  onChange={handleCityChange}
-                  error={!isCityValid && cityTouched}
+                  error={!(errors.city1 == null)}
                   helperText={
-                    !isCityValid && cityTouched
-                      ? 'Must contain at least one character and no special characters or numbers'
-                      : ''
+                    errors.city1 != null ? errors.city1.message?.toString() : ''
                   }
+                  {...register('city1')}
                 />
               </Grid>
-              <Grid item xs={12} md={5.8}>
+              <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth={true}
                   margin="dense"
                   label="Postal code"
                   variant="outlined"
-                  placeholder="Enter your postal code"
-                  onChange={handlePostCodeChange}
-                  error={!isPostCodeValid && postCodeTouched}
-                  helperText={
-                    !isPostCodeValid && postCodeTouched
-                      ? 'Must be a five digit number'
-                      : ''
-                  }
-                />
-              </Grid>
-              <Grid item xs={12} md={5.8}>
-                <Autocomplete
-                  sx={{ width: '100%', marginTop: '8px' }}
-                  fullWidth={true}
-                  options={countries}
-                  value={country}
-                  onChange={(e, newValue) => {
-                    if (newValue !== null) {
-                      setCountry(newValue);
+                  onInput={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    if (isCheckedCopyCheckBox) {
+                      setValue('post2', target.value);
                     }
                   }}
-                  onBlur={handleCountryChange}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Country"
-                      onChange={handleCountryChange}
-                      error={!isCountryValid && countryTouched}
-                      helperText={
-                        !isCountryValid && countryTouched
-                          ? 'Select a country from the list'
-                          : ''
-                      }
-                    />
-                  )}
+                  placeholder="Enter your postal code"
+                  error={!(errors.post1 == null)}
+                  helperText={
+                    errors.post1 != null ? errors.post1.message?.toString() : ''
+                  }
+                  {...register('post1')}
                 />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <FormControl
+                  fullWidth
+                  variant="filled"
+                  sx={{ marginTop: '8px' }}
+                >
+                  <InputLabel>Country</InputLabel>
+                  <Select
+                    label="Country"
+                    defaultValue=""
+                    onClose={() => {
+                      if (isCheckedCopyCheckBox) {
+                        setValue('country2', getValues('country1'));
+                      }
+                    }}
+                    error={!(errors.country1 == null)}
+                    {...register('country1')}
+                  >
+                    <MenuItem value={'US'}>USA</MenuItem>
+                    <MenuItem value={'FR'}>France</MenuItem>
+                  </Select>
+                  <FormHelperText sx={{ color: theme.palette.error.main }}>
+                    {errors.country1 != null
+                      ? errors.country1.message?.toString()
+                      : ''}
+                  </FormHelperText>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography variant="inherit">
+                  <Checkbox
+                    size="small"
+                    sx={{
+                      top: '-1px',
+                    }}
+                    onChange={(event) => {
+                      onChangeCheckedBoxCopy(event.target);
+                      setIsCheckedCopyCheckBox(event.target.checked);
+                    }}
+                  />
+                  Make billing details same as shipping
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <InputLabel sx={{ marginTop: '20px' }}>
+                  Billing address:
+                </InputLabel>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography
+                  variant="inherit"
+                  sx={{ marginTop: { sm: '13px' }, textAlign: { sm: 'end' } }}
+                >
+                  <Checkbox
+                    size="small"
+                    sx={{
+                      top: '-1px',
+                    }}
+                    onChange={(event) => {
+                      if (event.target.checked) setIsCheckedBilling(true);
+                      else setIsCheckedBilling(false);
+                    }}
+                  />
+                  Set as default
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth={true}
+                  margin="dense"
+                  label="Street"
+                  style={{
+                    display: isCheckedCopyCheckBox ? 'none' : 'block',
+                  }}
+                  variant="outlined"
+                  placeholder="Enter your street"
+                  error={!(errors.street2 == null) && !isCheckedCopyCheckBox}
+                  helperText={
+                    errors.street2 != null
+                      ? errors.street2.message?.toString()
+                      : ''
+                  }
+                  {...register('street2')}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth={true}
+                  margin="dense"
+                  label="City"
+                  style={{
+                    display: isCheckedCopyCheckBox ? 'none' : 'block',
+                  }}
+                  variant="outlined"
+                  placeholder="Enter your city"
+                  error={!(errors.city2 == null) && !isCheckedCopyCheckBox}
+                  helperText={
+                    errors.city2 != null ? errors.city2.message?.toString() : ''
+                  }
+                  {...register('city2')}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  fullWidth={true}
+                  margin="dense"
+                  label="Postal code"
+                  style={{
+                    display: isCheckedCopyCheckBox ? 'none' : 'block',
+                  }}
+                  variant="outlined"
+                  placeholder="Enter your postal code"
+                  error={!(errors.post2 == null) && !isCheckedCopyCheckBox}
+                  helperText={
+                    errors.post2 != null ? errors.post2.message?.toString() : ''
+                  }
+                  {...register('post2')}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <FormControl
+                  fullWidth
+                  variant="filled"
+                  sx={{
+                    marginTop: '8px',
+                    display: isCheckedCopyCheckBox ? 'none' : 'inline-flex',
+                  }}
+                >
+                  <InputLabel id="demo-simple-select-label">Country</InputLabel>
+                  <Select
+                    label="Country"
+                    defaultValue=""
+                    error={!(errors.country2 == null) && !isCheckedCopyCheckBox}
+                    {...register('country2')}
+                  >
+                    <MenuItem value={'US'}>USA</MenuItem>
+                    <MenuItem value={'FR'}>France</MenuItem>
+                  </Select>
+                  <FormHelperText>
+                    {errors.country2 != null
+                      ? errors.country2.message?.toString()
+                      : ''}
+                  </FormHelperText>
+                </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <Button
                   sx={{ width: '100%', marginTop: '20px' }}
                   type="submit"
                   variant="contained"
-                  onClick={handleSubmit}
                 >
                   Sign Up
                 </Button>

@@ -14,7 +14,8 @@ import {
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
-import { useIsLogged } from '../../helpers/hooks/Hooks';
+import { useAppDispatch, useIsLogged } from '../../helpers/hooks/Hooks';
+import { logout } from '../../store/reducers/CustomerSlice';
 
 const TextSpan = (props: { child: string }): ReactElement => {
   return <span>{props.child}</span>;
@@ -40,6 +41,7 @@ const NavLink = styled(Button)<ButtonProps>(() => ({
 
 const NotFound = (): ReactElement => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const title = '404'.split('');
 
   return (
@@ -65,16 +67,6 @@ const NotFound = (): ReactElement => {
             Home
           </NavLink>
         </LightTooltip>
-        <LightTooltip title="About Us">
-          <NavLink
-            variant="text"
-            onClick={(): void => {
-              navigate('/');
-            }}
-          >
-            About
-          </NavLink>
-        </LightTooltip>
         <LightTooltip title={useIsLogged() ? "You're logged in" : 'Log In'}>
           <span>
             <NavLink
@@ -90,6 +82,21 @@ const NotFound = (): ReactElement => {
           </span>
         </LightTooltip>
         <LightTooltip
+          title={useIsLogged() ? "You're logged in" : 'Registration'}
+        >
+          <span>
+            <NavLink
+              variant="text"
+              disabled={useIsLogged()}
+              onClick={(): void => {
+                navigate('/register');
+              }}
+            >
+              Sign Up
+            </NavLink>
+          </span>
+        </LightTooltip>
+        <LightTooltip
           title={useIsLogged() ? 'Log Out' : "You aren't authorized"}
         >
           <span>
@@ -98,7 +105,8 @@ const NotFound = (): ReactElement => {
               startIcon={<LogoutIcon />}
               disabled={!useIsLogged()}
               onClick={(): void => {
-                navigate('/register');
+                dispatch(logout());
+                navigate('/login');
               }}
             >
               LogOut
