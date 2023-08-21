@@ -35,7 +35,6 @@ export const apiRootCreateByToken = (): ByProjectKeyRequestBuilder => {
       .withProjectKey(projectKey)
       .withHttpMiddleware(httpMiddlewareOptions)
       .withExistingTokenFlow(`Bearer ${tokenCache.get().token}`, options)
-      .withLoggerMiddleware()
       .build(),
   ).withProjectKey({
     projectKey: 'eperfume',
