@@ -41,7 +41,6 @@ export const apiPasswordFlowRoot = (
     .withProjectKey(projectKey)
     .withPasswordFlow(passwordAuthMiddlewareOptions)
     .withHttpMiddleware(httpMiddlewareOptions)
-    .withLoggerMiddleware()
     .build();
 
   return createApiBuilderFromCtpClient(ctpClient).withProjectKey({

@@ -127,13 +127,11 @@ function RegisterForm(): ReactElement {
             isCheckedBilling,
             isCheckedCopyCheckBox,
           })
-            .then(async (updateResp) => {
-              console.log('updateResp', updateResp);
+            .then(async () => {
               await authPasswordCustomer({
                 email: data.email,
                 password: data.password,
               }).then((response) => {
-                console.log(response);
                 dispatch(
                   login({
                     customerId: JSON.stringify(response.body.customer.id),
