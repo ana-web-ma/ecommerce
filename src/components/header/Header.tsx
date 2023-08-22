@@ -10,13 +10,12 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import React, { type ReactElement } from 'react';
+import React, { useState, type ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
-import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
@@ -34,7 +33,11 @@ function HeaderLink(props: {
   const navigate = useNavigate();
 
   return (
-    <Typography variant="h3">
+    <Typography
+      variant="h3"
+      mb={3}
+      sx={{ fontSize: { md: '17px', lg: '20px' } }}
+    >
       <Link
         onClick={(): void => {
           navigate(props.path);
@@ -44,10 +47,8 @@ function HeaderLink(props: {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: '10px',
         }}
       >
-        {props.icon}
         {props.text}
       </Link>
     </Typography>
@@ -57,7 +58,7 @@ function HeaderLink(props: {
 const Header = (): ReactElement => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [checkedMenu, setCheckedMenu] = React.useState(false);
+  const [checkedMenu, setCheckedMenu] = useState(false);
 
   const handleDrawerToggle = (action: boolean): void => {
     setCheckedMenu(action);
@@ -68,7 +69,7 @@ const Header = (): ReactElement => {
     {
       isLogged: useIsLogged(),
       icon: <PermIdentityIcon />,
-      tooltip: 'My Account',
+      tooltip: 'My Profile',
       path: '/my-profile',
     },
     {
@@ -90,6 +91,16 @@ const Header = (): ReactElement => {
       path: '/register',
     },
   ];
+  const navMenuLinks = (
+    <>
+      <HeaderLink text="Home" path="/" />
+      <HeaderLink text="Catalog" path="/catalog" />
+      <HeaderLink text="NEW&TRENDING" path="/" />
+      <HeaderLink text="FRAGRANCES" path="/" />
+      <HeaderLink text="INTERIOR" path="/" />
+      <HeaderLink text="About Us" path="/about" />
+    </>
+  );
 
   const drawer = (
     <Stack height="100%" justifyContent="center" alignItems="center">
@@ -99,28 +110,7 @@ const Header = (): ReactElement => {
           handleDrawerToggle(false);
         }}
       >
-        <HeaderLink text="Home" path="/" icon={<HomeIcon />} />
-        {!useIsLogged() ? (
-          <HeaderLink text="Log in" path="/login" icon={<LoginIcon />} />
-        ) : (
-          ''
-        )}
-        {!useIsLogged() ? (
-          <HeaderLink text="Registration" path="/register" icon={<AddIcon />} />
-        ) : (
-          ''
-        )}
-        <Box
-          onClick={() => {
-            dispatch(logout());
-          }}
-        >
-          {useIsLogged() ? (
-            <HeaderLink text="Log out" path="/" icon={<LogoutIcon />} />
-          ) : (
-            ''
-          )}
-        </Box>
+        {navMenuLinks}
       </Stack>
     </Stack>
   );
@@ -141,6 +131,7 @@ const Header = (): ReactElement => {
         >
           <img src={logo} />
         </IconButton>
+
         <Checkbox
           sx={{
             '& .MuiSvgIcon-root': { color: 'black', fontSize: 38 },
@@ -153,6 +144,7 @@ const Header = (): ReactElement => {
             setCheckedMenu(event.target.checked);
           }}
         />
+
         <Stack
           direction="row"
           justifyContent="center"
@@ -167,11 +159,7 @@ const Header = (): ReactElement => {
             setCheckedMenu(false);
           }}
         >
-          <HeaderLink text="Home" path="/" />
-          <HeaderLink text="NEW & TRENDING" path="/" />
-          <HeaderLink text="FRAGRANCES" path="/" />
-          <HeaderLink text="INTERIOR" path="/" />
-          <HeaderLink text="About Us" path="/" />
+          {navMenuLinks}
         </Stack>
 
         <SpeedDial
@@ -210,6 +198,7 @@ const Header = (): ReactElement => {
                 component={Link}
                 onClick={() => {
                   dispatch(logout());
+                  navigate('/login');
                 }}
               >
                 <LogoutIcon />
@@ -219,79 +208,36 @@ const Header = (): ReactElement => {
           />
         </SpeedDial>
 
-        <Box sx={{ display: { md: 'none', xs: 'block' } }}></Box>
+        <Box sx={{ display: { md: 'none', xs: 'block' }, width: '50px' }}></Box>
+
         <Box sx={{ display: { md: 'flex', xs: 'none' } }}>
-          <Tooltip title="Search">
-            <IconButton
-              component={Link}
-              onClick={(): void => {
-                navigate('/');
-              }}
+          {actionLink.map((link, ind) => (
+            <Tooltip
+              title={link.tooltip}
+              key={`activeNavLink-${ind}`}
+              sx={{ display: link.isLogged ? 'block' : 'none' }}
             >
-              <SearchIcon />
-            </IconButton>
-          </Tooltip>
-          {useIsLogged() ? (
-            <Tooltip title="My Account">
               <IconButton
                 component={Link}
                 onClick={(): void => {
-                  navigate('/my-profile');
+                  navigate(link.path);
                 }}
               >
-                <PermIdentityIcon />
+                {link.icon}
               </IconButton>
             </Tooltip>
-          ) : (
-            ''
-          )}
-          <Tooltip title="Shopping Bag">
-            <IconButton
-              component={Link}
-              onClick={(): void => {
-                navigate('/cart');
-              }}
-            >
-              <ShoppingBagIcon />
-            </IconButton>
-          </Tooltip>
+          ))}
+
           {useIsLogged() ? (
             <Tooltip title="Log Out">
               <IconButton
                 component={Link}
                 onClick={() => {
                   dispatch(logout());
-                }}
-              >
-                <LogoutIcon />
-              </IconButton>
-            </Tooltip>
-          ) : (
-            ''
-          )}
-          {!useIsLogged() ? (
-            <Tooltip title="Log In">
-              <IconButton
-                component={Link}
-                onClick={(): void => {
                   navigate('/login');
                 }}
               >
-                <LoginIcon />
-              </IconButton>
-            </Tooltip>
-          ) : (
-            ''
-          )}
-          {!useIsLogged() ? (
-            <Tooltip title="Create a new account">
-              <IconButton
-                component={Link}
-                onClick={(): void => {
-                  navigate('/register');
-                }}
-              >
-                <AddIcon />
+                <LogoutIcon />
               </IconButton>
             </Tooltip>
           ) : (
