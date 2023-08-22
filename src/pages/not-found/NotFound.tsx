@@ -92,7 +92,7 @@ const NotFound = (): ReactElement => {
                 navigate('/register');
               }}
             >
-              Sign Up
+              SignUp
             </NavLink>
           </span>
         </LightTooltip>
