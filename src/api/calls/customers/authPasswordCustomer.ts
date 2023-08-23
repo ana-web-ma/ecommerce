@@ -4,9 +4,7 @@ import {
 } from '@commercetools/platform-sdk';
 import { apiPasswordFlowRoot } from '../../clients/PasswordFlowClient';
 
-// Пользователь найден: statusCode: 200
-// Неправильный email или пароль: statusCode: 400
-// Возвращает данные пользователя и сохраняет токен
+// Returns user data and save the token
 export const authPasswordCustomer = async (props: {
   email: string;
   password: string;
@@ -25,7 +23,7 @@ export const authPasswordCustomer = async (props: {
     .execute();
 };
 
-// Пример использования:
+// How to use:
 
 // authPasswordCustomer({
 //   email: 'example-email.example.com',

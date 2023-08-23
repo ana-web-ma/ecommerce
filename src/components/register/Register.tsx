@@ -27,9 +27,9 @@ import { onPromise } from '../login/Login';
 import theme from '../../theme';
 import { login } from '../../store/reducers/CustomerSlice';
 import { useAppDispatch } from '../../helpers/hooks/Hooks';
-import { createCustomer } from '../../api/calls/customer/createCustomer';
-import { firstUpdateAddress } from '../../api/calls/customer/update/firstUpdateAddress';
-import { authPasswordCustomer } from '../../api/calls/customer/authPasswordCustomer';
+import { createCustomer } from '../../api/calls/customers/createCustomer';
+import { firstUpdateAddress } from '../../api/calls/customers/update/firstUpdateAddress';
+import { authPasswordCustomer } from '../../api/calls/customers/authPasswordCustomer';
 import { tokenCache } from '../../api/tokenCache';
 
 function getDateFromString(dataInput: string): string {

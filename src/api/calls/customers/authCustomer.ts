@@ -4,8 +4,6 @@ import {
 } from '@commercetools/platform-sdk';
 import { apiRoot } from '../../clients/BuildClient';
 
-// Пользователь найден: statusCode: 200
-// Неправильный email или пароль: statusCode: 400
 export const authCustomer = async (props: {
   email: string;
   password: string;
@@ -21,7 +19,7 @@ export const authCustomer = async (props: {
     .execute();
 };
 
-// Пример использования:
+// How to use:
 
 // authCustomer({ email: 'example-email.example.com', password: 'password' })
 //   .then(console.log)

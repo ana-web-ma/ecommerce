@@ -11,8 +11,9 @@ import {
   Typography,
 } from '@mui/material';
 import { type ReactElement } from 'react';
-import { createCustomer } from '../../../api/calls/customer/createCustomer';
-import { firstUpdateAddress } from '../../../api/calls/customer/update/firstUpdateAddress';
+import { createCustomer } from '../../../api/calls/customers/createCustomer';
+import { firstUpdateAddress } from '../../../api/calls/customers/update/firstUpdateAddress';
+import { getProducts } from '../../../api/calls/products/getProducts';
 
 function DemoComponent(): ReactElement {
   const isCheckedCopyCheckBox = true;
@@ -59,11 +60,34 @@ function DemoComponent(): ReactElement {
       })
       .catch(console.log);
   };
+
+  const handleProductsSubmit = (e: { preventDefault: () => void }): void => {
+    getProducts({
+      limit: 5,
+      pageNumber: 3,
+      sort: {
+        field: 'id',
+        order: 'desc',
+      },
+      filter: {
+        categoriesById: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
+        // productByKey: { key: '34 Boulevard Saint Germain' },
+      },
+    })
+      .then((resp) => {
+        console.log('resp', resp.body.results);
+      })
+      .catch(console.log);
+  };
+
   return (
     <>
       <Container>
         <Button variant="contained" onClick={handleSubmit}>
           ADD USER
+        </Button>
+        <Button variant="contained" onClick={handleProductsSubmit}>
+          get products
         </Button>
         <Grid container>
           <Grid item>
