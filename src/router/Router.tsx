@@ -9,6 +9,7 @@ import About from '../pages/about/About';
 import Catalog from '../pages/catalog/Catalog';
 import Profile from '../pages/profile/Profile';
 import Cart from '../pages/cart/Cart';
+import ProductPage from '../pages/product/ProductPage';
 
 const isLogged = (): Response | null => {
   const customerData = localStorage.getItem('EPERFUME_CUSTOMER_TOKEN');
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
       {
         path: '/catalog',
         element: <Catalog />,
+      },
+      {
+        path: '/product',
+        element: <ProductPage />,
       },
     ],
   },

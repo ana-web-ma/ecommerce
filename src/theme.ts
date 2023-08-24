@@ -291,15 +291,16 @@ const theme = createTheme({
     MuiLink: {
       styleOverrides: {
         root: {
-          color: blue.A400,
-          textDecoration: 'none',
+          color: '#00000040',
+          fontWeight: 700,
+          textDecoration: 'underline',
           cursor: 'pointer',
           transition: '.3s',
           '&:hover': {
-            opacity: 0.3,
+            color: '#00000060',
           },
           '&:active': {
-            textDecoration: 'underline',
+            color: '#00000090',
           },
         },
       },
