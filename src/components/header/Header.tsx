@@ -236,6 +236,7 @@ const Header = (): ReactElement => {
                   dispatch(logout());
                   navigate('/login');
                 }}
+                sx={{ mt: '-7px' }}
               >
                 <LogoutIcon />
               </IconButton>
