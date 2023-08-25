@@ -8,7 +8,18 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import React, { type ReactElement } from 'react';
+import React, { useRef, type ReactElement } from 'react';
+// import Swiper core and required modules
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
+
+import { Swiper, SwiperSlide, type SwiperRef } from 'swiper/react';
+// import { SwiperOptions } from 'swiper/types';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
 import { getProducts } from '../../api/calls/products/getProducts';
 import DemoComponent from '../ui/demo/DemoComponent';
 import Image from '../ui/Image';
@@ -189,7 +200,10 @@ const productRequestData = getProducts({
   },
 })
   .then((resp) => {
-    console.log('resp', resp.body.results);
+    console.log(
+      'e',
+      resp.body.results.map((e) => e),
+    );
   })
   .catch(console.log);
 
@@ -212,6 +226,16 @@ function srcset(
   };
 }
 
+// const NewsListSlider = (): void => {
+//   const newsListSwiperRef = useRef<SwiperRef>(null);
+
+//   const nextElementSwiper = (): void => {
+//     if (newsListSwiperRef.current == null) return false;
+
+//     newsListSwiperRef.current?.swiper?.slideNext();
+//   };
+// };
+
 const Product = (): ReactElement => {
   const [expanded, setExpanded] = React.useState(false);
 
@@ -223,6 +247,27 @@ const Product = (): ReactElement => {
     <>
       <Grid container spacing={0}>
         <Grid item xs={6}>
+          {/* <Swiper
+            // install Swiper modules
+            ref={newsListSwiperRef}
+            modules={[Navigation, Pagination, Scrollbar, A11y]}
+            spaceBetween={50}
+            slidesPerView={3}
+            navigation
+            pagination={{ clickable: true }}
+            scrollbar={{ draggable: true }}
+            onSwiper={(swiper) => {
+              console.log(swiper);
+            }}
+            onSlideChange={() => {
+              console.log('slide change');
+            }}
+          >
+            <SwiperSlide>Slide 1</SwiperSlide>
+            <SwiperSlide>Slide 2</SwiperSlide>
+            <SwiperSlide>Slide 3</SwiperSlide>
+            <SwiperSlide>Slide 4</SwiperSlide>
+          </Swiper> */}
           <Image
             name={productData.name['en-US']}
             url={productData.masterVariant.images[0].url}
