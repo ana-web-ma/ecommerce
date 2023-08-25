@@ -10,20 +10,17 @@ import {
 } from '@mui/material';
 import type { ReactElement, ChangeEvent } from 'react';
 import { Edit, Save } from '@mui/icons-material';
+import Adresses from './Adresses';
 
 function ProfileForm(): ReactElement {
   const [firstName, setFirstName] = useState('Initial First Name');
   const [lastName, setLastName] = useState('Initial Last Name');
   const [birthdate, setBirthdate] = useState('2023-01-01');
-  // const [shippingStreet, setShippingStreet] = useState('Shipping Street');
-  // const [shippingCity, setShippingCity] = useState('Shipping City');
-  // const [shippingCode, setShippingCode] = useState('Shipping Code');
-  // const [shippingCountry, setShippingCountry] = useState('Shipping Country');
+
   const [isEditingFName, setIsEditingFName] = useState(false);
   const [isEditingLName, setIsEditingLName] = useState(false);
   const [isEditingBirthdate, setIsEditingBirthdate] = useState(false);
-  // const [isEditingShippingCity, setIsEditingShippingCity] = useState(false);
-  // const [isEditingShippingStreet, setIsEditingShippingStreet] = useState(false);
+
   const [tabValue, setTabValue] = useState(0);
 
   const handleEditClickFName = (): void => {
@@ -44,18 +41,6 @@ function ProfileForm(): ReactElement {
   const handleSaveClickBirthdate = (): void => {
     setIsEditingBirthdate(false);
   };
-  // const handleEditClickShippingStreet = (): void => {
-  //   setIsEditingShippingStreet(true);
-  // };
-  // const handleSaveClickShippingStreet = (): void => {
-  //   setIsEditingShippingStreet(false);
-  // };
-  // const handleEditClickShippingCity = (): void => {
-  //   setIsEditingShippingCity(true);
-  // };
-  // const handleSaveClickShippingCity = (): void => {
-  //   setIsEditingShippingCity(false);
-  // };
 
   const handleChangeFName = (event: ChangeEvent<HTMLInputElement>): void => {
     setFirstName(event.target.value);
@@ -189,44 +174,7 @@ function ProfileForm(): ReactElement {
             </Button>
           </div>
         )}
-        {tabValue === 1 && (
-          <div>
-            <Typography variant="body1" textAlign={'center'}>
-              Billing adress
-            </Typography>
-            <TextField
-              value={lastName}
-              onChange={handleChangeLName}
-              fullWidth
-              label="Last name"
-              disabled={!isEditingLName}
-              style={{ marginBottom: '16px' }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {isEditingLName ? (
-                      <Button
-                        onClick={handleSaveClickLName}
-                        startIcon={<Save />}
-                        variant="contained"
-                      >
-                        Save
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={handleEditClickLName}
-                        startIcon={<Edit />}
-                        variant="outlined"
-                      >
-                        Edit
-                      </Button>
-                    )}
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </div>
-        )}
+        {tabValue === 1 && <Adresses></Adresses>}
       </form>
     </Stack>
   );
