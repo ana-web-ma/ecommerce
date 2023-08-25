@@ -527,14 +527,7 @@ function RegisterForm(): ReactElement {
                 />
               </Grid>
               <Grid item xs={12} md={6}>
-                <FormControl
-                  fullWidth
-                  variant="filled"
-                  sx={{
-                    marginTop: '8px',
-                    display: isCheckedCopyCheckBox ? 'none' : 'inline-flex',
-                  }}
-                >
+                <FormControl fullWidth variant="filled">
                   <InputLabel id="demo-simple-select-label">Country</InputLabel>
                   <Select
                     label="Country"
