@@ -176,24 +176,24 @@ const productData = {
   createdAt: '2023-08-22T01:47:37.374Z',
   lastModifiedAt: '2023-08-23T03:10:17.832Z',
 };
-const productRequestData = getProducts({
-  limit: 5,
-  pageNumber: 0,
-  sort: {
-    field: 'id',
-    order: 'desc',
-  },
-  filter: {
-    // categoriesById: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
-    productByKey: { key: 'FEU DE BOIS' },
-  },
-})
-  .then((resp) => {
-    console.log('resp', resp.body.results);
-  })
-  .catch(console.log);
+// const productRequestData = getProducts({
+//   limit: 5,
+//   pageNumber: 0,
+//   sort: {
+//     field: 'id',
+//     order: 'desc',
+//   },
+//   filter: {
+//     // categoriesById: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
+//     productByKey: { key: 'FEU DE BOIS' },
+//   },
+// })
+//   .then((resp) => {
+//     console.log('resp', resp.body.results);
+//   })
+//   .catch(console.log);
 
-console.log('productRequestData', productRequestData);
+// console.log('productRequestData', productRequestData);
 
 function srcset(
   image: string,

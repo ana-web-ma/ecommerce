@@ -65,15 +65,19 @@ function DemoComponent(): ReactElement {
 
   const handleProductsSubmit = (e: { preventDefault: () => void }): void => {
     getProducts({
-      limit: 5,
+      limit: 100,
       pageNumber: 0,
       sort: {
         field: 'id',
         order: 'desc',
       },
       filter: {
-        // categoriesById: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
-        productByKey: { key: '34 Boulevard Saint Germain' },
+        productsByCategoryId: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
+        // productByKey: { key: '34 Boulevard Saint Germain' },
+        productByPrice: {
+          from: 0,
+          to: 10000,
+        },
       },
     })
       .then((resp) => {
