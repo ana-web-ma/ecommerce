@@ -1,12 +1,13 @@
-import { Box, Typography } from '@mui/material';
 import React, { type ReactElement } from 'react';
+import { Stack } from '@mui/material';
+import Products from '../../components/products/Products';
 
 const Catalog = (): ReactElement => {
   return (
     <>
-      <Box textAlign={'center'}>
-        <Typography variant="h2">All products</Typography>
-      </Box>
+      <Stack alignItems="center" gap={3}>
+        <Products />
+      </Stack>
     </>
   );
 };
