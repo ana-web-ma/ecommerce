@@ -10,8 +10,12 @@ import {
 } from '@mui/material';
 import React, { useRef, type ReactElement } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
 import { type SwiperOptions } from 'swiper/types/swiper-options';
 import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+// import './styles.css';
 import { getProducts } from '../../api/calls/products/getProducts';
 import DemoComponent from '../ui/demo/DemoComponent';
 import Image from '../ui/Image';
@@ -22,7 +26,7 @@ import Image from '../ui/Image';
 const swiperParams: SwiperOptions = {
   slidesPerView: 1,
   navigation: true,
-  pagination: { type: 'progressbar' },
+  pagination: { el: '.swiper-pagination', type: 'progressbar' },
 };
 
 // const HeroCarousel: React.FC = (): JSX.Element => (
@@ -258,7 +262,13 @@ const Product = (): ReactElement => {
     <>
       <Grid container spacing={0}>
         <Grid item xs={6}>
-          <Swiper {...swiperParams}>
+          <Swiper
+            pagination={true}
+            modules={[Pagination, Navigation]}
+            navigation={true}
+            className="mySwiper"
+            {...swiperParams}
+          >
             {productData.masterVariant.images.map((image, index) => (
               <SwiperSlide key={image.url} virtualIndex={index}>
                 <Image
@@ -268,6 +278,9 @@ const Product = (): ReactElement => {
                 />
               </SwiperSlide>
             ))}
+            <Button className="swiper-pagination" variant="outlined">
+              Button
+            </Button>
           </Swiper>
         </Grid>
         <Grid item xs={6} p={2}>
