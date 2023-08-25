@@ -9,20 +9,31 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useRef, type ReactElement } from 'react';
-// import Swiper core and required modules
-import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
-
-import { Swiper, SwiperSlide, type SwiperRef } from 'swiper/react';
-// import { SwiperOptions } from 'swiper/types';
-
-// Import Swiper styles
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { type SwiperOptions } from 'swiper/types/swiper-options';
 import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import 'swiper/css/scrollbar';
 import { getProducts } from '../../api/calls/products/getProducts';
 import DemoComponent from '../ui/demo/DemoComponent';
 import Image from '../ui/Image';
+// import classNames from 'classnames';
+
+// import styles from './HeroCarousel.module.scss';
+
+const swiperParams: SwiperOptions = {
+  slidesPerView: 1,
+  navigation: true,
+  pagination: { type: 'progressbar' },
+};
+
+// const HeroCarousel: React.FC = (): JSX.Element => (
+//   <Swiper className={classNames(styles.root)} {...swiperParams}>
+//     <SwiperSlide className={classNames(styles.slide1)}>Slide 1</SwiperSlide>
+//     <SwiperSlide className={classNames(styles.slide2)}>Slide 2</SwiperSlide>
+//     <SwiperSlide className={classNames(styles.slide3)}>Slide 3</SwiperSlide>
+//   </Swiper>
+// );
+
+// export default HeroCarousel;
 
 const productData = {
   id: 'd4384777-a619-4507-91b0-2fd113657c1f',
@@ -247,32 +258,17 @@ const Product = (): ReactElement => {
     <>
       <Grid container spacing={0}>
         <Grid item xs={6}>
-          {/* <Swiper
-            // install Swiper modules
-            ref={newsListSwiperRef}
-            modules={[Navigation, Pagination, Scrollbar, A11y]}
-            spaceBetween={50}
-            slidesPerView={3}
-            navigation
-            pagination={{ clickable: true }}
-            scrollbar={{ draggable: true }}
-            onSwiper={(swiper) => {
-              console.log(swiper);
-            }}
-            onSlideChange={() => {
-              console.log('slide change');
-            }}
-          >
-            <SwiperSlide>Slide 1</SwiperSlide>
-            <SwiperSlide>Slide 2</SwiperSlide>
-            <SwiperSlide>Slide 3</SwiperSlide>
-            <SwiperSlide>Slide 4</SwiperSlide>
-          </Swiper> */}
-          <Image
-            name={productData.name['en-US']}
-            url={productData.masterVariant.images[0].url}
-            maxWidth="100%"
-          />
+          <Swiper {...swiperParams}>
+            {productData.masterVariant.images.map((image, index) => (
+              <SwiperSlide key={image.url} virtualIndex={index}>
+                <Image
+                  name={productData.name['en-US']}
+                  url={image.url}
+                  maxWidth="100%"
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </Grid>
         <Grid item xs={6} p={2}>
           <Typography variant="h2">{productData.name['en-US']}</Typography>
