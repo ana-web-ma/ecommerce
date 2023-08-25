@@ -134,7 +134,7 @@ function RegisterForm(): ReactElement {
               }).then((response) => {
                 dispatch(
                   login({
-                    customerId: JSON.stringify(response.body.customer.id),
+                    customer: response.body.customer,
                     token: tokenCache.get().token,
                   }),
                 );
