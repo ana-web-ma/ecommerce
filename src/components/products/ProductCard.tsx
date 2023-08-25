@@ -13,7 +13,7 @@ import { NavLink } from 'react-router-dom';
 interface IProduct {
   id: string;
   image?: string;
-  image2?: string;
+  image2?: string | null;
   name: string | undefined;
   category: string;
   price: string;
@@ -99,7 +99,7 @@ const ProductCard = (props: IProductCard): ReactElement => {
                     ? props.product.image2 ?? props.product.image
                     : props.product.image
                 }
-              ></Img>
+              />
             </ButtonBase>
             <Stack
               direction="row"

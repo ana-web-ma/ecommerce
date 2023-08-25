@@ -1,10 +1,13 @@
-import React, { useState, type ReactElement, useEffect } from 'react';
+import type React from 'react';
+import { useState, type ReactElement, useEffect } from 'react';
 import {
+  Breadcrumbs,
   Grid,
   Pagination,
   PaginationItem,
   Stack,
   Typography,
+  Link as MuiLink,
 } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -16,19 +19,24 @@ import { getProducts } from '../../api/calls/products/getProducts';
 
 const getPageQty = (total: number): number => Math.ceil(total / 6);
 
+function handleClick(
+  event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+): void {
+  console.info('You clicked a breadcrumb.');
+}
+
 const Products = (): ReactElement => {
   const location = useLocation();
   const navigate = useNavigate();
   const [products, setProducts] = useState<ProductProjection[]>([]);
   const [query, setQuery] = useState('react');
-  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-  const [page, setPage] = useState(Number(location.search?.split('=')[1]) || 1);
+  const [page, setPage] = useState(1);
   const [total, setTotal] = useState(1);
   const [pageQty, setPageQty] = useState(0);
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    setPage(Number(location.search?.split('=')[1]) || 1);
+    setPage(Number(location.pathname.split('/')[2]) || 1);
     getProducts({
       limit: 6,
       pageNumber: page,
@@ -48,7 +56,7 @@ const Products = (): ReactElement => {
   }, [query, page, location]);
 
   useEffect(() => {
-    if (page > pageQty && pageQty !== 0) navigate('/404');
+    if (page > pageQty && page !== 1) navigate('/404');
   }, [page, pageQty, location]);
 
   return (
@@ -67,6 +75,18 @@ const Products = (): ReactElement => {
         </Typography>
       </Stack>
 
+      <div role="presentation" onClick={handleClick}>
+        <Breadcrumbs aria-label="breadcrumb">
+          <MuiLink underline="hover" color="inherit" href="/">
+            Home
+          </MuiLink>
+          <MuiLink underline="hover" color="inherit" href="/catalog">
+            Catalog
+          </MuiLink>
+          <Typography color="text.primary">Breadcrumbs</Typography>
+        </Breadcrumbs>
+      </div>
+
       <Stack direction="row" justifyContent="space-between"></Stack>
 
       <Grid mt={2} container justifyContent="center" spacing={1}>
@@ -78,9 +98,9 @@ const Products = (): ReactElement => {
                 ? card.masterVariant.images[0].url
                 : '',
             image2:
-              card.masterVariant.images !== undefined
+              card.masterVariant.images?.[1] !== undefined
                 ? card.masterVariant.images[1].url
-                : '',
+                : null,
             name: card.key,
             category: 'Unique',
             price: '23$',
@@ -110,8 +130,7 @@ const Products = (): ReactElement => {
         renderItem={(item) => (
           <PaginationItem
             component={Link}
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            to={`/catalog/?page=${item.page}`}
+            to={item.page !== null ? `/catalog/${item.page}` : '`/catalog/1`'}
             {...item}
           />
         )}
