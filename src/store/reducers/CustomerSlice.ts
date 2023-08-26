@@ -27,7 +27,6 @@ export const customerSlice = createSlice({
       state.isLogged = true;
       // eslint-disable-next-line no-param-reassign
       state.customer = action.payload.customer;
-      localStorage.setItem('EPERFUME_CUSTOMER_TOKEN', action.payload.token);
       localStorage.setItem(
         'EPERFUME_CUSTOMER_DATA',
         JSON.stringify(action.payload.customer),

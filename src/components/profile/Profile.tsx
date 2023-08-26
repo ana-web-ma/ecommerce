@@ -6,11 +6,12 @@ import {
   Stack,
   Tabs,
   Tab,
-  Typography,
 } from '@mui/material';
 import type { ReactElement, ChangeEvent } from 'react';
 import { Edit, Save } from '@mui/icons-material';
-import Adresses from './Adresses';
+import Addresses from './Addresses';
+import Password from './Password';
+import { updateMe } from '../../api/calls/customer/update/updateMe';
 
 function ProfileForm(): ReactElement {
   const ProfileData = localStorage.getItem('EPERFUME_CUSTOMER_DATA');
@@ -21,19 +22,53 @@ function ProfileForm(): ReactElement {
   const [firstName, setFirstName] = useState(ProfileDataObj.firstName);
   const [lastName, setLastName] = useState(ProfileDataObj.lastName);
   const [birthdate, setBirthdate] = useState(ProfileDataObj.dateOfBirth);
+  const [email, setEmail] = useState(ProfileDataObj.email);
 
   const [isEditingFName, setIsEditingFName] = useState(false);
   const [isEditingLName, setIsEditingLName] = useState(false);
   const [isEditingBirthdate, setIsEditingBirthdate] = useState(false);
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
 
   const [tabValue, setTabValue] = useState(0);
 
   const handleEditClickFName = (): void => {
     setIsEditingFName(true);
   };
-  const handleSaveClickFName = (): void => {
+  const handleSaveClickFName = async (): Promise<void> => {
     setIsEditingFName(false);
+    updateMe({
+      setFirstName: {
+        newFirstName: firstName,
+      },
+    })
+      .then((updatedData) => {
+        console.log('Profile updated:', updatedData);
+      })
+      .catch((error) => {
+        console.error('Error updating profile:', error);
+      });
+
+    // try {
+    //   const updatedData = await updateMe({
+    //     setFirstName: {
+    //       newFirstName: firstName,
+    //     },
+    //   });
+
+    //   // Обработка успешного ответа
+    //   console.log('Profile updated:', updatedData);
+    //   console.log(firstName);
+    // } catch (error) {
+    //   // Обработка ошибки
+    //   console.error('Error updating profile:', error);
+    // }
   };
+  const handleSaveFNameClick = (): void => {
+    handleSaveClickFName().catch((error) => {
+      console.error('Error handling save click:', error);
+    });
+  };
+
   const handleEditClickLName = (): void => {
     setIsEditingLName(true);
   };
@@ -45,6 +80,12 @@ function ProfileForm(): ReactElement {
   };
   const handleSaveClickBirthdate = (): void => {
     setIsEditingBirthdate(false);
+  };
+  const handleEditClickEmail = (): void => {
+    setIsEditingEmail(true);
+  };
+  const handleSaveClickEmail = (): void => {
+    setIsEditingEmail(false);
   };
 
   const handleChangeFName = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -58,8 +99,15 @@ function ProfileForm(): ReactElement {
   ): void => {
     setBirthdate(event.target.value);
   };
+  const handleChangeEmail = (event: ChangeEvent<HTMLInputElement>): void => {
+    setEmail(event.target.value);
+  };
   const handleSaveAllChanges = (): void => {
     console.log('Saving all changes');
+    setIsEditingFName(false);
+    setIsEditingLName(false);
+    setIsEditingBirthdate(false);
+    setIsEditingEmail(false);
   };
   const handleTabChange = (
     event: React.ChangeEvent<unknown>,
@@ -72,23 +120,24 @@ function ProfileForm(): ReactElement {
       <Tabs value={tabValue} onChange={handleTabChange} centered>
         <Tab label="Personal Info" />
         <Tab label="Addresses" />
+        <Tab label="Change password" />
       </Tabs>
       <form autoComplete="off" style={{ width: '98%', maxWidth: '640px' }}>
         {tabValue === 0 && (
-          <div>
+          <div style={{ minHeight: '800px' }}>
             <TextField
               value={firstName}
               onChange={handleChangeFName}
               fullWidth
               label="First name"
               disabled={!isEditingFName}
-              style={{ marginBottom: '16px' }}
+              style={{ marginTop: '16px' }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
                     {isEditingFName ? (
                       <Button
-                        onClick={handleSaveClickFName}
+                        onClick={handleSaveFNameClick}
                         startIcon={<Save />}
                         variant="contained"
                       >
@@ -113,7 +162,7 @@ function ProfileForm(): ReactElement {
               fullWidth
               label="Last name"
               disabled={!isEditingLName}
-              style={{ marginBottom: '16px' }}
+              style={{ marginTop: '16px' }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -144,6 +193,7 @@ function ProfileForm(): ReactElement {
               fullWidth
               label="Birthdate"
               type="date"
+              style={{ marginTop: '16px' }}
               disabled={!isEditingBirthdate}
               InputProps={{
                 endAdornment: (
@@ -169,6 +219,37 @@ function ProfileForm(): ReactElement {
                 ),
               }}
             />
+            <TextField
+              value={email}
+              onChange={handleChangeEmail}
+              fullWidth
+              label="Email"
+              disabled={!isEditingEmail}
+              style={{ marginTop: '16px' }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {isEditingEmail ? (
+                      <Button
+                        onClick={handleSaveClickEmail}
+                        startIcon={<Save />}
+                        variant="contained"
+                      >
+                        Save
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={handleEditClickEmail}
+                        startIcon={<Edit />}
+                        variant="outlined"
+                      >
+                        Edit
+                      </Button>
+                    )}
+                  </InputAdornment>
+                ),
+              }}
+            />
             <Button
               onClick={handleSaveAllChanges}
               variant="contained"
@@ -179,7 +260,8 @@ function ProfileForm(): ReactElement {
             </Button>
           </div>
         )}
-        {tabValue === 1 && <Adresses></Adresses>}
+        {tabValue === 1 && <Addresses></Addresses>}
+        {tabValue === 2 && <Password></Password>}
       </form>
     </Stack>
   );
