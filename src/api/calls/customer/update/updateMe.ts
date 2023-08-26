@@ -2,11 +2,13 @@ import {
   type Customer,
   type MyCustomerUpdateAction,
   type BaseAddress,
+  type ClientResponse,
 } from '@commercetools/platform-sdk';
-import { type ApiRequest } from '@commercetools/platform-sdk/dist/declarations/src/generated/shared/utils/requests-utils';
-import { apiRoot } from '../../../clients/BuildClient';
+import { apiRootCreateByToken } from '../../../clients/ExistingTokenFlowClient';
+import { getMe } from '../../getMe';
 
 export const updateMe = async (props: {
+  id: string;
   changeEmail?: {
     newEmail: string;
   };
@@ -47,7 +49,7 @@ export const updateMe = async (props: {
   setDateOfBirth?: {
     dateOfBirth: string;
   };
-}): Promise<ApiRequest<Customer>> => {
+}): Promise<ClientResponse<Customer>> => {
   const actions: MyCustomerUpdateAction[] = [];
 
   if (props.changeEmail != null) {
@@ -130,5 +132,40 @@ export const updateMe = async (props: {
     });
   }
 
-  return apiRoot.me().post({ body: { version: 1, actions } });
+  return apiRootCreateByToken()
+    .me()
+    .post({
+      body: { version: (await getMe({ id: props.id })).body.version, actions },
+    })
+    .execute();
 };
+
+// How to use
+
+// updateMe({
+//   id: '703242c5-49a2-4dc0-83f5-08e3cc0e6d4d',
+//   setFirstName: {
+//     newFirstName: 'NewFirstName',
+//   },
+// })
+//   .then((updateResp) => {
+//     console.log('updateResp', updateResp);
+//   })
+//   .catch(console.log);
+
+// Use after authPasswordCustomer
+// authPasswordCustomer({ email: 'a@a.aa', password: '!1Aaaaaa' })
+// .then((customerResp) => {
+//   console.log('customerResp', customerResp);
+//   updateMe({
+//     id: customerResp.body.customer.id,
+//     setFirstName: {
+//       newFirstName: 'firstNameNew',
+//     },
+//   })
+//     .then((updateResp) => {
+//       console.log('updateResp', updateResp);
+//     })
+//     .catch(console.log);
+// })
+// .catch(console.log);
