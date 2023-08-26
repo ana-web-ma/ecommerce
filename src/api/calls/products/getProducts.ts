@@ -64,7 +64,7 @@ const createFilters = (props: PropsType): string[] => {
 const createQueryArgs = (props: PropsType): QueryArgs => {
   const offset =
     props.pageNumber !== undefined && props.limit !== undefined
-      ? props.pageNumber * props.limit
+      ? (props.pageNumber - 1) * props.limit
       : 0;
 
   return {
