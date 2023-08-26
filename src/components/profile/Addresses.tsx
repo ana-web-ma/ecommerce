@@ -19,30 +19,50 @@ function Addresses(): ReactElement {
   if (ProfileData !== null) {
     ProfileDataObj = JSON.parse(ProfileData);
   }
+
+  const shippingId = ProfileDataObj.shippingAddressIds[0];
+  const billingId = ProfileDataObj.billingAddressIds[0];
+
+  let billingIndex = 0;
+  let shippingIndex = 0;
+
+  if (ProfileDataObj.addresses[0].id === shippingId) {
+    shippingIndex = 0;
+  } else if (ProfileDataObj.addresses[1].id === shippingId) {
+    shippingIndex = 1;
+  }
+  if (ProfileDataObj.addresses[0].id === billingId) {
+    billingIndex = 0;
+  } else if (ProfileDataObj.addresses[1].id === billingId) {
+    billingIndex = 1;
+  }
+
+  console.log(ProfileDataObj.addresses[0].id === shippingId);
+  console.log(ProfileDataObj.addresses[0].id === billingId);
   const [shippingStreet, setShippingStreet] = useState(
-    ProfileDataObj.addresses[0].streetName,
+    ProfileDataObj.addresses[shippingIndex].streetName,
   );
   const [shippingCity, setShippingCity] = useState(
-    ProfileDataObj.addresses[0].city,
+    ProfileDataObj.addresses[shippingIndex].city,
   );
   const [shippingCode, setShippingCode] = useState(
-    ProfileDataObj.addresses[0].postalCode,
+    ProfileDataObj.addresses[shippingIndex].postalCode,
   );
   const [shippingCountry, setShippingCountry] = useState(
-    ProfileDataObj.addresses[0].country,
+    ProfileDataObj.addresses[shippingIndex].country,
   );
 
   const [billingStreet, setBillingStreet] = useState(
-    ProfileDataObj.addresses[1].streetName,
+    ProfileDataObj.addresses[billingIndex].streetName,
   );
   const [billingCity, setBillingCity] = useState(
-    ProfileDataObj.addresses[1].city,
+    ProfileDataObj.addresses[billingIndex].city,
   );
   const [billingCode, setBillingCode] = useState(
-    ProfileDataObj.addresses[1].postalCode,
+    ProfileDataObj.addresses[billingIndex].postalCode,
   );
   const [billingCountry, setBillingCountry] = useState(
-    ProfileDataObj.addresses[1].country,
+    ProfileDataObj.addresses[billingIndex].country,
   );
 
   const [isEditing, setIsEditing] = useState(false);
