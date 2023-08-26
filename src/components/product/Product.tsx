@@ -70,13 +70,13 @@ const productData = {
             h: 3055,
           },
         },
-        {
-          url: 'https://c43d6e8e1587d36eac6f-07e75df687bdbd1d1c053ce7b38c2aa6.ssl.cf3.rackcdn.com/diptyque-feu-de-bois-AiDAxLuI.jpg',
-          dimensions: {
-            w: 2292,
-            h: 3055,
-          },
-        },
+        // {
+        //   url: 'https://c43d6e8e1587d36eac6f-07e75df687bdbd1d1c053ce7b38c2aa6.ssl.cf3.rackcdn.com/diptyque-feu-de-bois-AiDAxLuI.jpg',
+        //   dimensions: {
+        //     w: 2292,
+        //     h: 3055,
+        //   },
+        // },
       ],
       prices: [
         {
@@ -340,12 +340,14 @@ const Product = (): ReactElement => {
           )}
         </Grid>
         <Grid item xs={6} p={2}>
-          <Typography variant="h2">{productData.name['en-US']}</Typography>
+          <Typography mb={2} variant="h2">
+            {productData.name['en-US']}
+          </Typography>
           <Collapse in={expanded} timeout="auto" collapsedSize="70px">
             {productData.description['en-US']}
           </Collapse>
           <Link onClick={handleExpandClick}>Read more</Link>
-          <Typography variant="subtitle2">
+          <Typography mt={2} mb={2} variant="subtitle2">
             {`${
               productData.variants[activeVariant].prices[0].value.centAmount /
               100
@@ -358,18 +360,21 @@ const Product = (): ReactElement => {
                 item
                 xs={3}
                 key={e.id}
+                className={activeVariant === i ? 'active' : ''}
                 sx={{
                   cursor: 'pointer',
                   img: {
                     transition: '0.3s',
                     border: '1px solid transparent',
                   },
-                  '& .active': {
-                    img: {
-                      transition: '0.3s',
-                      border: '1px solid #000000',
-                    },
-                  },
+                  //   '.active': {
+                  //     transition: '0.3s',
+                  //     border: '1px solid red',
+                  //     img: {
+                  //       transition: '0.3s',
+                  //       border: '1px solid #000000',
+                  //     },
+                  //   },
                   ':hover': {
                     img: {
                       transition: '0.3s',
@@ -378,7 +383,18 @@ const Product = (): ReactElement => {
                   },
                 }}
               >
-                <Box>
+                <Box
+                // sx={{
+                //   '.active': {
+                //     transition: '0.3s',
+                //     border: '1px solid red',
+                //     img: {
+                //       transition: '0.3s',
+                //       border: '1px solid #000000',
+                //     },
+                //   },
+                // }}
+                >
                   <div
                     onClick={() => {
                       setActiveVariant(i);
