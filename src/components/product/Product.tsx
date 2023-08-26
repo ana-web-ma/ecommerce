@@ -15,6 +15,7 @@ import { type SwiperOptions } from 'swiper/types/swiper-options';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import './styles.css';
 // import './styles.css';
 import { getProducts } from '../../api/calls/products/getProducts';
 import DemoComponent from '../ui/demo/DemoComponent';
@@ -22,12 +23,6 @@ import Image from '../ui/Image';
 // import classNames from 'classnames';
 
 // import styles from './HeroCarousel.module.scss';
-
-const swiperParams: SwiperOptions = {
-  slidesPerView: 1,
-  navigation: true,
-  pagination: { el: '.swiper-pagination', type: 'progressbar' },
-};
 
 // const HeroCarousel: React.FC = (): JSX.Element => (
 //   <Swiper className={classNames(styles.root)} {...swiperParams}>
@@ -241,15 +236,19 @@ function srcset(
   };
 }
 
-// const NewsListSlider = (): void => {
-//   const newsListSwiperRef = useRef<SwiperRef>(null);
-
-//   const nextElementSwiper = (): void => {
-//     if (newsListSwiperRef.current == null) return false;
-
-//     newsListSwiperRef.current?.swiper?.slideNext();
-//   };
-// };
+const swiperParams: SwiperOptions = {
+  slidesPerView: 1,
+  // navigation: true,
+  pagination: {
+    // el: '.swiper-pagination',
+    clickable: true,
+  },
+  modules: [Pagination],
+  // style: {
+  //   // '--swiper-navigation-color': 'pink',
+  //   '--swiper-pagination-color': 'pink',
+  // },
+};
 
 const Product = (): ReactElement => {
   const [expanded, setExpanded] = React.useState(false);
@@ -262,13 +261,7 @@ const Product = (): ReactElement => {
     <>
       <Grid container spacing={0}>
         <Grid item xs={6}>
-          <Swiper
-            pagination={true}
-            modules={[Pagination, Navigation]}
-            navigation={true}
-            className="mySwiper"
-            {...swiperParams}
-          >
+          <Swiper className="mySwiper" {...swiperParams}>
             {productData.masterVariant.images.map((image, index) => (
               <SwiperSlide key={image.url} virtualIndex={index}>
                 <Image
@@ -278,9 +271,6 @@ const Product = (): ReactElement => {
                 />
               </SwiperSlide>
             ))}
-            <Button className="swiper-pagination" variant="outlined">
-              Button
-            </Button>
           </Swiper>
         </Grid>
         <Grid item xs={6} p={2}>
@@ -288,7 +278,6 @@ const Product = (): ReactElement => {
           <Collapse in={expanded} timeout="auto" collapsedSize="70px">
             {productData.description['en-US']}
           </Collapse>
-          {/* <Button sx={{ width: 'fit-content' }}></Button> */}
           <Link onClick={handleExpandClick}>Read more</Link>
           <Typography variant="subtitle2">123€</Typography>
           <Typography variant="body2">Select a size:</Typography>
