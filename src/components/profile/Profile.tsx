@@ -124,7 +124,7 @@ function ProfileForm(): ReactElement {
       </Tabs>
       <form autoComplete="off" style={{ width: '98%', maxWidth: '640px' }}>
         {tabValue === 0 && (
-          <div>
+          <div style={{ minHeight: '800px' }}>
             <TextField
               value={firstName}
               onChange={handleChangeFName}

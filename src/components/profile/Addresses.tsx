@@ -122,13 +122,13 @@ function Addresses(): ReactElement {
   };
 
   return (
-    <div>
+    <div style={{ minHeight: '800px' }}>
       <Typography
         variant="h3"
         textAlign={'center'}
         style={{ marginTop: '30px' }}
       >
-        Shipping adress
+        Shipping address
       </Typography>
       <TextField
         value={shippingStreet}
@@ -176,7 +176,7 @@ function Addresses(): ReactElement {
             top: '-1px',
           }}
           disabled={!isEditing}
-          defaultChecked={isDefaultShipping}
+          checked={isDefaultShipping}
           onChange={(event) => {
             if (event.target.checked) setIsDefaultShipping(true);
             else setIsDefaultShipping(false);
@@ -198,7 +198,7 @@ function Addresses(): ReactElement {
         textAlign={'center'}
         style={{ marginTop: '30px' }}
       >
-        Billing adress
+        Billing address
       </Typography>
       <TextField
         value={billingStreet}
@@ -246,7 +246,7 @@ function Addresses(): ReactElement {
             top: '-1px',
           }}
           disabled={!isEditingBilling}
-          defaultChecked={isDefaultBilling}
+          checked={isDefaultBilling}
           onChange={(event) => {
             if (event.target.checked) setIsDefaultBilling(true);
             else setIsDefaultBilling(false);

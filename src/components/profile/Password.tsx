@@ -1,28 +1,17 @@
 import type React from 'react';
 import { useState, type ReactElement } from 'react';
-import {
-  Button,
-  IconButton,
-  InputAdornment,
-  Link,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
 import { type FieldValues, type SubmitHandler, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { LoginSchema } from '../../helpers/yup/Yup';
-import theme from '../../theme';
 import { useAppDispatch } from '../../helpers/hooks/Hooks';
 import { login } from '../../store/reducers/CustomerSlice';
 import { authPasswordCustomer } from '../../api/calls/customer/authPasswordCustomer';
 import { tokenCache } from '../../api/tokenCache';
 
 export function onPromise<T>(
-  // used to wrap react-hook-forms's submit handler
-  // https://github.com/react-hook-form/react-hook-form/discussions/8020#discussioncomment-3429261
   promise: (event: React.SyntheticEvent) => Promise<T>,
 ) {
   return (event: React.SyntheticEvent) => {
@@ -81,7 +70,7 @@ function Password(): ReactElement {
   };
 
   return (
-    <div>
+    <div style={{ minHeight: '800px' }}>
       <TextField
         error={!(errors.password == null) || errorMessage !== ''}
         fullWidth={true}
