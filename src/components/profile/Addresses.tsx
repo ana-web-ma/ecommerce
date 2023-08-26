@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   TextField,
   Button,
-  InputAdornment,
   Typography,
   FormControl,
   InputLabel,
@@ -11,6 +10,7 @@ import {
   Checkbox,
 } from '@mui/material';
 import type { ReactElement, ChangeEvent } from 'react';
+import type { SelectChangeEvent } from '@mui/material';
 import { Edit, Save, Delete } from '@mui/icons-material';
 
 function Addresses(): ReactElement {
@@ -32,9 +32,30 @@ function Addresses(): ReactElement {
     ProfileDataObj.addresses[0].country,
   );
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [billingStreet, setBillingStreet] = useState(
+    ProfileDataObj.addresses[1].streetName,
+  );
+  const [billingCity, setBillingCity] = useState(
+    ProfileDataObj.addresses[1].city,
+  );
+  const [billingCode, setBillingCode] = useState(
+    ProfileDataObj.addresses[1].postalCode,
+  );
+  const [billingCountry, setBillingCountry] = useState(
+    ProfileDataObj.addresses[1].country,
+  );
 
-  const [isCheckedShipping, setIsCheckedShipping] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isDefaultShipping, setIsDefaultShipping] = useState(
+    ProfileDataObj.shippingAddressIds[0] ===
+      ProfileDataObj.defaultShippingAddressId,
+  );
+
+  const [isEditingBilling, setIsEditingBilling] = useState(false);
+  const [isDefaultBilling, setIsDefaultBilling] = useState(
+    ProfileDataObj.billingAddressIds[0] ===
+      ProfileDataObj.defaultBillingAddressId,
+  );
 
   const handleChangeShippingStreet = (
     event: ChangeEvent<HTMLInputElement>,
@@ -52,9 +73,30 @@ function Addresses(): ReactElement {
     setShippingCode(event.target.value);
   };
   const handleChangeShippingCountry = (
-    event: ChangeEvent<HTMLInputElement>,
+    event: SelectChangeEvent<HTMLInputElement>,
   ): void => {
     setShippingCountry(event.target.value);
+  };
+
+  const handleChangeBillingStreet = (
+    event: ChangeEvent<HTMLInputElement>,
+  ): void => {
+    setBillingStreet(event.target.value);
+  };
+  const handleChangeBillingCity = (
+    event: ChangeEvent<HTMLInputElement>,
+  ): void => {
+    setBillingCity(event.target.value);
+  };
+  const handleChangeBillingCode = (
+    event: ChangeEvent<HTMLInputElement>,
+  ): void => {
+    setBillingCode(event.target.value);
+  };
+  const handleChangeBillingCountry = (
+    event: SelectChangeEvent<HTMLInputElement>,
+  ): void => {
+    setBillingCountry(event.target.value);
   };
 
   const handleToggleEditSave = (): void => {
@@ -68,9 +110,24 @@ function Addresses(): ReactElement {
     // logic
   };
 
+  const handleToggleEditSaveBilling = (): void => {
+    if (isEditing) {
+      // logic
+    }
+    setIsEditingBilling(!isEditingBilling);
+  };
+
+  const handleDeleteClickBilling = (): void => {
+    // logic
+  };
+
   return (
     <div>
-      <Typography variant="h3" textAlign={'center'}>
+      <Typography
+        variant="h3"
+        textAlign={'center'}
+        style={{ marginTop: '30px' }}
+      >
         Shipping adress
       </Typography>
       <TextField
@@ -102,7 +159,7 @@ function Addresses(): ReactElement {
         <Select
           label="Country"
           value={shippingCountry}
-          // onClose={handleChangeShippingCountry}
+          onChange={handleChangeShippingCountry}
           disabled={!isEditing}
         >
           <MenuItem value={'US'}>USA</MenuItem>
@@ -118,9 +175,11 @@ function Addresses(): ReactElement {
           sx={{
             top: '-1px',
           }}
+          disabled={!isEditing}
+          defaultChecked={isDefaultShipping}
           onChange={(event) => {
-            if (event.target.checked) setIsCheckedShipping(true);
-            else setIsCheckedShipping(false);
+            if (event.target.checked) setIsDefaultShipping(true);
+            else setIsDefaultShipping(false);
           }}
         />
         Set as default
@@ -132,6 +191,76 @@ function Addresses(): ReactElement {
         {isEditing ? 'Save' : 'Edit'}
       </Button>
       <Button startIcon={<Delete />} onClick={handleDeleteClick}>
+        Delete
+      </Button>
+      <Typography
+        variant="h3"
+        textAlign={'center'}
+        style={{ marginTop: '30px' }}
+      >
+        Billing adress
+      </Typography>
+      <TextField
+        value={billingStreet}
+        onChange={handleChangeBillingStreet}
+        fullWidth
+        label="Street"
+        disabled={!isEditingBilling}
+        style={{ marginBottom: '16px' }}
+      />
+      <TextField
+        value={billingCity}
+        onChange={handleChangeBillingCity}
+        fullWidth
+        label="City"
+        disabled={!isEditingBilling}
+        style={{ marginBottom: '16px' }}
+      />
+      <TextField
+        value={billingCode}
+        onChange={handleChangeBillingCode}
+        fullWidth
+        label="Code"
+        disabled={!isEditingBilling}
+        style={{ marginBottom: '16px' }}
+      />
+      <FormControl fullWidth variant="filled">
+        <InputLabel>Country</InputLabel>
+        <Select
+          label="Country"
+          value={billingCountry}
+          onChange={handleChangeBillingCountry}
+          disabled={!isEditingBilling}
+        >
+          <MenuItem value={'US'}>USA</MenuItem>
+          <MenuItem value={'FR'}>France</MenuItem>
+        </Select>
+      </FormControl>
+      <Typography
+        variant="inherit"
+        sx={{ marginTop: { sm: '13px' }, textAlign: { sm: 'end' } }}
+      >
+        <Checkbox
+          size="small"
+          sx={{
+            top: '-1px',
+          }}
+          disabled={!isEditingBilling}
+          defaultChecked={isDefaultBilling}
+          onChange={(event) => {
+            if (event.target.checked) setIsDefaultBilling(true);
+            else setIsDefaultBilling(false);
+          }}
+        />
+        Set as default
+      </Typography>
+      <Button
+        startIcon={isEditing ? <Save /> : <Edit />}
+        onClick={handleToggleEditSaveBilling}
+      >
+        {isEditingBilling ? 'Save' : 'Edit'}
+      </Button>
+      <Button startIcon={<Delete />} onClick={handleDeleteClickBilling}>
         Delete
       </Button>
     </div>

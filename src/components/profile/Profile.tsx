@@ -11,6 +11,7 @@ import type { ReactElement, ChangeEvent } from 'react';
 import { Edit, Save } from '@mui/icons-material';
 import Addresses from './Addresses';
 import Password from './Password';
+import { updateMe } from '../../api/calls/customer/update/updateMe';
 
 function ProfileForm(): ReactElement {
   const ProfileData = localStorage.getItem('EPERFUME_CUSTOMER_DATA');
@@ -33,9 +34,41 @@ function ProfileForm(): ReactElement {
   const handleEditClickFName = (): void => {
     setIsEditingFName(true);
   };
-  const handleSaveClickFName = (): void => {
+  const handleSaveClickFName = async (): Promise<void> => {
     setIsEditingFName(false);
+    updateMe({
+      setFirstName: {
+        newFirstName: firstName,
+      },
+    })
+      .then((updatedData) => {
+        console.log('Profile updated:', updatedData);
+      })
+      .catch((error) => {
+        console.error('Error updating profile:', error);
+      });
+
+    // try {
+    //   const updatedData = await updateMe({
+    //     setFirstName: {
+    //       newFirstName: firstName,
+    //     },
+    //   });
+
+    //   // Обработка успешного ответа
+    //   console.log('Profile updated:', updatedData);
+    //   console.log(firstName);
+    // } catch (error) {
+    //   // Обработка ошибки
+    //   console.error('Error updating profile:', error);
+    // }
   };
+  const handleSaveFNameClick = (): void => {
+    handleSaveClickFName().catch((error) => {
+      console.error('Error handling save click:', error);
+    });
+  };
+
   const handleEditClickLName = (): void => {
     setIsEditingLName(true);
   };
@@ -104,7 +137,7 @@ function ProfileForm(): ReactElement {
                   <InputAdornment position="end">
                     {isEditingFName ? (
                       <Button
-                        onClick={handleSaveClickFName}
+                        onClick={handleSaveFNameClick}
                         startIcon={<Save />}
                         variant="contained"
                       >
