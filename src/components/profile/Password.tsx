@@ -1,0 +1,179 @@
+import type React from 'react';
+import { useState, type ReactElement } from 'react';
+import {
+  Button,
+  IconButton,
+  InputAdornment,
+  Link,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { type FieldValues, type SubmitHandler, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { LoginSchema } from '../../helpers/yup/Yup';
+import theme from '../../theme';
+import { useAppDispatch } from '../../helpers/hooks/Hooks';
+import { login } from '../../store/reducers/CustomerSlice';
+import { authPasswordCustomer } from '../../api/calls/customer/authPasswordCustomer';
+import { tokenCache } from '../../api/tokenCache';
+
+export function onPromise<T>(
+  // used to wrap react-hook-forms's submit handler
+  // https://github.com/react-hook-form/react-hook-form/discussions/8020#discussioncomment-3429261
+  promise: (event: React.SyntheticEvent) => Promise<T>,
+) {
+  return (event: React.SyntheticEvent) => {
+    promise(event).catch((error) => {
+      console.error('Unexpected error', error);
+    });
+  };
+}
+
+function Password(): ReactElement {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const [errorMessage, setErrorMessage] = useState('');
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm({
+    mode: 'onChange',
+    resolver: yupResolver(LoginSchema),
+  });
+
+  const handleSubmitForm: SubmitHandler<FieldValues> = async (
+    data,
+  ): Promise<void> => {
+    const customerData = {
+      email: data.email,
+      password: data.password,
+    };
+    await authPasswordCustomer(customerData)
+      .then(async (response): Promise<void> => {
+        dispatch(
+          login({
+            customer: response.body.customer,
+            token: tokenCache.get().token,
+          }),
+        );
+        navigate('/');
+      })
+      .catch((err) => {
+        setErrorMessage(err.message);
+      });
+  };
+
+  // Show/Hide Password Functionality 👁️‍🗨️
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = (): void => {
+    setShowPassword((show) => !show);
+  };
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ): void => {
+    event.preventDefault();
+  };
+
+  return (
+    <div>
+      <TextField
+        error={!(errors.password == null) || errorMessage !== ''}
+        fullWidth={true}
+        margin="normal"
+        type={showPassword ? 'text' : 'password'}
+        label="old password"
+        variant="outlined"
+        placeholder="Enter your old password"
+        onInput={() => {
+          setErrorMessage('');
+        }}
+        helperText={
+          errors.password != null ? errors.password.message?.toString() : ''
+        }
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+                onMouseDown={handleMouseDownPassword}
+              >
+                {showPassword ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+        {...register('password')}
+      />
+      <TextField
+        error={!(errors.password == null) || errorMessage !== ''}
+        fullWidth={true}
+        margin="normal"
+        type={showPassword ? 'text' : 'password'}
+        label="new password"
+        variant="outlined"
+        placeholder="Enter your new password"
+        onInput={() => {
+          setErrorMessage('');
+        }}
+        helperText={
+          errors.password != null ? errors.password.message?.toString() : ''
+        }
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+                onMouseDown={handleMouseDownPassword}
+              >
+                {showPassword ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+        {...register('password')}
+      />
+      <TextField
+        error={!(errors.password == null) || errorMessage !== ''}
+        fullWidth={true}
+        margin="normal"
+        type={showPassword ? 'text' : 'password'}
+        label="repeat new password"
+        variant="outlined"
+        placeholder="Repeat your new password"
+        onInput={() => {
+          setErrorMessage('');
+        }}
+        helperText={
+          errors.password != null ? errors.password.message?.toString() : ''
+        }
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+                onMouseDown={handleMouseDownPassword}
+              >
+                {showPassword ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+        {...register('password')}
+      />
+      <Button type="submit" variant="contained">
+        Login
+      </Button>
+    </div>
+  );
+}
+
+export default Password;
