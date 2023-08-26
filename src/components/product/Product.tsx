@@ -8,31 +8,16 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import React, { useRef, type ReactElement } from 'react';
+import React, { useEffect, type ReactElement } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules';
+import { Pagination } from 'swiper/modules';
 import { type SwiperOptions } from 'swiper/types/swiper-options';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import './styles.css';
-// import './styles.css';
-import { getProducts } from '../../api/calls/products/getProducts';
 import DemoComponent from '../ui/demo/DemoComponent';
 import Image from '../ui/Image';
-// import classNames from 'classnames';
-
-// import styles from './HeroCarousel.module.scss';
-
-// const HeroCarousel: React.FC = (): JSX.Element => (
-//   <Swiper className={classNames(styles.root)} {...swiperParams}>
-//     <SwiperSlide className={classNames(styles.slide1)}>Slide 1</SwiperSlide>
-//     <SwiperSlide className={classNames(styles.slide2)}>Slide 2</SwiperSlide>
-//     <SwiperSlide className={classNames(styles.slide3)}>Slide 3</SwiperSlide>
-//   </Swiper>
-// );
-
-// export default HeroCarousel;
 
 const productData = {
   id: 'd4384777-a619-4507-91b0-2fd113657c1f',
@@ -197,44 +182,44 @@ const productData = {
   createdAt: '2023-08-22T01:47:37.374Z',
   lastModifiedAt: '2023-08-23T03:10:17.832Z',
 };
-const productRequestData = getProducts({
-  limit: 5,
-  pageNumber: 0,
-  sort: {
-    field: 'id',
-    order: 'desc',
-  },
-  filter: {
-    // categoriesById: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
-    productByKey: { key: 'FEU DE BOIS' },
-  },
-})
-  .then((resp) => {
-    console.log(
-      'e',
-      resp.body.results.map((e) => e),
-    );
-  })
-  .catch(console.log);
+// const productRequestData = getProducts({
+//   limit: 5,
+//   pageNumber: 0,
+//   sort: {
+//     field: 'id',
+//     order: 'desc',
+//   },
+//   filter: {
+//     // categoriesById: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
+//     productByKey: { key: 'FEU DE BOIS' },
+//   },
+// })
+//   .then((resp) => {
+//     console.log(
+//       'e',
+//       resp.body.results.map((e) => e),
+//     );
+//   })
+//   .catch(console.log);
 
-console.log('productRequestData', productRequestData);
+// console.log('productRequestData', productRequestData);
 
-function srcset(
-  image: string,
-  size: number,
-  rows = 1,
-  cols = 1,
-): {
-  src: string;
-  srcSet: string;
-} {
-  return {
-    src: `${image}?w=${size * cols}&h=${size * rows}&fit=crop&auto=format`,
-    srcSet: `${image}?w=${size * cols}&h=${
-      size * rows
-    }&fit=crop&auto=format&dpr=2 2x`,
-  };
-}
+// function srcset(
+//   image: string,
+//   size: number,
+//   rows = 1,
+//   cols = 1,
+// ): {
+//   src: string;
+//   srcSet: string;
+// } {
+//   return {
+//     src: `${image}?w=${size * cols}&h=${size * rows}&fit=crop&auto=format`,
+//     srcSet: `${image}?w=${size * cols}&h=${
+//       size * rows
+//     }&fit=crop&auto=format&dpr=2 2x`,
+//   };
+// }
 
 const swiperParams: SwiperOptions = {
   slidesPerView: 1,
@@ -250,28 +235,69 @@ const swiperParams: SwiperOptions = {
   // },
 };
 
+interface ImageType {
+  url: string;
+  dimensions: {
+    w: number;
+    h: number;
+  };
+}
+
+interface Variant {
+  attributes: never[];
+  assets: never[];
+  images: ImageType[];
+  prices: never[];
+}
+
 const Product = (): ReactElement => {
   const [expanded, setExpanded] = React.useState(false);
+  const [activeVariant, setActiveVariant] = React.useState<number>(0);
+  const [images, setImages] = React.useState<ImageType[] | null>(null);
+  const [variantData, setVariantData] = React.useState<Variant>(
+    productData.masterVariant,
+  );
+
+  useEffect(() => {
+    console.log('building', activeVariant);
+  }, [activeVariant]);
 
   const handleExpandClick = (): void => {
     setExpanded(!expanded);
+  };
+
+  const handleActiveVariant = (
+    // event: React.MouseEvent<HTMLElement>,
+    newActiveVariant: number,
+  ): void => {
+    // console.log('before', activeVariant, newActiveVariant);
+    setActiveVariant(newActiveVariant);
+    // console.log('after', activeVariant, newActiveVariant);
+    // setTimeout(() => {
+    //   console.log('timeout', activeVariant, newActiveVariant);
+    // }, 1000);
   };
 
   return (
     <>
       <Grid container spacing={0}>
         <Grid item xs={6}>
-          <Swiper className="mySwiper" {...swiperParams}>
-            {productData.masterVariant.images.map((image, index) => (
-              <SwiperSlide key={image.url} virtualIndex={index}>
-                <Image
-                  name={productData.name['en-US']}
-                  url={image.url}
-                  maxWidth="100%"
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          {productData.variants.map(
+            (variant, variantIndex) =>
+              activeVariant === variantIndex && (
+                <Swiper key={variant.id} className="mySwiper" {...swiperParams}>
+                  {variant.images.map((image, index) => (
+                    <SwiperSlide key={image.url} virtualIndex={index}>
+                      <Image
+                        name={productData.name['en-US']}
+                        url={image.url}
+                        maxWidth="100%"
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              ),
+          )}
         </Grid>
         <Grid item xs={6} p={2}>
           <Typography variant="h2">{productData.name['en-US']}</Typography>
@@ -282,7 +308,7 @@ const Product = (): ReactElement => {
           <Typography variant="subtitle2">123€</Typography>
           <Typography variant="body2">Select a size:</Typography>
           <Grid columnSpacing={1} container>
-            {productData.variants.map((e) => (
+            {productData.variants.map((e, i) => (
               <Grid
                 item
                 xs={3}
@@ -293,6 +319,12 @@ const Product = (): ReactElement => {
                     transition: '0.3s',
                     border: '1px solid transparent',
                   },
+                  '& .active': {
+                    img: {
+                      transition: '0.3s',
+                      border: '1px solid #000000',
+                    },
+                  },
                   ':hover': {
                     img: {
                       transition: '0.3s',
@@ -301,14 +333,22 @@ const Product = (): ReactElement => {
                   },
                 }}
               >
-                <Image
-                  name={productData.name['en-US']}
-                  url={e.images[0].url}
-                  maxWidth="100%"
-                />
-                <Typography variant="body2" align="center">
-                  {e.key.replace(productData.name['en-US'], '')}
-                </Typography>
+                <Box>
+                  <div
+                    onClick={() => {
+                      handleActiveVariant(i);
+                    }}
+                  >
+                    <Image
+                      name={productData.name['en-US']}
+                      url={e.images[0].url}
+                      maxWidth="100%"
+                    />
+                    <Typography variant="body2" align="center">
+                      {e.key.replace(productData.name['en-US'], '')}
+                    </Typography>
+                  </div>
+                </Box>
               </Grid>
             ))}
           </Grid>
