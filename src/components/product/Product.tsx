@@ -18,10 +18,11 @@ import 'swiper/css/pagination';
 import './styles.css';
 import DemoComponent from '../ui/demo/DemoComponent';
 import Image from '../ui/Image';
+import { getProducts } from '../../api/calls/products/getProducts';
 
 const productData = {
   id: 'd4384777-a619-4507-91b0-2fd113657c1f',
-  version: 38,
+  version: 45,
   productType: {
     typeId: 'product-type',
     id: '542759a5-a331-4817-932b-3a4e4312b8f2',
@@ -77,7 +78,17 @@ const productData = {
           },
         },
       ],
-      prices: [],
+      prices: [
+        {
+          id: '6898959d-8f89-4ce4-9910-4c59395b6942',
+          value: {
+            type: 'centPrecision',
+            currencyCode: 'EUR',
+            centAmount: 5800,
+            fractionDigits: 2,
+          },
+        },
+      ],
       key: 'Classic FEU DE BOIS',
       id: 2,
     },
@@ -100,7 +111,17 @@ const productData = {
           },
         },
       ],
-      prices: [],
+      prices: [
+        {
+          id: 'bf632a88-5ace-49fd-abed-5f1053c1d76f',
+          value: {
+            type: 'centPrecision',
+            currencyCode: 'EUR',
+            centAmount: 8500,
+            fractionDigits: 2,
+          },
+        },
+      ],
       key: 'Medium FEU DE BOIS',
       id: 3,
     },
@@ -123,7 +144,17 @@ const productData = {
           },
         },
       ],
-      prices: [],
+      prices: [
+        {
+          id: '404243db-6f20-4358-9ef4-2b539a544a7b',
+          value: {
+            type: 'centPrecision',
+            currencyCode: 'EUR',
+            centAmount: 18000,
+            fractionDigits: 2,
+          },
+        },
+      ],
       key: 'Large FEU DE BOIS',
       id: 4,
     },
@@ -146,7 +177,17 @@ const productData = {
           },
         },
       ],
-      prices: [],
+      prices: [
+        {
+          id: '95004ed4-6f14-4ec1-a93a-25a545f5d428',
+          value: {
+            type: 'centPrecision',
+            currencyCode: 'EUR',
+            centAmount: 31500,
+            fractionDigits: 2,
+          },
+        },
+      ],
       key: 'Extra large FEU DE BOIS',
       id: 5,
     },
@@ -170,7 +211,17 @@ const productData = {
         },
       },
     ],
-    prices: [],
+    prices: [
+      {
+        id: 'e9aecc0b-a6bf-4877-bbda-f9d24ba28952',
+        value: {
+          type: 'centPrecision',
+          currencyCode: 'EUR',
+          centAmount: 3800,
+          fractionDigits: 2,
+        },
+      },
+    ],
     key: 'Small FEU DE BOIS',
     id: 1,
   },
@@ -180,7 +231,7 @@ const productData = {
   key: 'FEU DE BOIS',
   priceMode: 'Embedded',
   createdAt: '2023-08-22T01:47:37.374Z',
-  lastModifiedAt: '2023-08-23T03:10:17.832Z',
+  lastModifiedAt: '2023-08-24T20:22:40.978Z',
 };
 // const productRequestData = getProducts({
 //   limit: 5,
@@ -254,28 +305,17 @@ const Product = (): ReactElement => {
   const [expanded, setExpanded] = React.useState(false);
   const [activeVariant, setActiveVariant] = React.useState<number>(0);
   const [images, setImages] = React.useState<ImageType[] | null>(null);
-  const [variantData, setVariantData] = React.useState<Variant>(
-    productData.masterVariant,
-  );
+  // const [variantData, setVariantData] = React.useState<Variant>(
+  //   productData.masterVariant,
+  // );
 
   useEffect(() => {
     console.log('building', activeVariant);
+    console.log('prices', productData.variants[activeVariant]);
   }, [activeVariant]);
 
   const handleExpandClick = (): void => {
     setExpanded(!expanded);
-  };
-
-  const handleActiveVariant = (
-    // event: React.MouseEvent<HTMLElement>,
-    newActiveVariant: number,
-  ): void => {
-    // console.log('before', activeVariant, newActiveVariant);
-    setActiveVariant(newActiveVariant);
-    // console.log('after', activeVariant, newActiveVariant);
-    // setTimeout(() => {
-    //   console.log('timeout', activeVariant, newActiveVariant);
-    // }, 1000);
   };
 
   return (
@@ -305,7 +345,12 @@ const Product = (): ReactElement => {
             {productData.description['en-US']}
           </Collapse>
           <Link onClick={handleExpandClick}>Read more</Link>
-          <Typography variant="subtitle2">123€</Typography>
+          <Typography variant="subtitle2">
+            {`${
+              productData.variants[activeVariant].prices[0].value.centAmount /
+              100
+            } €`}
+          </Typography>
           <Typography variant="body2">Select a size:</Typography>
           <Grid columnSpacing={1} container>
             {productData.variants.map((e, i) => (
@@ -336,7 +381,7 @@ const Product = (): ReactElement => {
                 <Box>
                   <div
                     onClick={() => {
-                      handleActiveVariant(i);
+                      setActiveVariant(i);
                     }}
                   >
                     <Image
