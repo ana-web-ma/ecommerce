@@ -14,10 +14,23 @@ import type { ReactElement, ChangeEvent } from 'react';
 import { Edit, Save } from '@mui/icons-material';
 
 function Adresses(): ReactElement {
-  const [shippingStreet, setShippingStreet] = useState('Shipping Street');
-  const [shippingCity, setShippingCity] = useState('Shipping City');
-  const [shippingCode, setShippingCode] = useState('Shipping Code');
-  const [shippingCountry, setShippingCountry] = useState('US');
+  const ProfileData = localStorage.getItem('EPERFUME_CUSTOMER_DATA');
+  let ProfileDataObj = null;
+  if (ProfileData !== null) {
+    ProfileDataObj = JSON.parse(ProfileData);
+  }
+  const [shippingStreet, setShippingStreet] = useState(
+    ProfileDataObj.addresses[0].streetName,
+  );
+  const [shippingCity, setShippingCity] = useState(
+    ProfileDataObj.addresses[0].city,
+  );
+  const [shippingCode, setShippingCode] = useState(
+    ProfileDataObj.addresses[0].postalCode,
+  );
+  const [shippingCountry, setShippingCountry] = useState(
+    ProfileDataObj.addresses[0].country,
+  );
 
   const [isEditingShippingStreet, setIsEditingShippingStreet] = useState(false);
   const [isEditingShippingCity, setIsEditingShippingCity] = useState(false);

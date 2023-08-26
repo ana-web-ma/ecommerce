@@ -13,9 +13,14 @@ import { Edit, Save } from '@mui/icons-material';
 import Adresses from './Adresses';
 
 function ProfileForm(): ReactElement {
-  const [firstName, setFirstName] = useState('Initial First Name');
-  const [lastName, setLastName] = useState('Initial Last Name');
-  const [birthdate, setBirthdate] = useState('2023-01-01');
+  const ProfileData = localStorage.getItem('EPERFUME_CUSTOMER_DATA');
+  let ProfileDataObj = null;
+  if (ProfileData !== null) {
+    ProfileDataObj = JSON.parse(ProfileData);
+  }
+  const [firstName, setFirstName] = useState(ProfileDataObj.firstName);
+  const [lastName, setLastName] = useState(ProfileDataObj.lastName);
+  const [birthdate, setBirthdate] = useState(ProfileDataObj.dateOfBirth);
 
   const [isEditingFName, setIsEditingFName] = useState(false);
   const [isEditingLName, setIsEditingLName] = useState(false);
@@ -36,7 +41,7 @@ function ProfileForm(): ReactElement {
     setIsEditingLName(false);
   };
   const handleEditClickBirthdate = (): void => {
-    setIsEditingLName(true);
+    setIsEditingBirthdate(true);
   };
   const handleSaveClickBirthdate = (): void => {
     setIsEditingBirthdate(false);
