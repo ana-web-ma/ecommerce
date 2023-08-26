@@ -104,11 +104,7 @@ const ProductCard = (props: IProductCard): ReactElement => {
                   src={props.product.image}
                 />
               </Fade>
-              <Fade
-                style={{ position: 'relative' }}
-                timeout={800}
-                in={hoverEffect}
-              >
+              <Fade timeout={800} in={hoverEffect}>
                 <Img
                   sx={{
                     height: props.small
