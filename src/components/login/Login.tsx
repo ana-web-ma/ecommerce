@@ -56,7 +56,7 @@ function LoginForm(): ReactElement {
       .then(async (response): Promise<void> => {
         dispatch(
           login({
-            customerId: JSON.stringify(response.body.customer.id),
+            customer: response.body.customer,
             token: tokenCache.get().token,
           }),
         );

@@ -13,12 +13,12 @@ import {
 import { type ReactElement } from 'react';
 import { createCustomer } from '../../../api/calls/customers/createCustomer';
 import { firstUpdateAddress } from '../../../api/calls/customers/update/firstUpdateAddress';
+import { updateMe } from '../../../api/calls/customers/update/updateMe';
+import { authPasswordCustomer } from '../../../api/calls/customers/authPasswordCustomer';
+import { getMe } from '../../../api/calls/getMe';
 import { getProducts } from '../../../api/calls/products/getProducts';
 
 function DemoComponent(): ReactElement {
-  const isCheckedCopyCheckBox = true;
-  const isCheckedShipping = true;
-  const isCheckedBilling = true;
   const user = {
     email: 'test9@e.e',
     password: 'password',
@@ -61,6 +61,32 @@ function DemoComponent(): ReactElement {
       .catch(console.log);
   };
 
+  const handleUpdateSubmit = (e: { preventDefault: () => void }): void => {
+    authPasswordCustomer({ email: 'a@a.aa', password: '!1Aaaaaa' })
+      .then((customerResp) => {
+        console.log('customerResp', customerResp);
+        updateMe({
+          id: customerResp.body.customer.id,
+          setFirstName: {
+            newFirstName: 'firstNameNew',
+          },
+        })
+          .then((updateResp) => {
+            console.log('updateResp', updateResp);
+          })
+          .catch(console.log);
+      })
+      .catch(console.log);
+  };
+
+  const handleGetMe = (e: { preventDefault: () => void }): void => {
+    getMe({ id: '703242c5-49a2-4dc0-83f5-08e3cc0e6d4d' })
+      .then((getMeResp) => {
+        console.log('getMeResp', getMeResp);
+      })
+      .catch(console.log);
+  };
+
   const handleProductsSubmit = (e: { preventDefault: () => void }): void => {
     getProducts({
       limit: 5,
@@ -83,7 +109,13 @@ function DemoComponent(): ReactElement {
   return (
     <>
       <Container>
-        <Button variant="contained" onClick={handleSubmit}>
+        <Button variant="outlined" onClick={handleGetMe}>
+          Get User
+        </Button>
+        <Button variant="contained" onClick={handleUpdateSubmit}>
+          UPDATE USER
+        </Button>
+        <Button variant="outlined" onClick={handleSubmit}>
           ADD USER
         </Button>
         <Button variant="contained" onClick={handleProductsSubmit}>
