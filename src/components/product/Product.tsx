@@ -1,13 +1,4 @@
-import {
-  Box,
-  Button,
-  Collapse,
-  Grid,
-  Link,
-  Paper,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Box, Collapse, Grid, Link, Typography } from '@mui/material';
 import React, { useEffect, type ReactElement } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
@@ -16,317 +7,62 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import './styles.css';
-import DemoComponent from '../ui/demo/DemoComponent';
+import { type ProductProjection } from '@commercetools/platform-sdk';
 import Image from '../ui/Image';
 import { getProducts } from '../../api/calls/products/getProducts';
 
-const productData = {
-  id: 'd4384777-a619-4507-91b0-2fd113657c1f',
-  version: 45,
-  productType: {
-    typeId: 'product-type',
-    id: '542759a5-a331-4817-932b-3a4e4312b8f2',
-  },
-  name: {
-    'en-US': 'FEU DE BOIS',
-  },
-  description: {
-    'en-US':
-      'A sophisticated combination of woody essences, warm as a fire in the fireplace. This scented candle with five wicks is a hymn to wintertime.\nIn its elegant terracotta vessel - designed and hand-crafted at the Virebent factory - it evokes the fragrance of logs, crackling as they are slowly consumed in flame.',
-  },
-  categories: [
-    {
-      typeId: 'category',
-      id: '3af6470b-59b5-4d4e-9a7b-81133a440499',
-    },
-    {
-      typeId: 'category',
-      id: '3a86817e-dda4-42c5-9037-90a13b0f135d',
-    },
-    {
-      typeId: 'category',
-      id: '8c4a5815-b067-4f86-b565-9409d38672d3',
-    },
-  ],
-  categoryOrderHints: {},
-  slug: {
-    'en-US': 'feu-de-bois',
-  },
-  metaTitle: {
-    'en-US': '',
-  },
-  metaDescription: {
-    'en-US': '',
-  },
-  variants: [
-    {
-      attributes: [],
-      assets: [],
-      images: [
-        {
-          url: 'https://c43d6e8e1587d36eac6f-07e75df687bdbd1d1c053ce7b38c2aa6.ssl.cf3.rackcdn.com/diptyque-feu-de-bois-9A8I_mnu.jpg',
-          dimensions: {
-            w: 2292,
-            h: 3055,
-          },
-        },
-        // {
-        //   url: 'https://c43d6e8e1587d36eac6f-07e75df687bdbd1d1c053ce7b38c2aa6.ssl.cf3.rackcdn.com/diptyque-feu-de-bois-AiDAxLuI.jpg',
-        //   dimensions: {
-        //     w: 2292,
-        //     h: 3055,
-        //   },
-        // },
-      ],
-      prices: [
-        {
-          id: '6898959d-8f89-4ce4-9910-4c59395b6942',
-          value: {
-            type: 'centPrecision',
-            currencyCode: 'EUR',
-            centAmount: 5800,
-            fractionDigits: 2,
-          },
-        },
-      ],
-      key: 'Classic FEU DE BOIS',
-      id: 2,
-    },
-    {
-      attributes: [],
-      assets: [],
-      images: [
-        {
-          url: 'https://c43d6e8e1587d36eac6f-07e75df687bdbd1d1c053ce7b38c2aa6.ssl.cf3.rackcdn.com/diptyque-feu-de-bois-BC41aEHv.jpg',
-          dimensions: {
-            w: 2292,
-            h: 3055,
-          },
-        },
-        {
-          url: 'https://c43d6e8e1587d36eac6f-07e75df687bdbd1d1c053ce7b38c2aa6.ssl.cf3.rackcdn.com/diptyque-feu-de-bois-xKOMliu0.jpg',
-          dimensions: {
-            w: 2292,
-            h: 3055,
-          },
-        },
-      ],
-      prices: [
-        {
-          id: 'bf632a88-5ace-49fd-abed-5f1053c1d76f',
-          value: {
-            type: 'centPrecision',
-            currencyCode: 'EUR',
-            centAmount: 8500,
-            fractionDigits: 2,
-          },
-        },
-      ],
-      key: 'Medium FEU DE BOIS',
-      id: 3,
-    },
-    {
-      attributes: [],
-      assets: [],
-      images: [
-        {
-          url: 'https://c43d6e8e1587d36eac6f-07e75df687bdbd1d1c053ce7b38c2aa6.ssl.cf3.rackcdn.com/diptyque-feu-de-bois-DWWXlr64.jpg',
-          dimensions: {
-            w: 2292,
-            h: 3055,
-          },
-        },
-        {
-          url: 'https://c43d6e8e1587d36eac6f-07e75df687bdbd1d1c053ce7b38c2aa6.ssl.cf3.rackcdn.com/diptyque-feu-de-bois-DSDXgRbN.jpg',
-          dimensions: {
-            w: 2292,
-            h: 3055,
-          },
-        },
-      ],
-      prices: [
-        {
-          id: '404243db-6f20-4358-9ef4-2b539a544a7b',
-          value: {
-            type: 'centPrecision',
-            currencyCode: 'EUR',
-            centAmount: 18000,
-            fractionDigits: 2,
-          },
-        },
-      ],
-      key: 'Large FEU DE BOIS',
-      id: 4,
-    },
-    {
-      attributes: [],
-      assets: [],
-      images: [
-        {
-          url: 'https://c43d6e8e1587d36eac6f-07e75df687bdbd1d1c053ce7b38c2aa6.ssl.cf3.rackcdn.com/diptyque-feu-de-bois-gXCrq0QO.jpg',
-          dimensions: {
-            w: 2292,
-            h: 3055,
-          },
-        },
-        {
-          url: 'https://c43d6e8e1587d36eac6f-07e75df687bdbd1d1c053ce7b38c2aa6.ssl.cf3.rackcdn.com/diptyque-feu-de-bois-CIzaGnvH.jpg',
-          dimensions: {
-            w: 2292,
-            h: 3055,
-          },
-        },
-      ],
-      prices: [
-        {
-          id: '95004ed4-6f14-4ec1-a93a-25a545f5d428',
-          value: {
-            type: 'centPrecision',
-            currencyCode: 'EUR',
-            centAmount: 31500,
-            fractionDigits: 2,
-          },
-        },
-      ],
-      key: 'Extra large FEU DE BOIS',
-      id: 5,
-    },
-  ],
-  masterVariant: {
-    attributes: [],
-    assets: [],
-    images: [
-      {
-        url: 'https://c43d6e8e1587d36eac6f-07e75df687bdbd1d1c053ce7b38c2aa6.ssl.cf3.rackcdn.com/diptyque-feu-de-bois-_w1mUkKj.jpg',
-        dimensions: {
-          w: 2292,
-          h: 3055,
-        },
-      },
-      {
-        url: 'https://c43d6e8e1587d36eac6f-07e75df687bdbd1d1c053ce7b38c2aa6.ssl.cf3.rackcdn.com/diptyque-feu-de-bois-o4yTAMek.jpg',
-        dimensions: {
-          w: 2292,
-          h: 3055,
-        },
-      },
-    ],
-    prices: [
-      {
-        id: 'e9aecc0b-a6bf-4877-bbda-f9d24ba28952',
-        value: {
-          type: 'centPrecision',
-          currencyCode: 'EUR',
-          centAmount: 3800,
-          fractionDigits: 2,
-        },
-      },
-    ],
-    key: 'Small FEU DE BOIS',
-    id: 1,
-  },
-  searchKeywords: {},
-  hasStagedChanges: false,
-  published: true,
-  key: 'FEU DE BOIS',
-  priceMode: 'Embedded',
-  createdAt: '2023-08-22T01:47:37.374Z',
-  lastModifiedAt: '2023-08-24T20:22:40.978Z',
-};
-// const productRequestData = getProducts({
-//   limit: 5,
-//   pageNumber: 0,
-//   sort: {
-//     field: 'id',
-//     order: 'desc',
-//   },
-//   filter: {
-//     // categoriesById: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
-//     productByKey: { key: 'FEU DE BOIS' },
-//   },
-// })
-//   .then((resp) => {
-//     console.log(
-//       'e',
-//       resp.body.results.map((e) => e),
-//     );
-//   })
-//   .catch(console.log);
-
-// console.log('productRequestData', productRequestData);
-
-// function srcset(
-//   image: string,
-//   size: number,
-//   rows = 1,
-//   cols = 1,
-// ): {
-//   src: string;
-//   srcSet: string;
-// } {
-//   return {
-//     src: `${image}?w=${size * cols}&h=${size * rows}&fit=crop&auto=format`,
-//     srcSet: `${image}?w=${size * cols}&h=${
-//       size * rows
-//     }&fit=crop&auto=format&dpr=2 2x`,
-//   };
-// }
-
 const swiperParams: SwiperOptions = {
   slidesPerView: 1,
-  // navigation: true,
   pagination: {
-    // el: '.swiper-pagination',
     clickable: true,
   },
   modules: [Pagination],
-  // style: {
-  //   // '--swiper-navigation-color': 'pink',
-  //   '--swiper-pagination-color': 'pink',
-  // },
 };
-
-interface ImageType {
-  url: string;
-  dimensions: {
-    w: number;
-    h: number;
-  };
-}
-
-interface Variant {
-  attributes: never[];
-  assets: never[];
-  images: ImageType[];
-  prices: never[];
-}
 
 const Product = (): ReactElement => {
   const [expanded, setExpanded] = React.useState(false);
   const [activeVariant, setActiveVariant] = React.useState<number>(0);
-  const [images, setImages] = React.useState<ImageType[] | null>(null);
-  // const [variantData, setVariantData] = React.useState<Variant>(
-  //   productData.masterVariant,
-  // );
+  const [productData, setProductData] =
+    React.useState<ProductProjection | null>(null);
 
   useEffect(() => {
-    console.log('building', activeVariant);
-    console.log('prices', productData.variants[activeVariant]);
-  }, [activeVariant]);
+    getProducts({
+      limit: 5,
+      pageNumber: 0,
+      sort: {
+        field: 'id',
+        order: 'desc',
+      },
+      filter: {
+        productByKey: { key: '34 Boulevard Saint Germain' },
+      },
+    })
+      .then((resp) => {
+        setProductData(resp.body.results[0]);
+      })
+      .catch(console.log);
+  }, []);
+
+  useEffect(() => {}, [activeVariant]);
 
   const handleExpandClick = (): void => {
     setExpanded(!expanded);
   };
 
+  const prices =
+    productData?.variants[activeVariant].prices !== undefined
+      ? productData?.variants[activeVariant].prices
+      : undefined;
+
   return (
     <>
       <Grid container spacing={0}>
         <Grid item xs={6}>
-          {productData.variants.map(
+          {productData?.variants.map(
             (variant, variantIndex) =>
               activeVariant === variantIndex && (
                 <Swiper key={variant.id} className="mySwiper" {...swiperParams}>
-                  {variant.images.map((image, index) => (
+                  {variant.images?.map((image, index) => (
                     <SwiperSlide key={image.url} virtualIndex={index}>
                       <Image
                         name={productData.name['en-US']}
@@ -341,40 +77,35 @@ const Product = (): ReactElement => {
         </Grid>
         <Grid item xs={6} p={2}>
           <Typography mb={2} variant="h2">
-            {productData.name['en-US']}
+            {productData?.name['en-US']}
           </Typography>
-          <Collapse in={expanded} timeout="auto" collapsedSize="70px">
-            {productData.description['en-US']}
+          <Collapse in={expanded} timeout="auto" collapsedSize="50px">
+            {productData?.description != null &&
+              productData.description['en-US']}
           </Collapse>
           <Link onClick={handleExpandClick}>Read more</Link>
           <Typography mt={2} mb={2} variant="subtitle2">
             {`${
-              productData.variants[activeVariant].prices[0].value.centAmount /
+              Number(prices !== undefined ? prices[0].value.centAmount : '') /
               100
             } €`}
           </Typography>
           <Typography variant="body2">Select a size:</Typography>
-          <Grid columnSpacing={1} container>
-            {productData.variants.map((e, i) => (
+          <Grid mt={1} columnSpacing={1} container>
+            {productData?.variants.map((e, i) => (
               <Grid
                 item
                 xs={3}
                 key={e.id}
-                className={activeVariant === i ? 'active' : ''}
                 sx={{
                   cursor: 'pointer',
                   img: {
                     transition: '0.3s',
-                    border: '1px solid transparent',
+                    border:
+                      activeVariant === i
+                        ? '1px solid #00000080'
+                        : '1px solid transparent',
                   },
-                  //   '.active': {
-                  //     transition: '0.3s',
-                  //     border: '1px solid red',
-                  //     img: {
-                  //       transition: '0.3s',
-                  //       border: '1px solid #000000',
-                  //     },
-                  //   },
                   ':hover': {
                     img: {
                       transition: '0.3s',
@@ -383,18 +114,7 @@ const Product = (): ReactElement => {
                   },
                 }}
               >
-                <Box
-                // sx={{
-                //   '.active': {
-                //     transition: '0.3s',
-                //     border: '1px solid red',
-                //     img: {
-                //       transition: '0.3s',
-                //       border: '1px solid #000000',
-                //     },
-                //   },
-                // }}
-                >
+                <Box>
                   <div
                     onClick={() => {
                       setActiveVariant(i);
@@ -402,11 +122,13 @@ const Product = (): ReactElement => {
                   >
                     <Image
                       name={productData.name['en-US']}
-                      url={e.images[0].url}
+                      url={
+                        e.images?.[0].url !== undefined ? e.images?.[0].url : ''
+                      }
                       maxWidth="100%"
                     />
                     <Typography variant="body2" align="center">
-                      {e.key.replace(productData.name['en-US'], '')}
+                      {e.key?.replace(productData.name['en-US'], '')}
                     </Typography>
                   </div>
                 </Box>
@@ -414,14 +136,7 @@ const Product = (): ReactElement => {
             ))}
           </Grid>
         </Grid>
-        <Grid item xs={6}>
-          <Box>xs=4</Box>
-        </Grid>
-        <Grid item xs={6}>
-          <Box>xs=8</Box>
-        </Grid>
       </Grid>
-      <DemoComponent />
     </>
   );
 };
