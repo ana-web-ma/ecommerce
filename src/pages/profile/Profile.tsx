@@ -1,11 +1,12 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import React, { type ReactElement } from 'react';
+import ProfileForm from '../../components/profile/Profile';
 
 const Profile = (): ReactElement => {
   return (
     <>
       <Box textAlign={'center'}>
-        <Typography variant="h2">My account</Typography>
+        <ProfileForm />
       </Box>
     </>
   );
