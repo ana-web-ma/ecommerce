@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { LoginSchema } from '../../helpers/yup/Yup';
 import { useAppDispatch } from '../../helpers/hooks/Hooks';
 import { login } from '../../store/reducers/CustomerSlice';
-import { authPasswordCustomer } from '../../api/calls/customer/authPasswordCustomer';
+import { authPasswordCustomer } from '../../api/calls/customers/authPasswordCustomer';
 import { tokenCache } from '../../api/tokenCache';
 
 export function onPromise<T>(
