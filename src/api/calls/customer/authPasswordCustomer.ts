@@ -15,6 +15,7 @@ export const authPasswordCustomer = async (props: {
     username: props.email,
     password: props.password,
   })
+    .me()
     .login()
     .post({
       body: {

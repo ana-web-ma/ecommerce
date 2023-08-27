@@ -4,27 +4,30 @@ import {
 } from '@commercetools/platform-sdk';
 import { apiRootCreateByToken } from '../clients/ExistingTokenFlowClient';
 
-// Запрашивает данные авторизованного пользователя
-// Токен подходит: statusCode: 200
-export const getMe = async (): Promise<ClientResponse<Customer>> =>
-  apiRootCreateByToken().me().get().execute();
+export const getMe = async (props: {
+  id: string;
+}): Promise<ClientResponse<Customer>> => {
+  return apiRootCreateByToken()
+    .customers()
+    .withId({ ID: props.id })
+    .get()
+    .execute();
+};
 
-// Пример использования:
+// How to use
 
-//   getMe()
+//   getMe({ id: props.id })
 //     .then((loggedUserData) => {
 //       console.log('loggedUserData', loggedUserData);
 //     })
 //     .catch(console.error);
 
-// Пример использования вместе с авторизацией по почте/паролю
-// Сразу после логина запрашивает данные пользователя
-// Данные те же, что и при authPasswordCustomer
+// Use with password auth
 
 // authPasswordCustomer(user)
 // .then((userData) => {
 //   console.log('userData', userData);
-//   getMe()
+//   getMe({ id: userData.id })
 //     .then((loggedUserData) => {
 //       console.log('loggedUserData', loggedUserData);
 //     })
