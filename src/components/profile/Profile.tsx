@@ -11,7 +11,7 @@ import type { ReactElement, ChangeEvent } from 'react';
 import { Edit, Save } from '@mui/icons-material';
 import Addresses from './Addresses';
 import Password from './Password';
-import { updateMe } from '../../api/calls/customer/update/updateMe';
+import { updateMe } from '../../api/calls/customers/update/updateMe';
 
 function ProfileForm(): ReactElement {
   const ProfileData = localStorage.getItem('EPERFUME_CUSTOMER_DATA');
@@ -40,6 +40,7 @@ function ProfileForm(): ReactElement {
       setFirstName: {
         newFirstName: firstName,
       },
+      id: '',
     })
       .then((updatedData) => {
         console.log('Profile updated:', updatedData);

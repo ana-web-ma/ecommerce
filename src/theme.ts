@@ -55,10 +55,9 @@ const theme = createTheme({
           style: {
             fontFamily: BELLOTA_FONT,
             fontWeight: 700,
-            transition: '0.3s',
+            transition: 'all .3s ease-in-out',
             '&:hover': {
               opacity: 0.5,
-              transition: '0.3s',
             },
           },
         },
@@ -67,6 +66,7 @@ const theme = createTheme({
           style: {
             fontFamily: BELLOTA_FONT,
             fontWeight: 700,
+            transition: 'all .3s ease-in-out',
             '&:hover': {
               backgroundColor: '#00000015',
             },
@@ -108,6 +108,7 @@ const theme = createTheme({
     MuiIconButton: {
       styleOverrides: {
         root: {
+          transition: 'all .3s ease-in-out',
           '&:hover': {
             backgroundColor: '#00000000',
             path: {
@@ -151,10 +152,9 @@ const theme = createTheme({
             padding: '15px',
             backgroundColor: '#F6F6F6',
             borderColor: '#D9D9D9',
-            transition: '0.2s',
+            transition: 'all 0.3s ease-in-out',
             '&:hover': {
               backgroundColor: '#FFFFFF',
-              transition: '0.2s',
             },
           },
         },
@@ -166,14 +166,13 @@ const theme = createTheme({
           props: { variant: 'outlined' },
           style: {
             fontFamily: BELLOTA_FONT,
+            transition: 'all 0.2s ease-in-out',
             '&:hover fieldset': {
               backgroundColor: '#00000002',
-              transition: '0.2s',
             },
             '& fieldset': {
               backgroundColor: '#00000008',
               borderColor: '#00000000',
-              transition: '0.2s',
             },
           },
         },
@@ -295,7 +294,7 @@ const theme = createTheme({
           fontWeight: 700,
           textDecoration: 'underline',
           cursor: 'pointer',
-          transition: '.3s',
+          transition: 'all .3s ease-in-out',
           '&:hover': {
             color: '#00000060',
           },
