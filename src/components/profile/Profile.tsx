@@ -21,9 +21,6 @@ function ProfileForm(): ReactElement {
   const {
     register,
     formState: { errors },
-    handleSubmit,
-    getValues,
-    setValue,
   } = useForm({
     mode: 'onChange',
     resolver: yupResolver(RegisterSchema),
