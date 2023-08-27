@@ -9,12 +9,25 @@ import {
 } from '@mui/material';
 import type { ReactElement, ChangeEvent } from 'react';
 import { Edit, Save } from '@mui/icons-material';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import Addresses from './Addresses';
 import Password from './Password';
 import { CustomDialog } from '../register/DialogModule';
 import { updateMe } from '../../api/calls/customers/update/updateMe';
+import { RegisterSchema } from '../../helpers/yup/Yup';
 
 function ProfileForm(): ReactElement {
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    getValues,
+    setValue,
+  } = useForm({
+    mode: 'onChange',
+    resolver: yupResolver(RegisterSchema),
+  });
   const ProfileData = localStorage.getItem('EPERFUME_CUSTOMER_DATA');
   let ProfileDataObj = null;
   if (ProfileData !== null) {
@@ -53,7 +66,11 @@ function ProfileForm(): ReactElement {
         newFirstName: firstName,
       },
     })
-      .then(() => {
+      .then((res) => {
+        localStorage.setItem(
+          'EPERFUME_CUSTOMER_DATA',
+          JSON.stringify(res.body),
+        );
         openDialog('Successfully', 'First name changed');
       })
       .catch(() => {
@@ -70,7 +87,7 @@ function ProfileForm(): ReactElement {
   const handleEditClickLName = (): void => {
     setIsEditingLName(true);
   };
-  const handleSaveClickLName = (): void => {
+  const handleSaveClickLName = async (): Promise<void> => {
     setIsEditingLName(false);
     updateMe({
       id,
@@ -78,24 +95,76 @@ function ProfileForm(): ReactElement {
         newLastName: lastName,
       },
     })
-      .then(() => {
-        openDialog('Successfully', 'First name changed');
+      .then((res) => {
+        localStorage.setItem(
+          'EPERFUME_CUSTOMER_DATA',
+          JSON.stringify(res.body),
+        );
+        openDialog('Successfully', 'Last name changed');
       })
       .catch(() => {
         openDialog('Error', 'Try later');
       });
   };
+
+  const handleSaveLNameClick = (): void => {
+    handleSaveClickLName().catch((error) => {
+      console.error('Error handling save click:', error);
+    });
+  };
   const handleEditClickBirthdate = (): void => {
     setIsEditingBirthdate(true);
   };
-  const handleSaveClickBirthdate = (): void => {
+  const handleSaveClickBirthdate = async (): Promise<void> => {
     setIsEditingBirthdate(false);
+    updateMe({
+      id,
+      setDateOfBirth: {
+        dateOfBirth: birthdate,
+      },
+    })
+      .then((res) => {
+        localStorage.setItem(
+          'EPERFUME_CUSTOMER_DATA',
+          JSON.stringify(res.body),
+        );
+        openDialog('Successfully', 'Birthdate changed');
+      })
+      .catch(() => {
+        openDialog('Error', 'Try later');
+      });
+  };
+  const handleSaveBirthdateClick = (): void => {
+    handleSaveClickBirthdate().catch((error) => {
+      console.error('Error handling save click:', error);
+    });
   };
   const handleEditClickEmail = (): void => {
     setIsEditingEmail(true);
   };
-  const handleSaveClickEmail = (): void => {
+  const handleSaveClickEmail = async (): Promise<void> => {
     setIsEditingEmail(false);
+    updateMe({
+      id,
+      changeEmail: {
+        newEmail: email,
+      },
+    })
+      .then((res) => {
+        localStorage.setItem(
+          'EPERFUME_CUSTOMER_DATA',
+          JSON.stringify(res.body),
+        );
+        openDialog('Successfully', 'Email changed');
+      })
+      .catch(() => {
+        openDialog('Error', 'Try later');
+      });
+  };
+  const handleSaveEmailClick = (): void => {
+    handleSaveClickEmail().catch((error) => {
+      console.error('Error handling save click:', error);
+    });
   };
 
   const handleChangeFName = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -113,11 +182,35 @@ function ProfileForm(): ReactElement {
     setEmail(event.target.value);
   };
   const handleSaveAllChanges = (): void => {
-    console.log('Saving all changes');
     setIsEditingFName(false);
     setIsEditingLName(false);
     setIsEditingBirthdate(false);
     setIsEditingEmail(false);
+    updateMe({
+      id,
+      setFirstName: {
+        newFirstName: firstName,
+      },
+      setLastName: {
+        newLastName: lastName,
+      },
+      setDateOfBirth: {
+        dateOfBirth: birthdate,
+      },
+      changeEmail: {
+        newEmail: email,
+      },
+    })
+      .then((res) => {
+        localStorage.setItem(
+          'EPERFUME_CUSTOMER_DATA',
+          JSON.stringify(res.body),
+        );
+        openDialog('Successfully', 'Data changed');
+      })
+      .catch(() => {
+        openDialog('Error', 'Try later');
+      });
   };
   const handleTabChange = (
     event: React.ChangeEvent<unknown>,
@@ -179,7 +272,7 @@ function ProfileForm(): ReactElement {
                   <InputAdornment position="end">
                     {isEditingLName ? (
                       <Button
-                        onClick={handleSaveClickLName}
+                        onClick={handleSaveLNameClick}
                         startIcon={<Save />}
                         variant="contained"
                       >
@@ -211,7 +304,7 @@ function ProfileForm(): ReactElement {
                   <InputAdornment position="end">
                     {isEditingBirthdate ? (
                       <Button
-                        onClick={handleSaveClickBirthdate}
+                        onClick={handleSaveBirthdateClick}
                         startIcon={<Save />}
                         variant="contained"
                       >
@@ -242,7 +335,7 @@ function ProfileForm(): ReactElement {
                   <InputAdornment position="end">
                     {isEditingEmail ? (
                       <Button
-                        onClick={handleSaveClickEmail}
+                        onClick={handleSaveEmailClick}
                         startIcon={<Save />}
                         variant="contained"
                       >
