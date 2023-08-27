@@ -11,6 +11,7 @@ import type { ReactElement, ChangeEvent } from 'react';
 import { Edit, Save } from '@mui/icons-material';
 import Addresses from './Addresses';
 import Password from './Password';
+import { CustomDialog } from '../register/DialogModule';
 import { updateMe } from '../../api/calls/customers/update/updateMe';
 
 function ProfileForm(): ReactElement {
@@ -19,6 +20,7 @@ function ProfileForm(): ReactElement {
   if (ProfileData !== null) {
     ProfileDataObj = JSON.parse(ProfileData);
   }
+  const { id } = ProfileDataObj;
   const [firstName, setFirstName] = useState(ProfileDataObj.firstName);
   const [lastName, setLastName] = useState(ProfileDataObj.lastName);
   const [birthdate, setBirthdate] = useState(ProfileDataObj.dateOfBirth);
@@ -31,39 +33,34 @@ function ProfileForm(): ReactElement {
 
   const [tabValue, setTabValue] = useState(0);
 
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
+  const openDialog = (title: string, content: React.ReactNode): void => {
+    setDialogTitle(title);
+    setDialogContent(content);
+    setDialogOpen(true);
+  };
+
   const handleEditClickFName = (): void => {
     setIsEditingFName(true);
   };
   const handleSaveClickFName = async (): Promise<void> => {
     setIsEditingFName(false);
     updateMe({
+      id,
       setFirstName: {
         newFirstName: firstName,
       },
-      id: '',
     })
-      .then((updatedData) => {
-        console.log('Profile updated:', updatedData);
+      .then(() => {
+        openDialog('Successfully', 'First name changed');
       })
-      .catch((error) => {
-        console.error('Error updating profile:', error);
+      .catch(() => {
+        openDialog('Error', 'Try later');
       });
-
-    // try {
-    //   const updatedData = await updateMe({
-    //     setFirstName: {
-    //       newFirstName: firstName,
-    //     },
-    //   });
-
-    //   // Обработка успешного ответа
-    //   console.log('Profile updated:', updatedData);
-    //   console.log(firstName);
-    // } catch (error) {
-    //   // Обработка ошибки
-    //   console.error('Error updating profile:', error);
-    // }
   };
+
   const handleSaveFNameClick = (): void => {
     handleSaveClickFName().catch((error) => {
       console.error('Error handling save click:', error);
@@ -75,6 +72,18 @@ function ProfileForm(): ReactElement {
   };
   const handleSaveClickLName = (): void => {
     setIsEditingLName(false);
+    updateMe({
+      id,
+      setLastName: {
+        newLastName: lastName,
+      },
+    })
+      .then(() => {
+        openDialog('Successfully', 'First name changed');
+      })
+      .catch(() => {
+        openDialog('Error', 'Try later');
+      });
   };
   const handleEditClickBirthdate = (): void => {
     setIsEditingBirthdate(true);
@@ -116,6 +125,7 @@ function ProfileForm(): ReactElement {
   ): void => {
     setTabValue(newValue);
   };
+
   return (
     <Stack mt={3} justifyContent="center" alignItems="center">
       <Tabs value={tabValue} onChange={handleTabChange} centered>
@@ -264,6 +274,14 @@ function ProfileForm(): ReactElement {
         {tabValue === 1 && <Addresses></Addresses>}
         {tabValue === 2 && <Password></Password>}
       </form>
+      <CustomDialog
+        open={dialogOpen}
+        onClose={() => {
+          setDialogOpen(false);
+        }}
+        title={dialogTitle}
+        content={dialogContent}
+      />
     </Stack>
   );
 }
