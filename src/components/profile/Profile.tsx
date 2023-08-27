@@ -231,11 +231,18 @@ function ProfileForm(): ReactElement {
           <div style={{ minHeight: '800px' }}>
             <TextField
               value={firstName}
-              onChange={handleChangeFName}
+              onInput={handleChangeFName}
               fullWidth
               label="First name"
               disabled={!isEditingFName}
               style={{ marginTop: '16px' }}
+              error={!(errors.firstName == null)}
+              helperText={
+                errors.firstName != null
+                  ? errors.firstName.message?.toString()
+                  : ''
+              }
+              {...register('firstName')}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -244,6 +251,7 @@ function ProfileForm(): ReactElement {
                         onClick={handleSaveFNameClick}
                         startIcon={<Save />}
                         variant="contained"
+                        disabled={errors.firstName != null}
                       >
                         Save
                       </Button>
@@ -262,11 +270,18 @@ function ProfileForm(): ReactElement {
             />
             <TextField
               value={lastName}
-              onChange={handleChangeLName}
+              onInput={handleChangeLName}
               fullWidth
               label="Last name"
               disabled={!isEditingLName}
               style={{ marginTop: '16px' }}
+              error={!(errors.lastName == null)}
+              helperText={
+                errors.lastName != null
+                  ? errors.lastName.message?.toString()
+                  : ''
+              }
+              {...register('lastName')}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -275,6 +290,7 @@ function ProfileForm(): ReactElement {
                         onClick={handleSaveLNameClick}
                         startIcon={<Save />}
                         variant="contained"
+                        disabled={errors.lastName != null}
                       >
                         Save
                       </Button>
@@ -293,12 +309,17 @@ function ProfileForm(): ReactElement {
             />
             <TextField
               value={birthdate}
-              onChange={handleChangeBirthdate}
+              onInput={handleChangeBirthdate}
               fullWidth
               label="Birthdate"
               type="date"
               style={{ marginTop: '16px' }}
               disabled={!isEditingBirthdate}
+              error={!(errors.date == null)}
+              helperText={
+                errors.date != null ? errors.date.message?.toString() : ''
+              }
+              {...register('date')}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -307,6 +328,7 @@ function ProfileForm(): ReactElement {
                         onClick={handleSaveBirthdateClick}
                         startIcon={<Save />}
                         variant="contained"
+                        disabled={errors.date != null}
                       >
                         Save
                       </Button>
@@ -325,11 +347,16 @@ function ProfileForm(): ReactElement {
             />
             <TextField
               value={email}
-              onChange={handleChangeEmail}
+              onInput={handleChangeEmail}
               fullWidth
               label="Email"
               disabled={!isEditingEmail}
               style={{ marginTop: '16px' }}
+              error={!(errors.email == null)}
+              helperText={
+                errors.email != null ? errors.email.message?.toString() : ''
+              }
+              {...register('email')}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -338,6 +365,7 @@ function ProfileForm(): ReactElement {
                         onClick={handleSaveEmailClick}
                         startIcon={<Save />}
                         variant="contained"
+                        disabled={errors.email != null}
                       >
                         Save
                       </Button>
@@ -359,6 +387,12 @@ function ProfileForm(): ReactElement {
               variant="contained"
               color="primary"
               style={{ marginTop: '16px' }}
+              disabled={
+                errors.email != null ||
+                errors.firstName != null ||
+                errors.lastName != null ||
+                errors.date != null
+              }
             >
               Save All Changes
             </Button>
