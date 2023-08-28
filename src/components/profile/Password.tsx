@@ -5,7 +5,7 @@ import { type FieldValues, type SubmitHandler, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { RegisterSchema } from '../../helpers/yup/Yup';
+import { LoginSchema } from '../../helpers/yup/Yup';
 import { useAppDispatch } from '../../helpers/hooks/Hooks';
 import { login } from '../../store/reducers/CustomerSlice';
 import { authPasswordCustomer } from '../../api/calls/customers/authPasswordCustomer';
@@ -31,7 +31,7 @@ function Password(): ReactElement {
     handleSubmit,
   } = useForm({
     mode: 'onChange',
-    resolver: yupResolver(RegisterSchema),
+    resolver: yupResolver(LoginSchema),
   });
 
   const handleSubmitForm: SubmitHandler<FieldValues> = async (
@@ -72,7 +72,7 @@ function Password(): ReactElement {
   return (
     <div style={{ minHeight: '800px' }}>
       <TextField
-        error={!(errors.oldPassword == null) || errorMessage !== ''}
+        error={!(errors.password == null) || errorMessage !== ''}
         fullWidth={true}
         margin="normal"
         type={showPassword ? 'text' : 'password'}
@@ -83,9 +83,7 @@ function Password(): ReactElement {
           setErrorMessage('');
         }}
         helperText={
-          errors.oldPassword != null
-            ? errors.oldPassword.message?.toString()
-            : ''
+          errors.password != null ? errors.password.message?.toString() : ''
         }
         InputProps={{
           endAdornment: (
@@ -100,10 +98,10 @@ function Password(): ReactElement {
             </InputAdornment>
           ),
         }}
-        {...register('oldPassword')}
+        {...register('password')}
       />
       <TextField
-        error={!(errors.newPassword == null) || errorMessage !== ''}
+        error={!(errors.password == null) || errorMessage !== ''}
         fullWidth={true}
         margin="normal"
         type={showPassword ? 'text' : 'password'}
@@ -114,9 +112,7 @@ function Password(): ReactElement {
           setErrorMessage('');
         }}
         helperText={
-          errors.newPassword != null
-            ? errors.newPassword.message?.toString()
-            : ''
+          errors.password != null ? errors.password.message?.toString() : ''
         }
         InputProps={{
           endAdornment: (
@@ -131,10 +127,10 @@ function Password(): ReactElement {
             </InputAdornment>
           ),
         }}
-        {...register('newPassword')}
+        {...register('password')}
       />
       <TextField
-        error={!(errors.repeatPassword == null) || errorMessage !== ''}
+        error={!(errors.password == null) || errorMessage !== ''}
         fullWidth={true}
         margin="normal"
         type={showPassword ? 'text' : 'password'}
@@ -145,9 +141,7 @@ function Password(): ReactElement {
           setErrorMessage('');
         }}
         helperText={
-          errors.repeatPassword != null
-            ? errors.repeatPassword.message?.toString()
-            : ''
+          errors.password != null ? errors.password.message?.toString() : ''
         }
         InputProps={{
           endAdornment: (
@@ -162,18 +156,10 @@ function Password(): ReactElement {
             </InputAdornment>
           ),
         }}
-        {...register('repeatPassword')}
+        {...register('password')}
       />
-      <Button
-        disabled={
-          errors.oldPassword != null ||
-          errors.newPassword != null ||
-          errors.repeatPassword != null
-        }
-        type="submit"
-        variant="contained"
-      >
-        Save new password
+      <Button type="submit" variant="contained">
+        Login
       </Button>
     </div>
   );
