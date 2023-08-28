@@ -16,7 +16,7 @@ import {
   type Category,
   type ProductProjection,
 } from '@commercetools/platform-sdk';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import { getProducts } from '../../api/calls/products/getProducts';
 import { getCategories } from '../../api/calls/categories/getCategories';
@@ -25,6 +25,15 @@ import NavigationCatalog from './NavigationCatalog';
 
 const getPageQty = (total: number): number => Math.ceil(total / 6);
 
+const parentPath = (array: (string | undefined)[]): string => {
+  if (array === undefined) return '';
+  let temp: string | undefined = '';
+  if (Number.isNaN(Number(array[array.length - 1]))) {
+    return `/${array.join('/')}`;
+  }
+  temp = array.pop();
+  return array.length === 0 ? '' : `/${array.join('/')}`;
+};
 interface IBreadCrump {
   name: string;
   path: string;
@@ -36,7 +45,6 @@ const Products = (props: {
   breadcrumb: IBreadCrump[];
   idCategory?: string;
 }): ReactElement => {
-  const location = useLocation();
   const params = useParams();
   const [products, setProducts] = useState<ProductProjection[]>([]);
   const [arrayForBread, setArrayForBread] = useState<IBreadCrump[]>([]);
@@ -44,7 +52,6 @@ const Products = (props: {
     undefined,
   );
   const [query, setQuery] = useState(props.idCategory);
-  const [parentPath, setParentPath] = useState('');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(1);
   const [pageQty, setPageQty] = useState(0);
@@ -82,6 +89,8 @@ const Products = (props: {
         .catch((err) => {
           throw new Error(err);
         });
+    } else {
+      setRenderCategory(undefined);
     }
   }, [params]);
 
@@ -113,14 +122,13 @@ const Products = (props: {
         });
       }
     }
-  }, [renderCategory]);
+  }, [renderCategory, params]);
 
   useEffect(() => {
     const pageCurrent = !Number.isNaN(Number(params.id))
       ? Number(params.id)
       : 1;
     setPage(pageCurrent);
-    console.log(page);
     getProducts({
       limit: 6,
       pageNumber: pageCurrent,
@@ -147,14 +155,14 @@ const Products = (props: {
       .catch((err) => {
         throw new Error(err);
       });
-  }, [page, params, renderCategory]);
-  // useEffect(() => {
-  //   if (page > pageQty && pageQty !== 0) navigate('/404');
-  // }, [page, pageQty, location]);
+  }, [renderCategory, page]);
+
   return (
     <>
       <Stack mt={3} direction="row" gap={0.5} alignItems="end">
-        <Typography variant="h2">{renderCategory?.name['en-US']}</Typography>
+        <Typography variant="h2">
+          {renderCategory?.name['en-US'] ?? 'All products'}
+        </Typography>
         <Typography pb={0.4} sx={{ whiteSpace: 'nowrap' }} variant="body2">
           ({total} Products)
         </Typography>
@@ -168,7 +176,7 @@ const Products = (props: {
             Home
           </MuiLink>
           {renderCategory !== undefined ? (
-            <MuiLink component={Link} to="/catalog">
+            <MuiLink component={Link} to="/catalog/1">
               Catalog
             </MuiLink>
           ) : (
@@ -253,8 +261,8 @@ const Products = (props: {
             component={Link}
             to={
               item.page !== null
-                ? `/catalog${parentPath}/${item.page}`
-                : `/${props.path}/`
+                ? `/catalog${parentPath(Object.values(params))}/${item.page}`
+                : `/catalog/`
             }
             {...item}
           />

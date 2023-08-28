@@ -15,51 +15,158 @@ const NavigationCatalog = (props: {
     tempArr = [
       {
         title: 'Summer collection',
-        path: 'catalog/collections/summer',
+        path: 'collections/summer',
       },
       {
         title: 'Wedding collection',
-        path: 'catalog/collections/wedding',
+        path: 'collections/wedding',
+      },
+    ];
+  } else if (props.category === 'wedding collection') {
+    tempArr = [
+      {
+        title: 'Summer collection',
+        path: 'collections/summer',
+      },
+    ];
+  } else if (props.category === 'summer collection') {
+    tempArr = [
+      {
+        title: 'Wedding collection',
+        path: 'collections/wedding',
       },
     ];
   } else if (props.category === 'fragrances') {
     tempArr = [
       {
         title: 'Candles',
-        path: 'catalog/fragrances/candles',
+        path: 'fragrances/candles',
       },
       {
         title: 'Perfume',
-        path: 'catalog/fragrances/perfume',
+        path: 'fragrances/perfume',
       },
       {
         title: 'Diffusers',
-        path: 'catalog/fragrances/diffusers',
+        path: 'fragrances/diffusers',
+      },
+    ];
+  } else if (props.category === 'candles') {
+    tempArr = [
+      {
+        title: 'Perfume',
+        path: 'fragrances/perfume',
+      },
+      {
+        title: 'Diffusers',
+        path: 'fragrances/diffusers',
+      },
+    ];
+  } else if (props.category === 'perfume') {
+    tempArr = [
+      {
+        title: 'Candles',
+        path: 'fragrances/candles',
+      },
+      {
+        title: 'Diffusers',
+        path: 'fragrances/diffusers',
+      },
+    ];
+  } else if (props.category === 'diffusers') {
+    tempArr = [
+      {
+        title: 'Candles',
+        path: 'fragrances/candles',
+      },
+      {
+        title: 'Perfume',
+        path: 'fragrances/perfume',
       },
     ];
   } else if (props.category === 'home decor') {
     tempArr = [
       {
         title: 'Accessories',
-        path: 'catalog/home-decor/accessories',
+        path: 'home-decor/accessories',
       },
       {
         title: 'Candle holders',
-        path: 'catalog/home-decor/candle-holders',
+        path: 'home-decor/candle-holders',
       },
       {
         title: 'Tableware',
-        path: 'catalog/home-decor/tableware',
+        path: 'home-decor/tableware',
       },
       {
         title: 'Vases',
-        path: 'catalog/home-decor/vases',
+        path: 'home-decor/vases',
+      },
+    ];
+  } else if (props.category === 'accessories') {
+    tempArr = [
+      {
+        title: 'Candle holders',
+        path: 'home-decor/candle-holders',
+      },
+      {
+        title: 'Tableware',
+        path: 'home-decor/tableware',
+      },
+      {
+        title: 'Vases',
+        path: 'home-decor/vases',
+      },
+    ];
+  } else if (props.category === 'candle holders') {
+    tempArr = [
+      {
+        title: 'Accessories',
+        path: 'home-decor/accessories',
+      },
+      {
+        title: 'Tableware',
+        path: 'home-decor/tableware',
+      },
+      {
+        title: 'Vases',
+        path: 'home-decor/vases',
+      },
+    ];
+  } else if (props.category === 'tableware') {
+    tempArr = [
+      {
+        title: 'Accessories',
+        path: 'home-decor/accessories',
+      },
+      {
+        title: 'Candle holders',
+        path: 'home-decor/candle-holders',
+      },
+      {
+        title: 'Vases',
+        path: 'home-decor/vases',
+      },
+    ];
+  } else if (props.category === 'vases') {
+    tempArr = [
+      {
+        title: 'Accessories',
+        path: 'home-decor/accessories',
+      },
+      {
+        title: 'Candle holders',
+        path: 'home-decor/candle-holders',
+      },
+      {
+        title: 'Tableware',
+        path: 'home-decor/tableware',
       },
     ];
   }
   return (
     <>
-      <Stack direction="row" gap={2} justifyContent="center">
+      <Stack direction="row" height="27px" gap={2} justifyContent="center">
         {tempArr.map((item, ind) => {
           return (
             <MuiLink

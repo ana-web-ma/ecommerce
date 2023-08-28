@@ -61,7 +61,6 @@ const Header = (): ReactElement => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [checkedMenu, setCheckedMenu] = useState(false);
-  const [hoverNew, setHoverNew] = useState(false);
   const [hoverFragrances, setHoverFragrances] = useState(false);
   const [hoverHomeDecor, setHoverHomeDecor] = useState(false);
   const [hoverCollections, setHoverCollections] = useState(false);
@@ -101,7 +100,7 @@ const Header = (): ReactElement => {
   const navMenuLinks = (
     <>
       <HeaderLink text="Home" path="/" />
-      <HeaderLink text="Catalog" path="/catalog" />
+      <HeaderLink text="Catalog" path="/catalog/1" />
       <HeaderLink text="NEW" path="catalog/new" />
       <HeaderLink text="Collections" path="catalog/collections" />
       <HeaderLink text="Fragrances" path="catalog/fragrances" />
@@ -135,7 +134,6 @@ const Header = (): ReactElement => {
           zIndex="200"
           component={Link}
           onClick={(): void => {
-            setHoverNew(false);
             setHoverCollections(false);
             setHoverFragrances(false);
             setHoverHomeDecor(false);
@@ -179,7 +177,6 @@ const Header = (): ReactElement => {
         >
           <Box
             onClick={() => {
-              setHoverNew(false);
               setHoverCollections(false);
               setHoverFragrances(false);
               setHoverHomeDecor(false);
@@ -189,7 +186,6 @@ const Header = (): ReactElement => {
           </Box>
           <Box
             onClick={() => {
-              setHoverNew(false);
               setHoverCollections(false);
               setHoverFragrances(false);
               setHoverHomeDecor(false);
@@ -199,18 +195,15 @@ const Header = (): ReactElement => {
           </Box>
           <Box
             onClick={() => {
-              if (hoverNew) setHoverNew(false);
-              else setHoverNew(true);
               setHoverCollections(false);
               setHoverFragrances(false);
               setHoverHomeDecor(false);
             }}
           >
-            <HeaderLink text="New" />
+            <HeaderLink text="New" path="/catalog/new" />
           </Box>
           <Box
             onClick={() => {
-              setHoverNew(false);
               if (hoverCollections) setHoverCollections(false);
               else setHoverCollections(true);
               setHoverFragrances(false);
@@ -221,7 +214,6 @@ const Header = (): ReactElement => {
           </Box>
           <Box
             onClick={() => {
-              setHoverNew(false);
               setHoverCollections(false);
               if (hoverFragrances) setHoverFragrances(false);
               else setHoverFragrances(true);
@@ -232,7 +224,6 @@ const Header = (): ReactElement => {
           </Box>
           <Box
             onClick={() => {
-              setHoverNew(false);
               setHoverCollections(false);
               if (hoverHomeDecor) setHoverHomeDecor(false);
               else setHoverHomeDecor(true);
@@ -243,7 +234,6 @@ const Header = (): ReactElement => {
           </Box>
           <Box
             onClick={() => {
-              setHoverNew(false);
               setHoverCollections(false);
               setHoverHomeDecor(false);
               setHoverFragrances(false);
@@ -305,7 +295,6 @@ const Header = (): ReactElement => {
           zIndex="200"
           sx={{ display: { md: 'flex', xs: 'none' } }}
           onMouseEnter={() => {
-            setHoverNew(false);
             setHoverCollections(false);
             setHoverHomeDecor(false);
             setHoverFragrances(false);
@@ -364,27 +353,6 @@ const Header = (): ReactElement => {
           {drawer}
         </Drawer>
       </Box>
-      <BoxForHoverElement
-        sx={{
-          display: { md: 'block', xs: 'none' },
-          transform: hoverNew ? 'translateY(0)' : 'translateY(-100%)',
-        }}
-        onMouseEnter={() => {
-          setHoverNew(true);
-        }}
-        onMouseLeave={() => {
-          setHoverNew(false);
-        }}
-      >
-        <StackHover
-          onClick={() => {
-            setHoverNew(false);
-          }}
-        >
-          <HeaderLink text="New products" size="26px" path="catalog/new" />
-          <Img src={imageNew} />
-        </StackHover>
-      </BoxForHoverElement>
       <BoxForHoverElement
         sx={{
           display: { md: 'block', xs: 'none' },
