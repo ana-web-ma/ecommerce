@@ -5,7 +5,7 @@ import { type FieldValues, type SubmitHandler, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { LoginSchema } from '../../helpers/yup/Yup';
+import { RegisterSchema } from '../../helpers/yup/Yup';
 import { useAppDispatch } from '../../helpers/hooks/Hooks';
 import { login } from '../../store/reducers/CustomerSlice';
 import { authPasswordCustomer } from '../../api/calls/customers/authPasswordCustomer';
@@ -31,7 +31,7 @@ function Password(): ReactElement {
     handleSubmit,
   } = useForm({
     mode: 'onChange',
-    resolver: yupResolver(LoginSchema),
+    resolver: yupResolver(RegisterSchema),
   });
 
   const handleSubmitForm: SubmitHandler<FieldValues> = async (
@@ -57,10 +57,20 @@ function Password(): ReactElement {
   };
 
   // Show/Hide Password Functionality 👁️‍🗨️
-  const [showPassword, setShowPassword] = useState(false);
+  const [showOldPassword, setShowOldPassword] = useState(false);
 
-  const handleClickShowPassword = (): void => {
-    setShowPassword((show) => !show);
+  const handleClickShowOldPassword = (): void => {
+    setShowOldPassword((show) => !show);
+  };
+  const [showNewPassword, setShowNewPassword] = useState(false);
+
+  const handleClickShowNewPassword = (): void => {
+    setShowNewPassword((show) => !show);
+  };
+  const [showRepeatPassword, setShowRepeatPassword] = useState(false);
+
+  const handleClickShowRepeatPassword = (): void => {
+    setShowRepeatPassword((show) => !show);
   };
 
   const handleMouseDownPassword = (
@@ -72,68 +82,75 @@ function Password(): ReactElement {
   return (
     <div style={{ minHeight: '800px' }}>
       <TextField
-        error={!(errors.password == null) || errorMessage !== ''}
+        error={!(errors.oldPassword == null) || errorMessage !== ''}
         fullWidth={true}
         margin="normal"
-        type={showPassword ? 'text' : 'password'}
+        type={showOldPassword ? 'text' : 'password'}
         label="old password"
         variant="outlined"
+        required
         placeholder="Enter your old password"
         onInput={() => {
           setErrorMessage('');
         }}
         helperText={
-          errors.password != null ? errors.password.message?.toString() : ''
+          errors.oldPassword != null
+            ? errors.oldPassword.message?.toString()
+            : ''
         }
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
                 aria-label="toggle password visibility"
-                onClick={handleClickShowPassword}
+                onClick={handleClickShowOldPassword}
                 onMouseDown={handleMouseDownPassword}
               >
-                {showPassword ? <Visibility /> : <VisibilityOff />}
+                {showOldPassword ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
           ),
         }}
-        {...register('password')}
+        {...register('oldPassword')}
       />
       <TextField
-        error={!(errors.password == null) || errorMessage !== ''}
+        error={!(errors.newPassword == null) || errorMessage !== ''}
         fullWidth={true}
         margin="normal"
-        type={showPassword ? 'text' : 'password'}
+        type={showNewPassword ? 'text' : 'password'}
         label="new password"
         variant="outlined"
+        required
         placeholder="Enter your new password"
         onInput={() => {
           setErrorMessage('');
         }}
         helperText={
-          errors.password != null ? errors.password.message?.toString() : ''
+          errors.newPassword != null
+            ? errors.newPassword.message?.toString()
+            : ''
         }
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
                 aria-label="toggle password visibility"
-                onClick={handleClickShowPassword}
+                onClick={handleClickShowNewPassword}
                 onMouseDown={handleMouseDownPassword}
               >
-                {showPassword ? <Visibility /> : <VisibilityOff />}
+                {showNewPassword ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
           ),
         }}
-        {...register('password')}
+        {...register('newPassword')}
       />
       <TextField
-        error={!(errors.password == null) || errorMessage !== ''}
+        error={!(errors.repeatPassword == null) || errorMessage !== ''}
         fullWidth={true}
         margin="normal"
-        type={showPassword ? 'text' : 'password'}
+        required
+        type={showRepeatPassword ? 'text' : 'password'}
         label="repeat new password"
         variant="outlined"
         placeholder="Repeat your new password"
@@ -141,25 +158,35 @@ function Password(): ReactElement {
           setErrorMessage('');
         }}
         helperText={
-          errors.password != null ? errors.password.message?.toString() : ''
+          errors.repeatPassword != null
+            ? errors.repeatPassword.message?.toString()
+            : ''
         }
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
                 aria-label="toggle password visibility"
-                onClick={handleClickShowPassword}
+                onClick={handleClickShowRepeatPassword}
                 onMouseDown={handleMouseDownPassword}
               >
-                {showPassword ? <Visibility /> : <VisibilityOff />}
+                {showRepeatPassword ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
           ),
         }}
-        {...register('password')}
+        {...register('repeatPassword')}
       />
-      <Button type="submit" variant="contained">
-        Login
+      <Button
+        disabled={
+          errors.oldPassword != null ||
+          errors.newPassword != null ||
+          errors.repeatPassword != null
+        }
+        type="submit"
+        variant="contained"
+      >
+        Save new password
       </Button>
     </div>
   );
