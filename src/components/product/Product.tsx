@@ -5,6 +5,7 @@ import {
   Link,
   Modal,
   Paper,
+  Stack,
   Typography,
 } from '@mui/material';
 import React, { useEffect, type ReactElement } from 'react';
@@ -15,7 +16,10 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import './styles.css';
-import { type ProductProjection } from '@commercetools/platform-sdk';
+import {
+  type Price,
+  type ProductProjection,
+} from '@commercetools/platform-sdk';
 import Image from '../ui/Image';
 import { getProducts } from '../../api/calls/products/getProducts';
 
@@ -55,10 +59,11 @@ const Product = (): ReactElement => {
         order: 'desc',
       },
       filter: {
-        productByKey: { key: '34 Boulevard Saint Germain' },
+        productByKey: { key: 'ROSES' },
       },
     })
       .then((resp) => {
+        console.log('resp', resp.body.results[0]);
         setProductData(resp.body.results[0]);
       })
       .catch(console.log);
@@ -87,13 +92,40 @@ const Product = (): ReactElement => {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: '75vh',
-    // bgcolor: 'background.paper',
-    // border: '2px solid #000',
     boxShadow: 24,
     p: 0,
     '&:focus': {
       outline: 'none',
     },
+  };
+
+  const Price = (props: { price: Price }): ReactElement => {
+    console.log('price', props.price);
+    return props.price.discounted !== undefined ? (
+      <Stack flexDirection={'row'} columnGap={1}>
+        <Typography mt={2} mb={2} variant="subtitle2">
+          {`${Number(props.price.discounted.value.centAmount) / 100} €`}
+        </Typography>
+        <Typography
+          mt={2}
+          mb={2}
+          variant="subtitle2"
+          style={{
+            textDecorationLine: 'line-through',
+            opacity: '0.6',
+            fontWeight: 400,
+          }}
+        >
+          {`${Number(props.price.value.centAmount) / 100} €`}
+        </Typography>
+      </Stack>
+    ) : (
+      <Stack>
+        <Typography mt={2} mb={2} variant="subtitle2">
+          {`${Number(props.price.value.centAmount) / 100} €`}
+        </Typography>
+      </Stack>
+    );
   };
 
   return (
@@ -155,12 +187,7 @@ const Product = (): ReactElement => {
               productData.description['en-US']}
           </Collapse>
           <Link onClick={handleExpandClick}>...Read more</Link>
-          <Typography mt={2} mb={2} variant="subtitle2">
-            {`${
-              Number(prices !== undefined ? prices[0].value.centAmount : '') /
-              100
-            } €`}
-          </Typography>
+          {prices != null ? <Price price={prices[0]} /> : null}
           <Typography variant="body2">Select a size:</Typography>
           <Grid mt={1} columnSpacing={1} container>
             {productData?.variants.map((e, i) => (
