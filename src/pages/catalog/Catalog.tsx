@@ -6,7 +6,11 @@ const Catalog = (): ReactElement => {
   return (
     <>
       <Stack alignItems="center" gap={3}>
-        <Products />
+        <Products
+          path="catalog"
+          breadcrumb={[{ name: 'Catalog', path: '/catalog' }]}
+          title="All products"
+        />
       </Stack>
     </>
   );

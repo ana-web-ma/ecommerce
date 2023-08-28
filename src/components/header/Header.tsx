@@ -1,3 +1,4 @@
+import React, { useState, type ReactElement } from 'react';
 import {
   Box,
   Checkbox,
@@ -9,10 +10,8 @@ import {
   SpeedDialAction,
   Stack,
   Tooltip,
-  Typography,
   styled,
 } from '@mui/material';
-import React, { useState, type ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
@@ -30,37 +29,7 @@ import imageHomeDecor from './img/home-decor.jpg';
 import imageFragrances from './img/Fragrances.avif';
 import imageCollections from './img/collections.avif';
 import imageNew from './img/New.avif';
-
-function HeaderLink(props: {
-  text: string;
-  path: string;
-  icon?: ReactElement;
-}): ReactElement {
-  const navigate = useNavigate();
-
-  return (
-    <Typography
-      variant="h3"
-      margin="auto"
-      sx={{ fontSize: { md: '15px', lg: '20px' }, whiteSpace: 'nowrap' }}
-    >
-      <Link
-        onClick={(): void => {
-          navigate(props.path);
-        }}
-        style={{
-          color: 'inherit',
-          textDecoration: 'none',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        {props.text}
-      </Link>
-    </Typography>
-  );
-}
+import HeaderLink from './HeaderLink';
 
 const BoxForHoverElement = styled('div')({
   width: '100%',
@@ -77,7 +46,8 @@ const StackHover = styled(Stack)({
   height: '100%',
   flexDirection: 'row',
   justifyContent: 'center',
-  gap: '100px',
+  textAlign: 'right',
+  gap: '3vw',
   alignItems: 'center',
 });
 
@@ -131,11 +101,11 @@ const Header = (): ReactElement => {
   const navMenuLinks = (
     <>
       <HeaderLink text="Home" path="/" />
-      <HeaderLink text="Catalog" path="/catalog/1" />
-      <HeaderLink text="NEW" path="/" />
-      <HeaderLink text="Collections" path="/" />
-      <HeaderLink text="Fragrances" path="/" />
-      <HeaderLink text="Home decor" path="/" />
+      <HeaderLink text="Catalog" path="/catalog" />
+      <HeaderLink text="NEW" path="catalog/new" />
+      <HeaderLink text="Collections" path="catalog/collections" />
+      <HeaderLink text="Fragrances" path="catalog/fragrances" />
+      <HeaderLink text="Home decor" path="catalog/home-decor" />
       <HeaderLink text="About Us" path="/about" />
     </>
   );
@@ -165,6 +135,10 @@ const Header = (): ReactElement => {
           zIndex="200"
           component={Link}
           onClick={(): void => {
+            setHoverNew(false);
+            setHoverCollections(false);
+            setHoverFragrances(false);
+            setHoverHomeDecor(false);
             navigate('/');
           }}
         >
@@ -204,7 +178,7 @@ const Header = (): ReactElement => {
           }}
         >
           <Box
-            onMouseEnter={() => {
+            onClick={() => {
               setHoverNew(false);
               setHoverCollections(false);
               setHoverFragrances(false);
@@ -214,7 +188,7 @@ const Header = (): ReactElement => {
             <HeaderLink text="Home" path="/" />
           </Box>
           <Box
-            onMouseEnter={() => {
+            onClick={() => {
               setHoverNew(false);
               setHoverCollections(false);
               setHoverFragrances(false);
@@ -224,47 +198,51 @@ const Header = (): ReactElement => {
             <HeaderLink text="Catalog" path="/catalog/1" />
           </Box>
           <Box
-            onMouseEnter={() => {
-              setHoverNew(true);
+            onClick={() => {
+              if (hoverNew) setHoverNew(false);
+              else setHoverNew(true);
               setHoverCollections(false);
               setHoverFragrances(false);
               setHoverHomeDecor(false);
             }}
           >
-            <HeaderLink text="New" path="/" />
+            <HeaderLink text="New" />
           </Box>
           <Box
-            onMouseEnter={() => {
+            onClick={() => {
               setHoverNew(false);
-              setHoverCollections(true);
+              if (hoverCollections) setHoverCollections(false);
+              else setHoverCollections(true);
               setHoverFragrances(false);
               setHoverHomeDecor(false);
             }}
           >
-            <HeaderLink text="Collections" path="/" />
+            <HeaderLink text="Collections" />
           </Box>
           <Box
-            onMouseEnter={() => {
+            onClick={() => {
               setHoverNew(false);
               setHoverCollections(false);
-              setHoverFragrances(true);
+              if (hoverFragrances) setHoverFragrances(false);
+              else setHoverFragrances(true);
               setHoverHomeDecor(false);
             }}
           >
-            <HeaderLink text="Fragrances" path="/" />
+            <HeaderLink text="Fragrances" />
           </Box>
           <Box
-            onMouseEnter={() => {
+            onClick={() => {
               setHoverNew(false);
               setHoverCollections(false);
-              setHoverHomeDecor(true);
+              if (hoverHomeDecor) setHoverHomeDecor(false);
+              else setHoverHomeDecor(true);
               setHoverFragrances(false);
             }}
           >
-            <HeaderLink text="Home decor" path="/" />
+            <HeaderLink text="Home decor" />
           </Box>
           <Box
-            onMouseEnter={() => {
+            onClick={() => {
               setHoverNew(false);
               setHoverCollections(false);
               setHoverHomeDecor(false);
@@ -323,7 +301,16 @@ const Header = (): ReactElement => {
 
         <Box sx={{ display: { md: 'none', xs: 'block' }, width: '50px' }}></Box>
 
-        <Box zIndex="200" sx={{ display: { md: 'flex', xs: 'none' } }}>
+        <Box
+          zIndex="200"
+          sx={{ display: { md: 'flex', xs: 'none' } }}
+          onMouseEnter={() => {
+            setHoverNew(false);
+            setHoverCollections(false);
+            setHoverHomeDecor(false);
+            setHoverFragrances(false);
+          }}
+        >
           {actionLink.map((link, ind) => (
             <Tooltip
               title={link.tooltip}
@@ -389,16 +376,12 @@ const Header = (): ReactElement => {
           setHoverNew(false);
         }}
       >
-        <StackHover>
-          <Stack spacing={3}>
-            <Typography variant="h1">Categories</Typography>
-            <Divider />
-            <HeaderLink text="Perfume" path="/" />
-            <HeaderLink text="Candle" path="/" />
-            <HeaderLink text="Diffuser" path="/" />
-            <HeaderLink text="Accessory" path="/" />
-            <HeaderLink text="Decoration" path="/" />
-          </Stack>
+        <StackHover
+          onClick={() => {
+            setHoverNew(false);
+          }}
+        >
+          <HeaderLink text="New products" size="26px" path="catalog/new" />
           <Img src={imageNew} />
         </StackHover>
       </BoxForHoverElement>
@@ -414,15 +397,26 @@ const Header = (): ReactElement => {
           setHoverCollections(false);
         }}
       >
-        <StackHover>
+        <StackHover
+          onClick={() => {
+            setHoverCollections(false);
+          }}
+        >
+          <HeaderLink
+            text="Collections"
+            size="26px"
+            path="catalog/collections"
+          />
           <Stack spacing={3}>
-            <Typography variant="h1">Categories</Typography>
+            <HeaderLink
+              text="Summer collection"
+              path="catalog/collections/summer"
+            />
             <Divider />
-            <HeaderLink text="Perfume" path="/" />
-            <HeaderLink text="Candle" path="/" />
-            <HeaderLink text="Diffuser" path="/" />
-            <HeaderLink text="Accessory" path="/" />
-            <HeaderLink text="Decoration" path="/" />
+            <HeaderLink
+              text="Wedding collection"
+              path="catalog/collections/wedding"
+            />
           </Stack>
           <Img src={imageCollections} />
         </StackHover>
@@ -439,15 +433,18 @@ const Header = (): ReactElement => {
           setHoverFragrances(false);
         }}
       >
-        <StackHover>
+        <StackHover
+          onClick={() => {
+            setHoverFragrances(false);
+          }}
+        >
+          <HeaderLink text="Fragrances" size="26px" path="catalog/fragrances" />
           <Stack spacing={3}>
-            <Typography variant="h1">Categories</Typography>
+            <HeaderLink text="Candles" path="catalog/fragrances/candles" />
             <Divider />
-            <HeaderLink text="Perfume" path="/" />
-            <HeaderLink text="Candle" path="/" />
-            <HeaderLink text="Diffuser" path="/" />
-            <HeaderLink text="Accessory" path="/" />
-            <HeaderLink text="Decoration" path="/" />
+            <HeaderLink text="Perfume" path="catalog/fragrances/perfume" />
+            <Divider />
+            <HeaderLink text="Diffusers" path="catalog/fragrances/diffusers" />
           </Stack>
           <Img src={imageFragrances} />
         </StackHover>
@@ -464,12 +461,26 @@ const Header = (): ReactElement => {
           setHoverHomeDecor(false);
         }}
       >
-        <StackHover>
+        <StackHover
+          onClick={() => {
+            setHoverHomeDecor(false);
+          }}
+        >
+          <HeaderLink text="Home decor" size="26px" path="catalog/home-decor" />
           <Stack spacing={3}>
-            <Typography variant="h1">Categories</Typography>
+            <HeaderLink
+              text="Accessories"
+              path="catalog/home-decor/accessories"
+            />
             <Divider />
-            <HeaderLink text="Accessory" path="/" />
-            <HeaderLink text="Decoration" path="/" />
+            <HeaderLink text="Vases" path="catalog/home-decor/vases" />
+            <Divider />
+            <HeaderLink
+              text="Candle holders"
+              path="catalog/home-decor/candle-holders"
+            />
+            <Divider />
+            <HeaderLink text="Tableware" path="catalog/home-decor/tableware" />
           </Stack>
           <Img src={imageHomeDecor} />
         </StackHover>

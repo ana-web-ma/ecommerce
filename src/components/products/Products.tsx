@@ -12,38 +12,130 @@ import {
 import TuneIcon from '@mui/icons-material/Tune';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { type ProductProjection } from '@commercetools/platform-sdk';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import {
+  type Category,
+  type ProductProjection,
+} from '@commercetools/platform-sdk';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import { getProducts } from '../../api/calls/products/getProducts';
+import { getCategories } from '../../api/calls/categories/getCategories';
+import { getCategoryById } from '../../api/calls/categories/getCategoryById';
+import NavigationCatalog from './NavigationCatalog';
 
 const getPageQty = (total: number): number => Math.ceil(total / 6);
 
-function handleClick(
-  event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-): void {
-  console.info('You clicked a breadcrumb.');
+interface IBreadCrump {
+  name: string;
+  path: string;
 }
 
-const Products = (): ReactElement => {
+const Products = (props: {
+  path: string;
+  title: string;
+  breadcrumb: IBreadCrump[];
+  idCategory?: string;
+}): ReactElement => {
   const location = useLocation();
-  const navigate = useNavigate();
+  const params = useParams();
   const [products, setProducts] = useState<ProductProjection[]>([]);
-  const [query, setQuery] = useState('react');
+  const [arrayForBread, setArrayForBread] = useState<IBreadCrump[]>([]);
+  const [renderCategory, setRenderCategory] = useState<Category | undefined>(
+    undefined,
+  );
+  const [query, setQuery] = useState(props.idCategory);
+  const [parentPath, setParentPath] = useState('');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(1);
   const [pageQty, setPageQty] = useState(0);
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    setPage(Number(location.pathname.split('/')[2]) || 1);
+    if (Object.keys(params).length !== 0) {
+      getCategories()
+        .then((resp) => {
+          let objectCurrentCategory;
+          const renderDataQuery = (queryFunc: string): Category | undefined => {
+            const result = resp.body.results.filter(
+              (cat) => cat.slug['en-US'] === queryFunc,
+            );
+            if (result.length === 1) {
+              return result[0];
+            }
+            return undefined;
+          };
+          if (Object.keys(params).length === 0) {
+            objectCurrentCategory = undefined;
+          } else if (
+            Number.isNaN(Number(params.id)) &&
+            params.id !== undefined
+          ) {
+            objectCurrentCategory = renderDataQuery(params.id);
+          } else if (objectCurrentCategory === undefined) {
+            if (params.subcategory !== undefined) {
+              objectCurrentCategory = renderDataQuery(params.subcategory);
+            } else if (params.category !== undefined) {
+              objectCurrentCategory = renderDataQuery(params.category);
+            }
+          }
+          setRenderCategory(objectCurrentCategory);
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
+    }
+  }, [params]);
+
+  useEffect(() => {
+    setArrayForBread([]);
+    if (renderCategory !== undefined) {
+      const tempArray: IBreadCrump[] = [
+        {
+          name: renderCategory.name['en-US'],
+          path: '/catalog',
+        },
+      ];
+      if (renderCategory.ancestors.length === 0) {
+        setArrayForBread(tempArray);
+      } else {
+        renderCategory.ancestors.map(async (parent) => {
+          return getCategoryById({ id: parent.id })
+            .then((resp) => {
+              const temp = {
+                name: resp.body.name['en-US'],
+                path: `/${resp.body.slug['en-US']}`,
+              };
+              tempArray.unshift(temp);
+              setArrayForBread(tempArray);
+            })
+            .catch((err) => {
+              throw new Error(err);
+            });
+        });
+      }
+    }
+  }, [renderCategory]);
+
+  useEffect(() => {
+    const pageCurrent = !Number.isNaN(Number(params.id))
+      ? Number(params.id)
+      : 1;
+    setPage(pageCurrent);
+    console.log(page);
     getProducts({
       limit: 6,
-      pageNumber: page,
+      pageNumber: pageCurrent,
       sort: {
-        field: 'id',
-        order: 'desc',
+        field: 'name.en-US',
+        order: 'asc',
       },
+      filter:
+        renderCategory !== undefined
+          ? {
+              productsByCategoryId: {
+                id: renderCategory.id,
+              },
+            }
+          : {},
     })
       .then((resp) => {
         setProducts(resp.body.results);
@@ -52,45 +144,74 @@ const Products = (): ReactElement => {
           setPageQty(getPageQty(resp.body.total));
         }
       })
-      .catch(console.log);
-  }, [query, page, location]);
-
-  useEffect(() => {
-    if (page > pageQty && page !== 1) navigate('/404');
-  }, [page, pageQty, location]);
-
+      .catch((err) => {
+        throw new Error(err);
+      });
+  }, [page, params, renderCategory]);
+  // useEffect(() => {
+  //   if (page > pageQty && pageQty !== 0) navigate('/404');
+  // }, [page, pageQty, location]);
   return (
     <>
-      <Stack
-        mt={3}
-        direction="row"
-        gap={1}
-        width="100%"
-        justifyContent="start"
-        alignItems="end"
-      >
-        <Typography variant="h2">All products</Typography>
-        <Typography pb={0.7} variant="body1">
+      <Stack mt={3} direction="row" gap={0.5} alignItems="end">
+        <Typography variant="h2">{renderCategory?.name['en-US']}</Typography>
+        <Typography pb={0.4} sx={{ whiteSpace: 'nowrap' }} variant="body2">
           ({total} Products)
         </Typography>
       </Stack>
 
-      <div role="presentation" onClick={handleClick}>
+      <NavigationCatalog category={renderCategory?.name['en-US']} />
+
+      <div style={{ width: '100%' }} role="presentation">
         <Breadcrumbs aria-label="breadcrumb">
-          <MuiLink underline="hover" color="inherit" href="/">
+          <MuiLink component={Link} to="/">
             Home
           </MuiLink>
-          <MuiLink underline="hover" color="inherit" href="/catalog">
-            Catalog
-          </MuiLink>
-          <Typography color="text.primary">Breadcrumbs</Typography>
+          {renderCategory !== undefined ? (
+            <MuiLink component={Link} to="/catalog">
+              Catalog
+            </MuiLink>
+          ) : (
+            <Typography key="bread-catalog">Catalog</Typography>
+          )}
+          {arrayForBread.map((bread, ind, arr) => {
+            if (ind !== arr.length - 1) {
+              return (
+                <MuiLink
+                  component={Link}
+                  key={`bread-${ind}`}
+                  to={
+                    ind === 0
+                      ? `/catalog${bread.path}`
+                      : `/catalog${arr[ind - 1].path + bread.path}`
+                  }
+                >
+                  {bread.name}
+                </MuiLink>
+              );
+            }
+            return '';
+          })}
+          {arrayForBread[arrayForBread.length - 1] !== undefined ? (
+            <Typography key={`bread-title`}>
+              {arrayForBread[arrayForBread.length - 1].name}
+            </Typography>
+          ) : (
+            ''
+          )}
         </Breadcrumbs>
       </div>
 
-      <Stack direction="row" justifyContent="space-between"></Stack>
-
-      <Grid mt={2} container justifyContent="center" spacing={1}>
+      <Grid container justifyContent="center" spacing={1}>
         {products.map((card, index) => {
+          const price =
+            card.masterVariant.prices !== undefined
+              ? card.masterVariant.prices[0].value.centAmount / 100
+              : 0;
+          const currentCode =
+            card.masterVariant.prices !== undefined
+              ? card.masterVariant.prices[0].value.currencyCode
+              : '';
           const cardData = {
             id: card.id,
             image:
@@ -103,7 +224,7 @@ const Products = (): ReactElement => {
                 : null,
             name: card.key,
             category: 'Unique',
-            price: '23$',
+            price: `${price} ${currentCode}`,
           };
           if (index <= 1) {
             return (
@@ -130,7 +251,11 @@ const Products = (): ReactElement => {
         renderItem={(item) => (
           <PaginationItem
             component={Link}
-            to={item.page !== null ? `/catalog/${item.page}` : '`/catalog/1`'}
+            to={
+              item.page !== null
+                ? `/catalog${parentPath}/${item.page}`
+                : `/${props.path}/`
+            }
             {...item}
           />
         )}
