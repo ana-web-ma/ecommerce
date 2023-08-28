@@ -17,6 +17,8 @@ import { updateMe } from '../../../api/calls/customers/update/updateMe';
 import { authPasswordCustomer } from '../../../api/calls/customers/authPasswordCustomer';
 import { getMe } from '../../../api/calls/getMe';
 import { getProducts } from '../../../api/calls/products/getProducts';
+import { getCategories } from '../../../api/calls/categories/getCategories';
+import { getCategoryById } from '../../../api/calls/categories/getCategoryById';
 import { updatePassword } from '../../../api/calls/customers/update/updatePassword';
 
 function DemoComponent(): ReactElement {
@@ -90,17 +92,35 @@ function DemoComponent(): ReactElement {
 
   const handleProductsSubmit = (e: { preventDefault: () => void }): void => {
     getProducts({
-      limit: 5,
-      pageNumber: 3,
+      limit: 100,
+      pageNumber: 0,
       sort: {
         field: 'id',
         order: 'desc',
       },
       filter: {
-        categoriesById: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
+        productsByCategoryId: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
         // productByKey: { key: '34 Boulevard Saint Germain' },
+        productByPrice: {
+          from: 0,
+          to: 10000,
+        },
       },
     })
+      .then((resp) => {
+        console.log('resp', resp.body.results);
+      })
+      .catch(console.log);
+  };
+
+  const handleCategoriesSubmit = (e: { preventDefault: () => void }): void => {
+    // getCategoryById({ id: '26920e5c-0643-440d-aa79-2a82a76c97a4' })
+    //   .then((resp) => {
+    //     console.log('ancestors', resp.body.ancestors);
+    //   })
+    //   .catch(console.log);
+
+    getCategories()
       .then((resp) => {
         console.log('resp', resp.body.results);
       })
@@ -141,6 +161,9 @@ function DemoComponent(): ReactElement {
         </Button>
         <Button variant="contained" onClick={handleProductsSubmit}>
           get products
+        </Button>
+        <Button variant="contained" onClick={handleCategoriesSubmit}>
+          get categories
         </Button>
         <Grid container>
           <Grid item>

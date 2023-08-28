@@ -1,6 +1,7 @@
 import {
   Box,
   Checkbox,
+  Divider,
   Drawer,
   IconButton,
   Link,
@@ -9,6 +10,7 @@ import {
   Stack,
   Tooltip,
   Typography,
+  styled,
 } from '@mui/material';
 import React, { useState, type ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +26,10 @@ import SearchIcon from '../ui/icons/SearchIcon';
 import logo from './img/logo.png';
 import { useAppDispatch, useIsLogged } from '../../helpers/hooks/Hooks';
 import { logout } from '../../store/reducers/CustomerSlice';
+import imageHomeDecor from './img/home-decor.jpg';
+import imageFragrances from './img/Fragrances.avif';
+import imageCollections from './img/collections.avif';
+import imageNew from './img/New.avif';
 
 function HeaderLink(props: {
   text: string;
@@ -35,8 +41,8 @@ function HeaderLink(props: {
   return (
     <Typography
       variant="h3"
-      mb={3}
-      sx={{ fontSize: { md: '17px', lg: '20px' } }}
+      margin="auto"
+      sx={{ fontSize: { md: '15px', lg: '20px' }, whiteSpace: 'nowrap' }}
     >
       <Link
         onClick={(): void => {
@@ -44,6 +50,7 @@ function HeaderLink(props: {
         }}
         style={{
           color: 'inherit',
+          textDecoration: 'none',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -55,10 +62,39 @@ function HeaderLink(props: {
   );
 }
 
+const BoxForHoverElement = styled('div')({
+  width: '100%',
+  height: '370px',
+  zIndex: '50',
+  top: '75px',
+  position: 'absolute',
+  backgroundColor: '#F6F6F6',
+  borderBottom: '1px solid #D9D9D9',
+  transition: 'transform .6s linear',
+});
+
+const StackHover = styled(Stack)({
+  height: '100%',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  gap: '100px',
+  alignItems: 'center',
+});
+
+const Img = styled('img')({
+  display: 'block',
+  height: '340px',
+  objectFit: 'contain',
+});
+
 const Header = (): ReactElement => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [checkedMenu, setCheckedMenu] = useState(false);
+  const [hoverNew, setHoverNew] = useState(false);
+  const [hoverFragrances, setHoverFragrances] = useState(false);
+  const [hoverHomeDecor, setHoverHomeDecor] = useState(false);
+  const [hoverCollections, setHoverCollections] = useState(false);
 
   const handleDrawerToggle = (action: boolean): void => {
     setCheckedMenu(action);
@@ -91,13 +127,15 @@ const Header = (): ReactElement => {
       path: '/register',
     },
   ];
+
   const navMenuLinks = (
     <>
       <HeaderLink text="Home" path="/" />
-      <HeaderLink text="Catalog" path="/catalog" />
-      <HeaderLink text="NEW&TRENDING" path="/" />
-      <HeaderLink text="FRAGRANCES" path="/" />
-      <HeaderLink text="INTERIOR" path="/" />
+      <HeaderLink text="Catalog" path="/catalog/1" />
+      <HeaderLink text="NEW" path="/" />
+      <HeaderLink text="Collections" path="/" />
+      <HeaderLink text="Fragrances" path="/" />
+      <HeaderLink text="Home decor" path="/" />
       <HeaderLink text="About Us" path="/about" />
     </>
   );
@@ -105,7 +143,7 @@ const Header = (): ReactElement => {
   const drawer = (
     <Stack height="100%" justifyContent="center" alignItems="center">
       <Stack
-        gap={1}
+        gap={3}
         onClick={() => {
           handleDrawerToggle(false);
         }}
@@ -124,6 +162,7 @@ const Header = (): ReactElement => {
         alignItems="center"
       >
         <IconButton
+          zIndex="200"
           component={Link}
           onClick={(): void => {
             navigate('/');
@@ -134,8 +173,12 @@ const Header = (): ReactElement => {
 
         <Checkbox
           sx={{
-            '& .MuiSvgIcon-root': { color: 'black', fontSize: 38 },
-            display: { md: 'none', zIndex: '2000' },
+            '& .MuiSvgIcon-root': {
+              color: 'black',
+              fontSize: 38,
+            },
+            display: { md: 'none' },
+            zIndex: '2000',
           }}
           icon={<MenuIcon />}
           checkedIcon={<MenuOpenIcon />}
@@ -149,6 +192,7 @@ const Header = (): ReactElement => {
           direction="row"
           justifyContent="center"
           alignItems="center"
+          zIndex="200"
           spacing={2}
           sx={{ display: { md: 'flex', xs: 'none' } }}
           role="presentation"
@@ -159,7 +203,76 @@ const Header = (): ReactElement => {
             setCheckedMenu(false);
           }}
         >
-          {navMenuLinks}
+          <Box
+            onMouseEnter={() => {
+              setHoverNew(false);
+              setHoverCollections(false);
+              setHoverFragrances(false);
+              setHoverHomeDecor(false);
+            }}
+          >
+            <HeaderLink text="Home" path="/" />
+          </Box>
+          <Box
+            onMouseEnter={() => {
+              setHoverNew(false);
+              setHoverCollections(false);
+              setHoverFragrances(false);
+              setHoverHomeDecor(false);
+            }}
+          >
+            <HeaderLink text="Catalog" path="/catalog/1" />
+          </Box>
+          <Box
+            onMouseEnter={() => {
+              setHoverNew(true);
+              setHoverCollections(false);
+              setHoverFragrances(false);
+              setHoverHomeDecor(false);
+            }}
+          >
+            <HeaderLink text="New" path="/" />
+          </Box>
+          <Box
+            onMouseEnter={() => {
+              setHoverNew(false);
+              setHoverCollections(true);
+              setHoverFragrances(false);
+              setHoverHomeDecor(false);
+            }}
+          >
+            <HeaderLink text="Collections" path="/" />
+          </Box>
+          <Box
+            onMouseEnter={() => {
+              setHoverNew(false);
+              setHoverCollections(false);
+              setHoverFragrances(true);
+              setHoverHomeDecor(false);
+            }}
+          >
+            <HeaderLink text="Fragrances" path="/" />
+          </Box>
+          <Box
+            onMouseEnter={() => {
+              setHoverNew(false);
+              setHoverCollections(false);
+              setHoverHomeDecor(true);
+              setHoverFragrances(false);
+            }}
+          >
+            <HeaderLink text="Home decor" path="/" />
+          </Box>
+          <Box
+            onMouseEnter={() => {
+              setHoverNew(false);
+              setHoverCollections(false);
+              setHoverHomeDecor(false);
+              setHoverFragrances(false);
+            }}
+          >
+            <HeaderLink text="About Us" path="/about" />
+          </Box>
         </Stack>
 
         <SpeedDial
@@ -210,7 +323,7 @@ const Header = (): ReactElement => {
 
         <Box sx={{ display: { md: 'none', xs: 'block' }, width: '50px' }}></Box>
 
-        <Box sx={{ display: { md: 'flex', xs: 'none' } }}>
+        <Box zIndex="200" sx={{ display: { md: 'flex', xs: 'none' } }}>
           {actionLink.map((link, ind) => (
             <Tooltip
               title={link.tooltip}
@@ -236,6 +349,7 @@ const Header = (): ReactElement => {
                   dispatch(logout());
                   navigate('/login');
                 }}
+                sx={{ mt: '-7px' }}
               >
                 <LogoutIcon />
               </IconButton>
@@ -263,6 +377,111 @@ const Header = (): ReactElement => {
           {drawer}
         </Drawer>
       </Box>
+      <BoxForHoverElement
+        sx={{
+          display: { md: 'block', xs: 'none' },
+          transform: hoverNew ? 'translateY(0)' : 'translateY(-100%)',
+        }}
+        onMouseEnter={() => {
+          setHoverNew(true);
+        }}
+        onMouseLeave={() => {
+          setHoverNew(false);
+        }}
+      >
+        <StackHover>
+          <Stack spacing={3}>
+            <Typography variant="h1">Categories</Typography>
+            <Divider />
+            <HeaderLink text="Perfume" path="/" />
+            <HeaderLink text="Candle" path="/" />
+            <HeaderLink text="Diffuser" path="/" />
+            <HeaderLink text="Accessory" path="/" />
+            <HeaderLink text="Decoration" path="/" />
+          </Stack>
+          <Img src={imageNew} />
+        </StackHover>
+      </BoxForHoverElement>
+      <BoxForHoverElement
+        sx={{
+          display: { md: 'block', xs: 'none' },
+          transform: hoverCollections ? 'translateY(0)' : 'translateY(-100%)',
+        }}
+        onMouseEnter={() => {
+          setHoverCollections(true);
+        }}
+        onMouseLeave={() => {
+          setHoverCollections(false);
+        }}
+      >
+        <StackHover>
+          <Stack spacing={3}>
+            <Typography variant="h1">Categories</Typography>
+            <Divider />
+            <HeaderLink text="Perfume" path="/" />
+            <HeaderLink text="Candle" path="/" />
+            <HeaderLink text="Diffuser" path="/" />
+            <HeaderLink text="Accessory" path="/" />
+            <HeaderLink text="Decoration" path="/" />
+          </Stack>
+          <Img src={imageCollections} />
+        </StackHover>
+      </BoxForHoverElement>
+      <BoxForHoverElement
+        sx={{
+          display: { md: 'block', xs: 'none' },
+          transform: hoverFragrances ? 'translateY(0)' : 'translateY(-100%)',
+        }}
+        onMouseEnter={() => {
+          setHoverFragrances(true);
+        }}
+        onMouseLeave={() => {
+          setHoverFragrances(false);
+        }}
+      >
+        <StackHover>
+          <Stack spacing={3}>
+            <Typography variant="h1">Categories</Typography>
+            <Divider />
+            <HeaderLink text="Perfume" path="/" />
+            <HeaderLink text="Candle" path="/" />
+            <HeaderLink text="Diffuser" path="/" />
+            <HeaderLink text="Accessory" path="/" />
+            <HeaderLink text="Decoration" path="/" />
+          </Stack>
+          <Img src={imageFragrances} />
+        </StackHover>
+      </BoxForHoverElement>
+      <BoxForHoverElement
+        sx={{
+          display: { md: 'block', xs: 'none' },
+          transform: hoverHomeDecor ? 'translateY(0)' : 'translateY(-100%)',
+        }}
+        onMouseEnter={() => {
+          setHoverHomeDecor(true);
+        }}
+        onMouseLeave={() => {
+          setHoverHomeDecor(false);
+        }}
+      >
+        <StackHover>
+          <Stack spacing={3}>
+            <Typography variant="h1">Categories</Typography>
+            <Divider />
+            <HeaderLink text="Accessory" path="/" />
+            <HeaderLink text="Decoration" path="/" />
+          </Stack>
+          <Img src={imageHomeDecor} />
+        </StackHover>
+      </BoxForHoverElement>
+      <BoxForHoverElement
+        sx={{
+          display: { md: 'block', xs: 'none' },
+          transform: 'translateY(-100%)',
+          backgroundColor: '#fff',
+          borderColor: '#fff',
+        }}
+      />
     </>
   );
 };

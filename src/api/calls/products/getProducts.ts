@@ -35,24 +35,37 @@ interface PropsType {
     field: string;
     order: 'asc' | 'desc';
   };
-  filter?: { categoriesById?: { id: string }; productByKey?: { key: string } };
+  filter?: {
+    productsByCategoryId?: { id: string };
+    productByKey?: { key: string };
+    productByPrice?: { from: number; to: number };
+  };
 }
 
-const createQueryArgs = (props: PropsType): QueryArgs => {
-  const offset =
-    props.pageNumber !== undefined && props.limit !== undefined
-      ? props.pageNumber * props.limit
-      : 0;
-
+const createFilters = (props: PropsType): string[] => {
   const filterResult = [];
-  if (props.filter?.categoriesById?.id !== undefined) {
+  if (props.filter?.productsByCategoryId?.id !== undefined) {
     filterResult.push(
-      `categories.id: subtree("${props.filter.categoriesById.id}")`,
+      `categories.id: subtree("${props.filter.productsByCategoryId.id}")`,
     );
   }
   if (props.filter?.productByKey?.key !== undefined) {
     filterResult.push(`key: "${props.filter.productByKey.key}"`);
   }
+  if (props.filter?.productByPrice !== undefined) {
+    filterResult.push(
+      `variants.price.centAmount:range (${props.filter?.productByPrice.from} to ${props.filter?.productByPrice.to})`,
+    );
+  }
+
+  return filterResult;
+};
+
+const createQueryArgs = (props: PropsType): QueryArgs => {
+  const offset =
+    props.pageNumber !== undefined && props.limit !== undefined
+      ? (props.pageNumber - 1) * props.limit
+      : 0;
 
   return {
     limit: props.limit === undefined ? 5 : props.limit,
@@ -61,7 +74,7 @@ const createQueryArgs = (props: PropsType): QueryArgs => {
       props.sort !== undefined
         ? `${props.sort.field} ${props.sort.order}`
         : 'id asc',
-    filter: filterResult,
+    filter: createFilters(props),
   };
 };
 
@@ -78,15 +91,19 @@ export const getProducts = async (
 // How to use:
 
 // getProducts({
-//   limit: 5,
-//   pageNumber: 3,
+//   limit: 100,
+//   pageNumber: 0,
 //   sort: {
 //     field: 'id',
 //     order: 'desc',
 //   },
 //   filter: {
-//     categoriesById: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
+//     productsByCategoryId: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
 //     // productByKey: { key: '34 Boulevard Saint Germain' },
+//     productByPrice: {
+//       from: 0,
+//       to: 10000,
+//     },
 //   },
 // })
 //   .then((resp) => {
