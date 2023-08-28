@@ -16,12 +16,10 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import './styles.css';
-import {
-  type Price,
-  type ProductProjection,
-} from '@commercetools/platform-sdk';
+import { type ProductProjection } from '@commercetools/platform-sdk';
 import Image from '../ui/Image';
 import { getProducts } from '../../api/calls/products/getProducts';
+import PriceComponent from '../ui/Price';
 
 const swiperParams: SwiperOptions = {
   slidesPerView: 1,
@@ -99,35 +97,6 @@ const Product = (): ReactElement => {
     },
   };
 
-  const Price = (props: { price: Price }): ReactElement => {
-    console.log('price', props.price);
-    return props.price.discounted !== undefined ? (
-      <Stack flexDirection={'row'} columnGap={1}>
-        <Typography mt={2} mb={2} variant="subtitle2">
-          {`${Number(props.price.discounted.value.centAmount) / 100} €`}
-        </Typography>
-        <Typography
-          mt={2}
-          mb={2}
-          variant="subtitle2"
-          style={{
-            textDecorationLine: 'line-through',
-            opacity: '0.6',
-            fontWeight: 400,
-          }}
-        >
-          {`${Number(props.price.value.centAmount) / 100} €`}
-        </Typography>
-      </Stack>
-    ) : (
-      <Stack>
-        <Typography mt={2} mb={2} variant="subtitle2">
-          {`${Number(props.price.value.centAmount) / 100} €`}
-        </Typography>
-      </Stack>
-    );
-  };
-
   return (
     <>
       <Grid container spacing={0}>
@@ -173,7 +142,6 @@ const Product = (): ReactElement => {
                       </Swiper>{' '}
                     </Paper>
                   </Modal>
-                  ,
                 </div>
               ),
           )}
@@ -186,8 +154,10 @@ const Product = (): ReactElement => {
             {productData?.description != null &&
               productData.description['en-US']}
           </Collapse>
-          <Link onClick={handleExpandClick}>...Read more</Link>
-          {prices != null ? <Price price={prices[0]} /> : null}
+          <Link onClick={handleExpandClick} mb={4} display="block">
+            ...Read more
+          </Link>
+          {prices != null ? <PriceComponent price={prices[0]} /> : null}
           <Typography variant="body2">Select a size:</Typography>
           <Grid mt={1} columnSpacing={1} container>
             {productData?.variants.map((e, i) => (
