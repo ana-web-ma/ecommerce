@@ -1,7 +1,15 @@
-import { Box, Collapse, Grid, Link, Typography } from '@mui/material';
+import {
+  Box,
+  Collapse,
+  Grid,
+  Link,
+  Modal,
+  Paper,
+  Typography,
+} from '@mui/material';
 import React, { useEffect, type ReactElement } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination } from 'swiper/modules';
+import { Pagination, Zoom } from 'swiper/modules';
 import { type SwiperOptions } from 'swiper/types/swiper-options';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -19,16 +27,29 @@ const swiperParams: SwiperOptions = {
   modules: [Pagination],
 };
 
+const zoomedSwiperParams: SwiperOptions = {
+  slidesPerView: 1,
+  pagination: {
+    clickable: true,
+  },
+  modules: [Zoom, Pagination],
+  zoom: {
+    maxRatio: 5,
+    minRatio: 5,
+  },
+};
+
 const Product = (): ReactElement => {
   const [expanded, setExpanded] = React.useState(false);
   const [activeVariant, setActiveVariant] = React.useState<number>(0);
   const [productData, setProductData] =
     React.useState<ProductProjection | null>(null);
+  const [openModal, setOpenModal] = React.useState(false);
 
   useEffect(() => {
     getProducts({
       limit: 5,
-      pageNumber: 0,
+      pageNumber: 1,
       sort: {
         field: 'id',
         order: 'desc',
@@ -45,6 +66,12 @@ const Product = (): ReactElement => {
 
   useEffect(() => {}, [activeVariant]);
 
+  const handleOpenModal = (): void => {
+    setOpenModal(true);
+  };
+  const handleCloseModal = (): void => {
+    setOpenModal(false);
+  };
   const handleExpandClick = (): void => {
     setExpanded(!expanded);
   };
@@ -54,36 +81,80 @@ const Product = (): ReactElement => {
       ? productData?.variants[activeVariant].prices
       : undefined;
 
+  const style = {
+    position: 'absolute' as const,
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '75vh',
+    // bgcolor: 'background.paper',
+    // border: '2px solid #000',
+    boxShadow: 24,
+    p: 0,
+    '&:focus': {
+      outline: 'none',
+    },
+  };
+
   return (
     <>
       <Grid container spacing={0}>
-        <Grid item xs={6}>
+        <Grid item xs={4}>
           {productData?.variants.map(
             (variant, variantIndex) =>
               activeVariant === variantIndex && (
-                <Swiper key={variant.id} className="mySwiper" {...swiperParams}>
-                  {variant.images?.map((image, index) => (
-                    <SwiperSlide key={image.url} virtualIndex={index}>
-                      <Image
-                        name={productData.name['en-US']}
-                        url={image.url}
-                        maxWidth="100%"
-                      />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+                <div key={variant.id}>
+                  <Swiper className="mySwiper" {...swiperParams}>
+                    {variant.images?.map((image, index) => (
+                      <SwiperSlide
+                        onClick={handleOpenModal}
+                        key={image.url}
+                        virtualIndex={index}
+                      >
+                        <Image
+                          name={productData.name['en-US']}
+                          url={image.url}
+                          maxWidth="100%"
+                        />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                  <Modal
+                    open={openModal}
+                    onClose={handleCloseModal}
+                    aria-labelledby="parent-modal-title"
+                    aria-describedby="parent-modal-description"
+                  >
+                    <Paper variant="outlined" sx={style}>
+                      <Swiper className="mySwiper" {...zoomedSwiperParams}>
+                        {variant.images?.map((image, index) => (
+                          <SwiperSlide key={image.url} virtualIndex={index}>
+                            <div className="swiper-zoom-container">
+                              <Image
+                                name={productData.name['en-US']}
+                                url={image.url}
+                                maxWidth="100%"
+                              />
+                            </div>
+                          </SwiperSlide>
+                        ))}
+                      </Swiper>{' '}
+                    </Paper>
+                  </Modal>
+                  ,
+                </div>
               ),
           )}
         </Grid>
-        <Grid item xs={6} p={2}>
+        <Grid item xs={8} pl={3} pr={5}>
           <Typography mb={2} variant="h2">
             {productData?.name['en-US']}
           </Typography>
-          <Collapse in={expanded} timeout="auto" collapsedSize="50px">
+          <Collapse in={expanded} timeout="auto" collapsedSize="20px">
             {productData?.description != null &&
               productData.description['en-US']}
           </Collapse>
-          <Link onClick={handleExpandClick}>Read more</Link>
+          <Link onClick={handleExpandClick}>...Read more</Link>
           <Typography mt={2} mb={2} variant="subtitle2">
             {`${
               Number(prices !== undefined ? prices[0].value.centAmount : '') /
@@ -95,7 +166,7 @@ const Product = (): ReactElement => {
             {productData?.variants.map((e, i) => (
               <Grid
                 item
-                xs={3}
+                xs={2}
                 key={e.id}
                 sx={{
                   cursor: 'pointer',
