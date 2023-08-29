@@ -54,7 +54,7 @@ const ProductCard = (props: IProductCard): ReactElement => {
           to={`/catalog/${props.product.id}`}
           key={props.product.id}
         >
-          <Stack alignItems="center">
+          <Stack alignItems="center" sx={{ position: 'relative' }}>
             <Stack
               direction="row"
               width="100%"
@@ -81,7 +81,6 @@ const ProductCard = (props: IProductCard): ReactElement => {
               </IconButton>
             </Stack>
             <div
-              style={{ position: 'relative', width: 'auto' }}
               onMouseEnter={() => {
                 setHoverEffect(true);
               }}
@@ -90,7 +89,11 @@ const ProductCard = (props: IProductCard): ReactElement => {
               }}
             >
               <Fade
-                style={{ position: 'absolute' }}
+                style={{
+                  position: 'absolute',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                }}
                 timeout={600}
                 in={!hoverEffect}
               >
@@ -129,7 +132,9 @@ const ProductCard = (props: IProductCard): ReactElement => {
               alignItems="center"
             >
               <Typography variant="subtitle2">{props.product.name}</Typography>
-              <Typography variant="subtitle2">{props.product.price}</Typography>
+              <Typography variant="subtitle2" sx={{ whiteSpace: 'nowrap' }}>
+                {props.product.price}
+              </Typography>
             </Stack>
           </Stack>
         </NavLink>
