@@ -28,7 +28,6 @@ import { logout } from '../../store/reducers/CustomerSlice';
 import imageHomeDecor from './img/home-decor.jpg';
 import imageFragrances from './img/Fragrances.avif';
 import imageCollections from './img/collections.avif';
-import imageNew from './img/New.avif';
 import HeaderLink from './HeaderLink';
 
 const BoxForHoverElement = styled('div')({
@@ -100,7 +99,7 @@ const Header = (): ReactElement => {
   const navMenuLinks = (
     <>
       <HeaderLink text="Home" path="/" />
-      <HeaderLink text="Catalog" path="/catalog/1" />
+      <HeaderLink text="Catalog" path="/catalog" />
       <HeaderLink text="NEW" path="catalog/new" />
       <HeaderLink text="Collections" path="catalog/collections" />
       <HeaderLink text="Fragrances" path="catalog/fragrances" />
@@ -191,7 +190,7 @@ const Header = (): ReactElement => {
               setHoverHomeDecor(false);
             }}
           >
-            <HeaderLink text="Catalog" path="/catalog/1" />
+            <HeaderLink text="Catalog" path="/catalog" />
           </Box>
           <Box
             onClick={() => {

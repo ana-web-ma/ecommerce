@@ -26,7 +26,7 @@ import NavigationCatalog from './NavigationCatalog';
 const getPageQty = (total: number): number => Math.ceil(total / 6);
 
 const parentPath = (array: (string | undefined)[]): string => {
-  if (array === undefined) return '';
+  if (array === undefined || array.length === 0) return '';
   let temp: string | undefined = '';
   if (Number.isNaN(Number(array[array.length - 1]))) {
     return `/${array.join('/')}`;
@@ -39,19 +39,14 @@ interface IBreadCrump {
   path: string;
 }
 
-const Products = (props: {
-  path: string;
-  title: string;
-  breadcrumb: IBreadCrump[];
-  idCategory?: string;
-}): ReactElement => {
+const Products = (): ReactElement => {
   const params = useParams();
   const [products, setProducts] = useState<ProductProjection[]>([]);
   const [arrayForBread, setArrayForBread] = useState<IBreadCrump[]>([]);
   const [renderCategory, setRenderCategory] = useState<Category | undefined>(
     undefined,
   );
-  const [query, setQuery] = useState(props.idCategory);
+  const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(1);
   const [pageQty, setPageQty] = useState(0);
@@ -122,7 +117,7 @@ const Products = (props: {
         });
       }
     }
-  }, [renderCategory, params]);
+  }, [renderCategory, products]);
 
   useEffect(() => {
     const pageCurrent = !Number.isNaN(Number(params.id))
