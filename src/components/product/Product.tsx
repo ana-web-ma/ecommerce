@@ -6,6 +6,7 @@ import {
   Link,
   Modal,
   Paper,
+  Stack,
   Typography,
 } from '@mui/material';
 import React, { useEffect, type ReactElement } from 'react';
@@ -20,6 +21,7 @@ import { type ProductProjection } from '@commercetools/platform-sdk';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import Image from '../ui/Image';
 import { getProducts } from '../../api/calls/products/getProducts';
+import PriceComponent from '../ui/Price';
 
 const swiperParams: SwiperOptions = {
   slidesPerView: 1,
@@ -61,6 +63,7 @@ const Product = (): ReactElement => {
       },
     })
       .then((resp) => {
+        console.log('resp', resp.body.results[0]);
         setProductData(resp.body.results[0]);
       })
       .catch(console.log);
@@ -162,7 +165,6 @@ const Product = (): ReactElement => {
                       </Swiper>{' '}
                     </Paper>
                   </Modal>
-                  ,
                 </div>
               ),
           )}
@@ -175,13 +177,10 @@ const Product = (): ReactElement => {
             {productData?.description != null &&
               productData.description['en-US']}
           </Collapse>
-          <Link onClick={handleExpandClick}>...Read more</Link>
-          <Typography mt={2} mb={2} variant="subtitle2">
-            {`${
-              Number(prices !== undefined ? prices[0].value.centAmount : '') /
-              100
-            } €`}
-          </Typography>
+          <Link onClick={handleExpandClick} mb={4} display="block">
+            ...Read more
+          </Link>
+          {prices != null ? <PriceComponent price={prices[0]} /> : null}
           <Typography variant="body2">Select a size:</Typography>
           <Grid mt={1} columnSpacing={1} container>
             {productData?.variants.map((e, i) => (

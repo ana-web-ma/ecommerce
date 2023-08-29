@@ -92,18 +92,18 @@ function DemoComponent(): ReactElement {
   const handleProductsSubmit = (e: { preventDefault: () => void }): void => {
     getProducts({
       limit: 100,
-      pageNumber: 0,
+      pageNumber: 1,
       sort: {
         field: 'id',
         order: 'desc',
       },
       filter: {
-        productsByCategoryId: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
+        productsByCategoryId: { id: '8c4a5815-b067-4f86-b565-9409d38672d3' },
         // productByKey: { key: '34 Boulevard Saint Germain' },
-        productByPrice: {
-          from: 0,
-          to: 10000,
-        },
+        // productByPrice: {
+        //   from: 0,
+        //   to: 10000,
+        // },
       },
     })
       .then((resp) => {
