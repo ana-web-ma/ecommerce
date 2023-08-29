@@ -149,7 +149,7 @@ const Header = (): ReactElement => {
               fontSize: 38,
             },
             display: { md: 'none' },
-            zIndex: '2000',
+            zIndex: checkedMenu ? '2000' : '0',
           }}
           icon={<MenuIcon />}
           checkedIcon={<MenuOpenIcon />}

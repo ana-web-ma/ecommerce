@@ -8,8 +8,11 @@ import {
   Stack,
   Typography,
   Link as MuiLink,
+  Checkbox,
 } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
+import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
+import EuroIcon from '@mui/icons-material/Euro';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
@@ -50,15 +53,17 @@ const Products = (): ReactElement => {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(1);
   const [pageQty, setPageQty] = useState(0);
+  const [checkedSort, setCheckedSort] = useState(true);
+  const [checkedTypeSort, setCheckedTypeSort] = useState(false);
 
   useEffect(() => {
     if (Object.keys(params).length !== 0) {
       getCategories()
         .then((resp) => {
           let objectCurrentCategory;
-          const renderDataQuery = (queryFunc: string): Category | undefined => {
+          const getDataUseUrlPath = (pathUrl: string): Category | undefined => {
             const result = resp.body.results.filter(
-              (cat) => cat.slug['en-US'] === queryFunc,
+              (cat) => cat.slug['en-US'] === pathUrl,
             );
             if (result.length === 1) {
               return result[0];
@@ -71,12 +76,12 @@ const Products = (): ReactElement => {
             Number.isNaN(Number(params.id)) &&
             params.id !== undefined
           ) {
-            objectCurrentCategory = renderDataQuery(params.id);
+            objectCurrentCategory = getDataUseUrlPath(params.id);
           } else if (objectCurrentCategory === undefined) {
             if (params.subcategory !== undefined) {
-              objectCurrentCategory = renderDataQuery(params.subcategory);
+              objectCurrentCategory = getDataUseUrlPath(params.subcategory);
             } else if (params.category !== undefined) {
-              objectCurrentCategory = renderDataQuery(params.category);
+              objectCurrentCategory = getDataUseUrlPath(params.category);
             }
           }
           setRenderCategory(objectCurrentCategory);
@@ -128,8 +133,8 @@ const Products = (): ReactElement => {
       limit: 6,
       pageNumber: pageCurrent,
       sort: {
-        field: 'name.en-US',
-        order: 'asc',
+        field: checkedTypeSort ? 'price' : 'name.en-US',
+        order: checkedSort ? 'asc' : 'desc',
       },
       filter:
         renderCategory !== undefined
@@ -150,7 +155,7 @@ const Products = (): ReactElement => {
       .catch((err) => {
         throw new Error(err);
       });
-  }, [renderCategory, page]);
+  }, [renderCategory, page, checkedSort, checkedTypeSort]);
 
   return (
     <>
@@ -205,18 +210,52 @@ const Products = (): ReactElement => {
         </Breadcrumbs>
       </div>
 
+      <Stack direction={'row'} width={'100%'} justifyContent={'space-between'}>
+        <Stack>
+          <Checkbox
+            sx={{
+              '& .MuiSvgIcon-root': {
+                color: 'black',
+              },
+            }}
+            icon={<TuneIcon />}
+          />
+        </Stack>
+        <Stack direction={'row'}>
+          <Checkbox
+            sx={{
+              '& .MuiSvgIcon-root': {
+                color: 'black',
+              },
+            }}
+            icon={<SortByAlphaIcon />}
+            checkedIcon={<EuroIcon />}
+            checked={checkedTypeSort}
+            onChange={(event): void => {
+              setCheckedTypeSort(event.target.checked);
+            }}
+          />
+          <Checkbox
+            sx={{
+              '& .MuiSvgIcon-root': {
+                color: 'black',
+              },
+            }}
+            icon={<ExpandMoreIcon />}
+            checkedIcon={<ExpandLessIcon />}
+            checked={checkedSort}
+            onChange={(event): void => {
+              setCheckedSort(event.target.checked);
+            }}
+          />
+        </Stack>
+      </Stack>
+
       <Grid container justifyContent="center" spacing={1}>
         {products.map((card, index) => {
-          const price =
-            card.masterVariant.prices !== undefined
-              ? card.masterVariant.prices[0].value.centAmount / 100
-              : 0;
-          const currentCode =
-            card.masterVariant.prices !== undefined
-              ? card.masterVariant.prices[0].value.currencyCode
-              : '';
           const cardData = {
             id: card.id,
+            attribute: card.masterVariant.attributes,
             image:
               card.masterVariant.images !== undefined
                 ? card.masterVariant.images[0].url
@@ -226,8 +265,9 @@ const Products = (): ReactElement => {
                 ? card.masterVariant.images[1].url
                 : null,
             name: card.key,
-            category: 'Unique',
-            price: `${price} ${currentCode}`,
+            description:
+              card.description !== undefined ? card.description['en-US'] : '',
+            price: card.masterVariant.prices,
           };
           if (index <= 1) {
             return (
