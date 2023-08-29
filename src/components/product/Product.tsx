@@ -112,12 +112,11 @@ const Product = (): ReactElement => {
           item
           xs={12}
           sm={5}
-          md={7}
+          md={6}
           sx={{
             flexDirection: { xs: 'column-reverse', sm: 'row' },
-            // paddingLeft: { md: '10%' },
-            // paddingRight: { md: '5%' },
-            // maxHeight: { sm: '50vh' },
+            paddingLeft: { md: '15%' },
+            paddingRight: { md: '5%' },
           }}
         >
           {productData?.variants.map(
@@ -183,7 +182,7 @@ const Product = (): ReactElement => {
               ),
           )}
         </Grid>
-        <Grid item xs={12} sm={7} md={5} pl={3} pr={5}>
+        <Grid item xs={12} sm={7} md={6} pl={3} pr={5}>
           <Typography mb={2} variant="h2">
             {productData?.name['en-US']}
           </Typography>
