@@ -2,6 +2,7 @@ import {
   Box,
   Collapse,
   Grid,
+  IconButton,
   Link,
   Modal,
   Paper,
@@ -16,6 +17,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import './styles.css';
 import { type ProductProjection } from '@commercetools/platform-sdk';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import Image from '../ui/Image';
 import { getProducts } from '../../api/calls/products/getProducts';
 
@@ -55,7 +57,7 @@ const Product = (): ReactElement => {
         order: 'desc',
       },
       filter: {
-        productByKey: { key: '34 Boulevard Saint Germain' },
+        productByKey: { key: 'ROSES' },
       },
     })
       .then((resp) => {
@@ -81,15 +83,12 @@ const Product = (): ReactElement => {
       ? productData?.variants[activeVariant].prices
       : undefined;
 
-  const style = {
+  const paperStyle = {
     position: 'absolute' as const,
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '75vh',
-    // bgcolor: 'background.paper',
-    // border: '2px solid #000',
-    boxShadow: 24,
+    width: '70vh',
     p: 0,
     '&:focus': {
       outline: 'none',
@@ -125,7 +124,20 @@ const Product = (): ReactElement => {
                     aria-labelledby="parent-modal-title"
                     aria-describedby="parent-modal-description"
                   >
-                    <Paper variant="outlined" sx={style}>
+                    <Paper variant="outlined" sx={paperStyle}>
+                      <IconButton
+                        onClick={handleCloseModal}
+                        aria-label="close"
+                        color="secondary"
+                        sx={{
+                          position: 'absolute',
+                          top: 0,
+                          right: 0,
+                          zIndex: 10,
+                        }}
+                      >
+                        <CloseRoundedIcon />
+                      </IconButton>
                       <Swiper className="mySwiper" {...zoomedSwiperParams}>
                         {variant.images?.map((image, index) => (
                           <SwiperSlide key={image.url} virtualIndex={index}>
