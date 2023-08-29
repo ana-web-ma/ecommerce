@@ -193,7 +193,7 @@ const theme = createTheme({
           props: { variant: 'h2' },
           style: {
             fontFamily: PLAYFAIR_FONT,
-            fontSize: '60px',
+            fontSize: '40px',
             textTransform: 'uppercase',
           },
         },
