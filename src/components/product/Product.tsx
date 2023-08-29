@@ -97,8 +97,12 @@ const Product = (): ReactElement => {
 
   return (
     <>
-      <Grid container spacing={0}>
-        <Grid item xs={4}>
+      <Grid
+        sx={{ flexDirection: { xs: 'column-reverse' } }}
+        container
+        spacing={0}
+      >
+        <Grid item xs={12} md={4}>
           {productData?.variants.map(
             (variant, variantIndex) =>
               activeVariant === variantIndex && (
@@ -132,7 +136,12 @@ const Product = (): ReactElement => {
                         sx={{
                           position: 'absolute',
                           top: 0,
-                          right: 0,
+                          right: {
+                            xs: '50%',
+                          },
+                          transform: {
+                            xs: 'translate(50%, 0)',
+                          },
                           zIndex: 10,
                         }}
                       >
@@ -158,7 +167,7 @@ const Product = (): ReactElement => {
               ),
           )}
         </Grid>
-        <Grid item xs={8} pl={3} pr={5}>
+        <Grid item xs={12} md={8} pl={3} pr={5}>
           <Typography mb={2} variant="h2">
             {productData?.name['en-US']}
           </Typography>
