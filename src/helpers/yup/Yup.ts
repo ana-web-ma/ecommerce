@@ -54,7 +54,7 @@ export const RegisterSchema = yup.object().shape({
     .min(8, 'Password must be at least 8 characters'),
   repeatPassword: yup
     .string()
-    .matches(/^\S*$/, 'Remove whitespace')
+    .oneOf([yup.ref('newPassword'), undefined], 'Passwords must match')
     .required('Password is a required field')
     .matches(
       /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%&?*"])[a-zA-Z0-9!@#$%&?*]{4,30}$/,

@@ -30,7 +30,6 @@ function Password(): ReactElement {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
-  const [passwordsMatchError, setPasswordsMatchError] = useState(false);
   const ProfileData = localStorage.getItem('EPERFUME_CUSTOMER_DATA');
   let ProfileDataObj = null;
   if (ProfileData !== null) {
