@@ -39,6 +39,7 @@ interface PropsType {
     productsByCategoryId?: { id: string };
     productByKey?: { key: string };
     productByPrice?: { from: number; to: number };
+    productByAttributeKey?: { key: 'floral' | 'woody' | 'citrus' | 'amber' };
   };
 }
 
@@ -55,6 +56,11 @@ const createFilters = (props: PropsType): string[] => {
   if (props.filter?.productByPrice !== undefined) {
     filterResult.push(
       `variants.price.centAmount:range (${props.filter?.productByPrice.from} to ${props.filter?.productByPrice.to})`,
+    );
+  }
+  if (props.filter?.productByAttributeKey !== undefined) {
+    filterResult.push(
+      `variants.attributes.olfactory.key:"${props.filter.productByAttributeKey.key}"`,
     );
   }
 
@@ -75,6 +81,7 @@ const createQueryArgs = (props: PropsType): QueryArgs => {
         ? `${props.sort.field} ${props.sort.order}`
         : 'id asc',
     filter: createFilters(props),
+    markMatchingVariants: true,
   };
 };
 
