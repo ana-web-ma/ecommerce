@@ -185,7 +185,11 @@ const Product = (): ReactElement => {
           )}
         </Grid>
         <Grid item xs={12} sm={7} md={6} pl={3} pr={5}>
-          <Typography mb={2} variant="h2">
+          <Typography
+            mb={2}
+            variant="h2"
+            sx={{ fontSize: { xs: 36, sm: 36, md: 48, lg: 52, xl: 60 } }}
+          >
             {productData?.name['en-US']}
           </Typography>
           <Collapse in={expanded} timeout="auto" collapsedSize="20px">
