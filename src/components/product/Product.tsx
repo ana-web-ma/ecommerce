@@ -2,6 +2,7 @@ import {
   Box,
   Collapse,
   Grid,
+  IconButton,
   Link,
   Modal,
   Paper,
@@ -17,6 +18,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import './styles.css';
 import { type ProductProjection } from '@commercetools/platform-sdk';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import Image from '../ui/Image';
 import { getProducts } from '../../api/calls/products/getProducts';
 import PriceComponent from '../ui/Price';
@@ -57,11 +59,13 @@ const Product = (): ReactElement => {
         order: 'desc',
       },
       filter: {
-        productByKey: { key: 'ROSES' },
+        productByKey: { key: 'white-melted-wax-candle-holder' },
       },
     })
       .then((resp) => {
-        console.log('resp', resp.body.results[0]);
+        resp.body.results[0].variants.unshift(
+          resp.body.results[0].masterVariant,
+        );
         setProductData(resp.body.results[0]);
       })
       .catch(console.log);
@@ -84,13 +88,12 @@ const Product = (): ReactElement => {
       ? productData?.variants[activeVariant].prices
       : undefined;
 
-  const style = {
+  const paperStyle = {
     position: 'absolute' as const,
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '75vh',
-    boxShadow: 24,
+    width: '70vh',
     p: 0,
     '&:focus': {
       outline: 'none',
@@ -99,8 +102,25 @@ const Product = (): ReactElement => {
 
   return (
     <>
-      <Grid container spacing={0}>
-        <Grid item xs={4}>
+      <Grid
+        sx={{
+          flexDirection: { xs: 'column-reverse', sm: 'row' },
+          // maxHeight: { sm: '50vh', md: '50vh' },
+        }}
+        container
+        spacing={0}
+      >
+        <Grid
+          item
+          xs={12}
+          sm={5}
+          md={6}
+          sx={{
+            flexDirection: { xs: 'column-reverse', sm: 'row' },
+            paddingLeft: { md: '15%' },
+            paddingRight: { md: '5%' },
+          }}
+        >
           {productData?.variants.map(
             (variant, variantIndex) =>
               activeVariant === variantIndex && (
@@ -126,7 +146,25 @@ const Product = (): ReactElement => {
                     aria-labelledby="parent-modal-title"
                     aria-describedby="parent-modal-description"
                   >
-                    <Paper variant="outlined" sx={style}>
+                    <Paper variant="outlined" sx={paperStyle}>
+                      <IconButton
+                        onClick={handleCloseModal}
+                        aria-label="close"
+                        color="secondary"
+                        sx={{
+                          position: 'absolute',
+                          top: 0,
+                          right: {
+                            xs: '50%',
+                          },
+                          transform: {
+                            xs: 'translate(50%, 0)',
+                          },
+                          zIndex: 10,
+                        }}
+                      >
+                        <CloseRoundedIcon />
+                      </IconButton>
                       <Swiper className="mySwiper" {...zoomedSwiperParams}>
                         {variant.images?.map((image, index) => (
                           <SwiperSlide key={image.url} virtualIndex={index}>
@@ -146,8 +184,12 @@ const Product = (): ReactElement => {
               ),
           )}
         </Grid>
-        <Grid item xs={8} pl={3} pr={5}>
-          <Typography mb={2} variant="h2">
+        <Grid item xs={12} sm={7} md={6} pl={3} pr={5}>
+          <Typography
+            mb={2}
+            variant="h2"
+            sx={{ fontSize: { xs: 36, sm: 36, md: 48, lg: 52, xl: 60 } }}
+          >
             {productData?.name['en-US']}
           </Typography>
           <Collapse in={expanded} timeout="auto" collapsedSize="20px">
