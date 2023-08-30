@@ -11,7 +11,7 @@ const theme = createTheme({
       main: '#000000',
     },
     secondary: {
-      main: '#00000020',
+      main: '#888888',
     },
     error: {
       main: red.A400,
@@ -82,8 +82,7 @@ const theme = createTheme({
     },
     MuiButtonBase: {
       defaultProps: {
-        // The props to change the default for.
-        disableRipple: true, // No more ripple, on the whole application 💣!
+        disableRipple: true,
       },
     },
     MuiContainer: {
