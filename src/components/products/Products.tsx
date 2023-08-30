@@ -16,10 +16,9 @@ import {
   type Category,
   type ProductProjection,
 } from '@commercetools/platform-sdk';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import { getProducts } from '../../api/calls/products/getProducts';
-import { getCategories } from '../../api/calls/categories/getCategories';
 import { getCategoryById } from '../../api/calls/categories/getCategoryById';
 import NavigationCatalog from './NavigationCatalog';
 import { getCategoryByKey } from '../../api/calls/categories/getCategoriesByKey';
@@ -50,6 +49,7 @@ interface IBreadCrump {
 
 const Products = (): ReactElement => {
   const params = useParams();
+  const navigation = useNavigate();
   const [products, setProducts] = useState<ProductProjection[]>([]);
   const [arrayForBread, setArrayForBread] = useState<IBreadCrump[]>([]);
   const [responseCategoryByKey, setResponseCategoryByKey] = useState<
@@ -152,6 +152,7 @@ const Products = (): ReactElement => {
         }
       })
       .catch((err) => {
+        navigation('/404');
         throw new Error(err);
       });
   }, [responseCategoryByKey, page]);

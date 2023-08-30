@@ -6,7 +6,6 @@ import {
   Link,
   Modal,
   Paper,
-  Stack,
   Typography,
 } from '@mui/material';
 import React, { useEffect, type ReactElement } from 'react';
@@ -17,13 +16,10 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import './styles.css';
-import {
-  type Product as ProductType,
-  type ProductProjection,
-} from '@commercetools/platform-sdk';
+import { type Product as ProductType } from '@commercetools/platform-sdk';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useNavigate, useParams } from 'react-router-dom';
 import Image from '../ui/Image';
-import { getProducts } from '../../api/calls/products/getProducts';
 import PriceComponent from '../ui/Price';
 import { getProductByKey } from '../../api/calls/products/getProductByKey';
 
@@ -61,7 +57,9 @@ const Product = (): ReactElement => {
     if (params.key !== undefined) {
       getProductByKey({ key: params.key })
         .then((resp) => {
-          console.log('getProductByKey', resp.body);
+          resp.body.masterData.current.variants.unshift(
+            resp.body.masterData.current.masterVariant,
+          );
           setProductData(resp.body);
         })
         .catch((err) => {
@@ -69,25 +67,6 @@ const Product = (): ReactElement => {
           throw new Error(err);
         });
     }
-  }, [params]);
-
-  useEffect(() => {
-    getProducts({
-      limit: 5,
-      pageNumber: 1,
-      sort: {
-        field: 'id',
-        order: 'desc',
-      },
-      filter: {
-        productByKey: { key: params.key !== undefined ? params.key : '' },
-      },
-    })
-      .then((resp) => {
-        console.log('resp', resp.body.results[0]);
-        // setProductData(resp.body.results[0]);
-      })
-      .catch(console.log);
   }, [params]);
 
   useEffect(() => {}, [activeVariant]);
@@ -103,10 +82,9 @@ const Product = (): ReactElement => {
   };
 
   const prices =
-    productData?.masterData.current.variants.length !== 0 &&
     productData?.masterData.current.variants[activeVariant].prices !== undefined
       ? productData?.masterData.current.variants[activeVariant].prices
-      : null;
+      : undefined;
 
   const paperStyle = {
     position: 'absolute' as const,
@@ -141,7 +119,7 @@ const Product = (): ReactElement => {
             paddingRight: { md: '5%' },
           }}
         >
-          {productData?.variants.map(
+          {productData?.masterData.current.variants.map(
             (variant, variantIndex) =>
               activeVariant === variantIndex && (
                 <div key={variant.id}>
@@ -212,7 +190,7 @@ const Product = (): ReactElement => {
             variant="h2"
             sx={{ fontSize: { xs: 36, sm: 36, md: 48, lg: 52, xl: 60 } }}
           >
-            {productData?.name['en-US']}
+            {productData?.masterData.current.name['en-US']}
           </Typography>
           <Collapse in={expanded} timeout="auto" collapsedSize="20px">
             {productData?.masterData.current.description != null &&
