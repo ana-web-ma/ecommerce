@@ -59,11 +59,13 @@ const Product = (): ReactElement => {
         order: 'desc',
       },
       filter: {
-        productByKey: { key: 'ROSES' },
+        productByKey: { key: 'white-melted-wax-candle-holder' },
       },
     })
       .then((resp) => {
-        console.log('resp', resp.body.results[0]);
+        resp.body.results[0].variants.unshift(
+          resp.body.results[0].masterVariant,
+        );
         setProductData(resp.body.results[0]);
       })
       .catch(console.log);
