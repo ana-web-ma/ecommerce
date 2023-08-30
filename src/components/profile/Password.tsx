@@ -1,15 +1,12 @@
 import type React from 'react';
 import { useState, type ReactElement } from 'react';
 import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
-import { type FieldValues, type SubmitHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
 import { RegisterSchema } from '../../helpers/yup/Yup';
-import { useAppDispatch } from '../../helpers/hooks/Hooks';
-import { login } from '../../store/reducers/CustomerSlice';
-import { authPasswordCustomer } from '../../api/calls/customers/authPasswordCustomer';
-import { tokenCache } from '../../api/tokenCache';
+import { updatePassword } from '../../api/calls/customers/update/updatePassword';
+import { CustomDialog } from '../register/DialogModule';
 
 export function onPromise<T>(
   promise: (event: React.SyntheticEvent) => Promise<T>,
@@ -22,38 +19,74 @@ export function onPromise<T>(
 }
 
 function Password(): ReactElement {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const [errorMessage, setErrorMessage] = useState('');
   const {
     register,
     formState: { errors },
-    handleSubmit,
   } = useForm({
     mode: 'onChange',
     resolver: yupResolver(RegisterSchema),
   });
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [repeatPassword, setRepeatPassword] = useState('');
+  const [passwordsMatchError, setPasswordsMatchError] = useState(false);
+  const ProfileData = localStorage.getItem('EPERFUME_CUSTOMER_DATA');
+  let ProfileDataObj = null;
+  if (ProfileData !== null) {
+    ProfileDataObj = JSON.parse(ProfileData);
+  }
+  const { id } = ProfileDataObj;
+  const handleChangeCurrentPassword = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ): void => {
+    setErrorMessage('');
+    setCurrentPassword(event.target.value);
+  };
+  const handleChangeNewPassword = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ): void => {
+    setErrorMessage('');
+    setNewPassword(event.target.value);
+  };
+  const handleChangeRepeatPassword = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ): void => {
+    setErrorMessage('');
+    setRepeatPassword(event.target.value);
+  };
 
-  const handleSubmitForm: SubmitHandler<FieldValues> = async (
-    data,
-  ): Promise<void> => {
-    const customerData = {
-      email: data.email,
-      password: data.password,
-    };
-    await authPasswordCustomer(customerData)
-      .then(async (response): Promise<void> => {
-        dispatch(
-          login({
-            customer: response.body.customer,
-            token: tokenCache.get().token,
-          }),
-        );
-        navigate('/');
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
+  const openDialog = (title: string, content: React.ReactNode): void => {
+    setDialogTitle(title);
+    setDialogContent(content);
+    setDialogOpen(true);
+  };
+
+  const changePassword = async (): Promise<void> => {
+    updatePassword({
+      id,
+      currentPassword,
+      newPassword,
+    })
+      .then((resp) => {
+        openDialog('Successfully', 'Password changed');
+        console.log(resp);
       })
       .catch((err) => {
-        setErrorMessage(err.message);
+        if (err.statusCode === 400) {
+          openDialog('Error', 'The given current password does not match');
+        } else {
+          openDialog('Error', err.message);
+        }
       });
+  };
+  const changePasswordChecked = (): void => {
+    changePassword().catch((error) => {
+      console.error('Error handling save click:', error);
+    });
   };
 
   // Show/Hide Password Functionality 👁️‍🗨️
@@ -86,13 +119,11 @@ function Password(): ReactElement {
         fullWidth={true}
         margin="normal"
         type={showOldPassword ? 'text' : 'password'}
-        label="old password"
+        label="current password"
         variant="outlined"
         required
-        placeholder="Enter your old password"
-        onInput={() => {
-          setErrorMessage('');
-        }}
+        placeholder="Enter your current password"
+        onInput={handleChangeCurrentPassword}
         helperText={
           errors.oldPassword != null
             ? errors.oldPassword.message?.toString()
@@ -122,9 +153,7 @@ function Password(): ReactElement {
         variant="outlined"
         required
         placeholder="Enter your new password"
-        onInput={() => {
-          setErrorMessage('');
-        }}
+        onInput={handleChangeNewPassword}
         helperText={
           errors.newPassword != null
             ? errors.newPassword.message?.toString()
@@ -154,9 +183,7 @@ function Password(): ReactElement {
         label="repeat new password"
         variant="outlined"
         placeholder="Repeat your new password"
-        onInput={() => {
-          setErrorMessage('');
-        }}
+        onInput={handleChangeRepeatPassword}
         helperText={
           errors.repeatPassword != null
             ? errors.repeatPassword.message?.toString()
@@ -178,16 +205,27 @@ function Password(): ReactElement {
         {...register('repeatPassword')}
       />
       <Button
+        onClick={changePasswordChecked}
         disabled={
           errors.oldPassword != null ||
           errors.newPassword != null ||
-          errors.repeatPassword != null
+          errors.repeatPassword != null ||
+          currentPassword === '' ||
+          newPassword === '' ||
+          repeatPassword === ''
         }
-        type="submit"
         variant="contained"
       >
         Save new password
       </Button>
+      <CustomDialog
+        open={dialogOpen}
+        onClose={() => {
+          setDialogOpen(false);
+        }}
+        title={dialogTitle}
+        content={dialogContent}
+      />
     </div>
   );
 }
