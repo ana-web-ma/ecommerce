@@ -60,7 +60,7 @@ const Product = (): ReactElement => {
     if (params.key !== undefined) {
       getProductByKey({ key: params.key })
         .then((resp) => {
-          console.log('Vit', resp.body);
+          console.log('getProductByKey', resp.body);
           setProductData(resp.body);
         })
         .catch((err) => {
@@ -79,15 +79,15 @@ const Product = (): ReactElement => {
         order: 'desc',
       },
       filter: {
-        productByKey: { key: 'roses' },
+        productByKey: { key: params.key !== undefined ? params.key : '' },
       },
     })
       .then((resp) => {
-        console.log('Ana', resp.body.results[0]);
+        console.log('getProducts', resp.body.results[0]);
         // setProductData(resp.body.results[0]);
       })
       .catch(console.log);
-  }, []);
+  }, [params]);
 
   useEffect(() => {}, [activeVariant]);
 
