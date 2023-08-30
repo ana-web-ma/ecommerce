@@ -225,8 +225,8 @@ const Products = (): ReactElement => {
               card.masterVariant.images?.[1] !== undefined
                 ? card.masterVariant.images[1].url
                 : null,
-            name: card.key,
-            category: 'Unique',
+            name: card.name['en-US'],
+            keyValue: card.key !== undefined ? card.key : '',
             price: `${price} ${currentCode}`,
           };
           if (index <= 1) {
