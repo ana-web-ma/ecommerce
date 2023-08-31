@@ -25,6 +25,8 @@ import { getProducts } from '../../api/calls/products/getProducts';
 import { getCategoryById } from '../../api/calls/categories/getCategoryById';
 import NavigationCatalog from './NavigationCatalog';
 import { getCategoryByKey } from '../../api/calls/categories/getCategoriesByKey';
+import { useSearchText } from '../../helpers/hooks/Hooks';
+import { searchAPI } from '../../api/calls/products/searchProducts';
 
 const getPageQty = (total: number): number => Math.ceil(total / 6);
 
@@ -64,6 +66,8 @@ const Products = (): ReactElement => {
   const [pageQty, setPageQty] = useState(1);
   const [checkedSort, setCheckedSort] = useState(true);
   const [checkedTypeSort, setCheckedTypeSort] = useState(false);
+  const [tempTextState, setTempTextState] = useState<string | null>(null);
+  const tempText: string | null = useSearchText();
 
   useEffect(() => {
     if (category !== undefined) {
@@ -78,6 +82,7 @@ const Products = (): ReactElement => {
   }, [category]);
 
   useEffect(() => {
+    setTempTextState(tempText);
     if (Object.values(params).length === 0) {
       setPage(1);
       setCategory(undefined);
@@ -91,11 +96,29 @@ const Products = (): ReactElement => {
       }
     } else if (Object.values(params).length === 1) {
       if (params.id !== undefined) {
-        const tempNumber = returnNumber(params.id);
-        if (tempNumber !== null && tempNumber !== page) setPage(tempNumber);
-        else if (tempNumber === null) {
-          setCategory(params.id);
-          setPage(1);
+        if (params.id === 'search') {
+          if (tempTextState !== null) {
+            searchAPI({ text: tempTextState, pageNumber: page })
+              .then((resp) => {
+                setProducts(resp.body.results);
+                if (resp.body.total != null) {
+                  setTotal(resp.body.total);
+                  setPageQty(getPageQty(resp.body.total));
+                }
+                setTempTextState(null);
+              })
+              .catch((err) => {
+                navigation('/404');
+                throw new Error(err);
+              });
+          }
+        } else {
+          const tempNumber = returnNumber(params.id);
+          if (tempNumber !== null && tempNumber !== page) setPage(tempNumber);
+          else if (tempNumber === null) {
+            setCategory(params.id);
+            setPage(1);
+          }
         }
       }
     }

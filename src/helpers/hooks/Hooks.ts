@@ -69,3 +69,8 @@ export const useCustomer = (): Customer | null => {
   const { customer } = useAppSelector((state) => state.customerReducer);
   return customer;
 };
+
+export const useSearchText = (): string | null => {
+  const { searchText } = useAppSelector((state) => state.customerReducer);
+  return searchText;
+};

@@ -1,15 +1,20 @@
 import React, { useState, type ReactElement } from 'react';
 import {
   Box,
+  Button,
   Checkbox,
   Divider,
   Drawer,
   IconButton,
+  InputAdornment,
   Link,
+  Modal,
   SpeedDial,
   SpeedDialAction,
   Stack,
+  TextField,
   Tooltip,
+  Typography,
   styled,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -24,7 +29,7 @@ import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SearchIcon from '../ui/icons/SearchIcon';
 import logo from './img/logo.png';
 import { useAppDispatch, useIsLogged } from '../../helpers/hooks/Hooks';
-import { logout } from '../../store/reducers/CustomerSlice';
+import { logout, search } from '../../store/reducers/CustomerSlice';
 import imageHomeDecor from './img/home-decor.jpg';
 import imageFragrances from './img/Fragrances.avif';
 import imageCollections from './img/collections.avif';
@@ -56,6 +61,22 @@ const Img = styled('img')({
   objectFit: 'contain',
 });
 
+const styleSearchModal = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '20px',
+  alignItems: 'center',
+  transform: 'translate(-50%, -50%)',
+  width: { xs: '350px', md: '500px' },
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
 const Header = (): ReactElement => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -63,13 +84,20 @@ const Header = (): ReactElement => {
   const [hoverFragrances, setHoverFragrances] = useState(false);
   const [hoverHomeDecor, setHoverHomeDecor] = useState(false);
   const [hoverCollections, setHoverCollections] = useState(false);
+  const [openSearchModal, setOpenSearchModal] = React.useState(false);
+  const [searchText, setSearchText] = React.useState('');
 
   const handleDrawerToggle = (action: boolean): void => {
     setCheckedMenu(action);
   };
 
   const actionLink = [
-    { isLogged: true, icon: <SearchIcon />, tooltip: 'Search', path: '/' },
+    {
+      isLogged: true,
+      icon: <SearchIcon />,
+      tooltip: 'Search',
+      path: null,
+    },
     {
       isLogged: useIsLogged(),
       icon: <PermIdentityIcon />,
@@ -261,7 +289,11 @@ const Header = (): ReactElement => {
                 <IconButton
                   component={Link}
                   onClick={(): void => {
-                    navigate(link.path);
+                    if (link.path !== null) {
+                      navigate(link.path);
+                    } else {
+                      setOpenSearchModal(true);
+                    }
                   }}
                 >
                   {link.icon}
@@ -308,7 +340,11 @@ const Header = (): ReactElement => {
               <IconButton
                 component={Link}
                 onClick={(): void => {
-                  navigate(link.path);
+                  if (link.path !== null) {
+                    navigate(link.path);
+                  } else {
+                    setOpenSearchModal(true);
+                  }
                 }}
               >
                 {link.icon}
@@ -448,6 +484,40 @@ const Header = (): ReactElement => {
           borderColor: '#fff',
         }}
       />
+      <Modal
+        open={openSearchModal}
+        onClose={() => {
+          setOpenSearchModal(false);
+        }}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={styleSearchModal}>
+          <TextField
+            fullWidth
+            onChange={(event) => {
+              setSearchText(event.target.value);
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Button
+            onClick={() => {
+              dispatch(search(searchText));
+              setOpenSearchModal(false);
+              navigate('/catalog/search');
+            }}
+            variant="contained"
+          >
+            Search
+          </Button>
+        </Box>
+      </Modal>
     </>
   );
 };
