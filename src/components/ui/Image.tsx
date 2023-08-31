@@ -17,6 +17,7 @@ export default function Image(props: {
         width: props.width,
         maxHeight: props.maxHeight,
         maxWidth: props.maxWidth,
+        display: 'block',
       }}
       alt={props.name}
       src={props.url}

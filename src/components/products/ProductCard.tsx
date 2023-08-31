@@ -16,7 +16,9 @@ import PriceComponent from '../ui/Price';
 
 interface IProduct {
   id: string;
-  attribute: Attribute[] | undefined;
+  attribute: string;
+  category?: string;
+  keyValue: string;
   image?: string;
   image2?: string | null;
   name: string | undefined;
@@ -54,8 +56,7 @@ const ProductCard = (props: IProductCard): ReactElement => {
       >
         <NavLink
           style={{ textDecoration: 'none', color: 'inherit' }}
-          to={`/catalog/${props.product.id}`}
-          key={props.product.id}
+          to={`/product/${props.product.keyValue}`}
         >
           <Stack alignItems="center" sx={{ position: 'relative' }}>
             <Stack
@@ -70,9 +71,7 @@ const ProductCard = (props: IProductCard): ReactElement => {
                 pl={1}
                 minHeight={30}
               >
-                {props.product.attribute?.[0] !== undefined
-                  ? props.product.attribute[0].value
-                  : ''}
+                {props.product.attribute}
               </Typography>
               <Tooltip title={props.product.description} placement="top">
                 <Stack direction={'row'} gap={1}>

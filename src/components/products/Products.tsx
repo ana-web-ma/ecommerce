@@ -19,14 +19,22 @@ import {
   type Category,
   type ProductProjection,
 } from '@commercetools/platform-sdk';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import { getProducts } from '../../api/calls/products/getProducts';
-import { getCategories } from '../../api/calls/categories/getCategories';
 import { getCategoryById } from '../../api/calls/categories/getCategoryById';
 import NavigationCatalog from './NavigationCatalog';
+import { getCategoryByKey } from '../../api/calls/categories/getCategoriesByKey';
 
 const getPageQty = (total: number): number => Math.ceil(total / 6);
+
+const testNumber = (value: string): boolean => {
+  return Number.isNaN(Number(value));
+};
+
+const returnNumber = (value: string): number | null => {
+  return Number.isNaN(Number(value)) ? null : Number(value);
+};
 
 const parentPath = (array: (string | undefined)[]): string => {
   if (array === undefined || array.length === 0) return '';
@@ -44,69 +52,68 @@ interface IBreadCrump {
 
 const Products = (): ReactElement => {
   const params = useParams();
+  const navigation = useNavigate();
   const [products, setProducts] = useState<ProductProjection[]>([]);
   const [arrayForBread, setArrayForBread] = useState<IBreadCrump[]>([]);
-  const [renderCategory, setRenderCategory] = useState<Category | undefined>(
-    undefined,
-  );
-  const [query, setQuery] = useState('');
+  const [responseCategoryByKey, setResponseCategoryByKey] = useState<
+    Category | undefined
+  >(undefined);
+  const [category, setCategory] = useState<string | undefined>(undefined);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(1);
-  const [pageQty, setPageQty] = useState(0);
+  const [pageQty, setPageQty] = useState(1);
   const [checkedSort, setCheckedSort] = useState(true);
   const [checkedTypeSort, setCheckedTypeSort] = useState(false);
 
   useEffect(() => {
-    if (Object.keys(params).length !== 0) {
-      getCategories()
+    if (category !== undefined) {
+      getCategoryByKey({ key: category })
         .then((resp) => {
-          let objectCurrentCategory;
-          const getDataUseUrlPath = (pathUrl: string): Category | undefined => {
-            const result = resp.body.results.filter(
-              (cat) => cat.slug['en-US'] === pathUrl,
-            );
-            if (result.length === 1) {
-              return result[0];
-            }
-            return undefined;
-          };
-          if (Object.keys(params).length === 0) {
-            objectCurrentCategory = undefined;
-          } else if (
-            Number.isNaN(Number(params.id)) &&
-            params.id !== undefined
-          ) {
-            objectCurrentCategory = getDataUseUrlPath(params.id);
-          } else if (objectCurrentCategory === undefined) {
-            if (params.subcategory !== undefined) {
-              objectCurrentCategory = getDataUseUrlPath(params.subcategory);
-            } else if (params.category !== undefined) {
-              objectCurrentCategory = getDataUseUrlPath(params.category);
-            }
-          }
-          setRenderCategory(objectCurrentCategory);
+          setResponseCategoryByKey(resp.body);
         })
         .catch((err) => {
           throw new Error(err);
         });
-    } else {
-      setRenderCategory(undefined);
+    } else setResponseCategoryByKey(undefined);
+  }, [category]);
+
+  useEffect(() => {
+    if (Object.values(params).length === 0) {
+      setPage(1);
+      setCategory(undefined);
+    } else if (Object.values(params).length === 2) {
+      if (params.id !== undefined) {
+        const tempNumber = returnNumber(params.id);
+        if (tempNumber !== null && tempNumber !== page) setPage(tempNumber);
+      }
+      if (params.category !== undefined) {
+        setCategory(params.category);
+      }
+    } else if (Object.values(params).length === 1) {
+      if (params.id !== undefined) {
+        const tempNumber = returnNumber(params.id);
+        if (tempNumber !== null && tempNumber !== page) setPage(tempNumber);
+        else if (tempNumber === null) {
+          setCategory(params.id);
+          setPage(1);
+        }
+      }
     }
-  }, [params]);
+  }, [page, params]);
 
   useEffect(() => {
     setArrayForBread([]);
-    if (renderCategory !== undefined) {
+    if (responseCategoryByKey !== undefined) {
       const tempArray: IBreadCrump[] = [
         {
-          name: renderCategory.name['en-US'],
+          name: responseCategoryByKey.name['en-US'],
           path: '/catalog',
         },
       ];
-      if (renderCategory.ancestors.length === 0) {
+      if (responseCategoryByKey.ancestors.length === 0) {
         setArrayForBread(tempArray);
       } else {
-        renderCategory.ancestors.map(async (parent) => {
+        responseCategoryByKey.ancestors.map(async (parent) => {
           return getCategoryById({ id: parent.id })
             .then((resp) => {
               const temp = {
@@ -122,25 +129,21 @@ const Products = (): ReactElement => {
         });
       }
     }
-  }, [renderCategory, products]);
+  }, [responseCategoryByKey, category, products]);
 
   useEffect(() => {
-    const pageCurrent = !Number.isNaN(Number(params.id))
-      ? Number(params.id)
-      : 1;
-    setPage(pageCurrent);
     getProducts({
       limit: 6,
-      pageNumber: pageCurrent,
+      pageNumber: page,
       sort: {
         field: checkedTypeSort ? 'price' : 'name.en-US',
         order: checkedSort ? 'asc' : 'desc',
       },
       filter:
-        renderCategory !== undefined
+        responseCategoryByKey !== undefined
           ? {
               productsByCategoryId: {
-                id: renderCategory.id,
+                id: responseCategoryByKey.id,
               },
             }
           : {},
@@ -153,60 +156,50 @@ const Products = (): ReactElement => {
         }
       })
       .catch((err) => {
+        navigation('/404');
         throw new Error(err);
       });
-  }, [renderCategory, page, checkedSort, checkedTypeSort]);
+  }, [responseCategoryByKey, page, checkedSort, checkedTypeSort]);
 
   return (
     <>
       <Stack mt={3} direction="row" gap={0.5} alignItems="end">
         <Typography variant="h2">
-          {renderCategory?.name['en-US'] ?? 'All products'}
+          {responseCategoryByKey?.name['en-US'] ?? 'All products'}
         </Typography>
         <Typography pb={0.4} sx={{ whiteSpace: 'nowrap' }} variant="body2">
           ({total} Products)
         </Typography>
       </Stack>
 
-      <NavigationCatalog category={renderCategory?.name['en-US']} />
+      <NavigationCatalog category={responseCategoryByKey?.name['en-US']} />
 
       <div style={{ width: '100%' }} role="presentation">
         <Breadcrumbs aria-label="breadcrumb">
           <MuiLink component={Link} to="/">
             Home
           </MuiLink>
-          {renderCategory !== undefined ? (
-            <MuiLink component={Link} to="/catalog/1">
+          {responseCategoryByKey !== undefined ? (
+            <MuiLink component={Link} to="/catalog">
               Catalog
             </MuiLink>
           ) : (
             <Typography key="bread-catalog">Catalog</Typography>
           )}
           {arrayForBread.map((bread, ind, arr) => {
-            if (ind !== arr.length - 1) {
+            if (ind === 0 && arr.length === 2) {
               return (
                 <MuiLink
                   component={Link}
                   key={`bread-${ind}`}
-                  to={
-                    ind === 0
-                      ? `/catalog${bread.path}`
-                      : `/catalog${arr[ind - 1].path + bread.path}`
-                  }
+                  to={`/catalog${bread.path}`}
                 >
                   {bread.name}
                 </MuiLink>
               );
             }
-            return '';
+            return <Typography key={`bread-title`}>{bread.name}</Typography>;
           })}
-          {arrayForBread[arrayForBread.length - 1] !== undefined ? (
-            <Typography key={`bread-title`}>
-              {arrayForBread[arrayForBread.length - 1].name}
-            </Typography>
-          ) : (
-            ''
-          )}
         </Breadcrumbs>
       </div>
 
@@ -255,7 +248,11 @@ const Products = (): ReactElement => {
         {products.map((card, index) => {
           const cardData = {
             id: card.id,
-            attribute: card.masterVariant.attributes,
+            attribute:
+              card.masterVariant.attributes !== undefined &&
+              card.masterVariant.attributes.length !== 0
+                ? card.masterVariant.attributes[0].value.key
+                : '',
             image:
               card.masterVariant.images !== undefined
                 ? card.masterVariant.images[0].url
@@ -265,19 +262,20 @@ const Products = (): ReactElement => {
                 ? card.masterVariant.images[1].url
                 : null,
             name: card.key,
+            keyValue: card.key !== undefined ? card.key : '',
             description:
               card.description !== undefined ? card.description['en-US'] : '',
             price: card.masterVariant.prices,
           };
           if (index <= 1) {
             return (
-              <Grid key={card.id} item xs={10} sm={12} md={9} lg={6}>
+              <Grid key={`catalog-${index}`} item xs={10} sm={12} md={9} lg={6}>
                 <ProductCard product={cardData} small={false} />
               </Grid>
             );
           }
           return (
-            <Grid key={card.id} item xs={10} sm={6} md={4.5} lg={3}>
+            <Grid key={`catalog-${index}`} item xs={10} sm={6} md={4.5} lg={3}>
               <ProductCard product={cardData} small={true} />
             </Grid>
           );
