@@ -16,7 +16,8 @@ interface IProduct {
   image?: string;
   image2?: string | null;
   name: string | undefined;
-  category: string;
+  category?: string;
+  keyValue: string;
   price: string;
 }
 
@@ -51,8 +52,7 @@ const ProductCard = (props: IProductCard): ReactElement => {
       >
         <NavLink
           style={{ textDecoration: 'none', color: 'inherit' }}
-          to={`/catalog/${props.product.id}`}
-          key={props.product.id}
+          to={`/product/${props.product.keyValue}`}
         >
           <Stack alignItems="center" sx={{ position: 'relative' }}>
             <Stack
