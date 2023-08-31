@@ -4,8 +4,14 @@
 }
 
 .swiper-pagination-bullet {
-  width: var(--swiper-pagination-bullet-width, var(--swiper-pagination-bullet-size, 20px));
-  height: var(--swiper-pagination-bullet-height, var(--swiper-pagination-bullet-size, 20px));
+  width: var(
+    --swiper-pagination-bullet-width,
+    var(--swiper-pagination-bullet-size, 20px)
+  );
+  height: var(
+    --swiper-pagination-bullet-height,
+    var(--swiper-pagination-bullet-size, 20px)
+  );
 }
 
 /* .MuiGrid-item img {
