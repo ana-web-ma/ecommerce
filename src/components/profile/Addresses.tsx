@@ -12,13 +12,26 @@ import {
 import type { ReactElement, ChangeEvent } from 'react';
 import type { SelectChangeEvent } from '@mui/material';
 import { Edit, Save, Delete } from '@mui/icons-material';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
+import { updateMe } from '../../api/calls/customers/update/updateMe';
+import { CustomDialog } from '../register/DialogModule';
+import { RegisterSchema } from '../../helpers/yup/Yup';
 
 function Addresses(): ReactElement {
+  const {
+    register,
+    formState: { errors },
+  } = useForm({
+    mode: 'onChange',
+    resolver: yupResolver(RegisterSchema),
+  });
   const ProfileData = localStorage.getItem('EPERFUME_CUSTOMER_DATA');
   let ProfileDataObj = null;
   if (ProfileData !== null) {
     ProfileDataObj = JSON.parse(ProfileData);
   }
+  const { id } = ProfileDataObj;
 
   const shippingId = ProfileDataObj.shippingAddressIds[0];
   const billingId = ProfileDataObj.billingAddressIds[0];
@@ -119,28 +132,139 @@ function Addresses(): ReactElement {
     setBillingCountry(event.target.value);
   };
 
-  const handleToggleEditSave = (): void => {
-    if (isEditing) {
-      // logic
+  // Dialog window
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
+  const openDialog = (title: string, content: React.ReactNode): void => {
+    setDialogTitle(title);
+    setDialogContent(content);
+    setDialogOpen(true);
+  };
+
+  const handleToggleEditSave = async (): Promise<void> => {
+    if (isEditing && isDefaultShipping) {
+      updateMe({
+        id,
+        changeAddress: {
+          addressId: shippingId,
+          address: {
+            country: shippingCountry,
+            city: shippingCity,
+            streetName: shippingStreet,
+            postalCode: shippingCode,
+          },
+        },
+        setDefaultShippingAddress: {
+          addressId: shippingId,
+        },
+      })
+        .then((res) => {
+          localStorage.setItem(
+            'EPERFUME_CUSTOMER_DATA',
+            JSON.stringify(res.body),
+          );
+          openDialog('Successfully', 'Address changed');
+        })
+        .catch((err) => {
+          openDialog('Error', err.toString());
+        });
+    } else if (isEditing && !isDefaultShipping) {
+      updateMe({
+        id,
+        changeAddress: {
+          addressId: shippingId,
+          address: {
+            country: shippingCountry,
+            city: shippingCity,
+            streetName: shippingStreet,
+            postalCode: shippingCode,
+          },
+        },
+      })
+        .then((res) => {
+          localStorage.setItem(
+            'EPERFUME_CUSTOMER_DATA',
+            JSON.stringify(res.body),
+          );
+          openDialog('Successfully', 'Address changed');
+        })
+        .catch((err) => {
+          openDialog('Error', err.toString());
+        });
     }
     setIsEditing(!isEditing);
   };
-
-  const handleDeleteClick = (): void => {
-    // logic
+  const toggleHandleEditSave = (): void => {
+    handleToggleEditSave().catch((error) => {
+      console.error('Error handling save click:', error);
+    });
   };
-
-  const handleToggleEditSaveBilling = (): void => {
-    if (isEditing) {
-      // logic
+  const handleToggleEditSaveBilling = async (): Promise<void> => {
+    if (isEditingBilling && isDefaultBilling) {
+      updateMe({
+        id,
+        changeAddress: {
+          addressId: billingId,
+          address: {
+            country: billingCountry,
+            city: billingCity,
+            streetName: billingStreet,
+            postalCode: billingCode,
+          },
+        },
+        setDefaultBillingAddress: {
+          addressId: billingId,
+        },
+      })
+        .then((res) => {
+          localStorage.setItem(
+            'EPERFUME_CUSTOMER_DATA',
+            JSON.stringify(res.body),
+          );
+          openDialog('Successfully', 'Address changed');
+        })
+        .catch((err) => {
+          openDialog('Error', err.toString());
+        });
+    } else if (isEditingBilling && !isDefaultBilling) {
+      updateMe({
+        id,
+        changeAddress: {
+          addressId: billingId,
+          address: {
+            country: billingCountry,
+            city: billingCity,
+            streetName: billingStreet,
+            postalCode: billingCode,
+          },
+        },
+      })
+        .then((res) => {
+          localStorage.setItem(
+            'EPERFUME_CUSTOMER_DATA',
+            JSON.stringify(res.body),
+          );
+          openDialog('Successfully', 'Address changed');
+        })
+        .catch((err) => {
+          openDialog('Error', err.toString());
+        });
     }
     setIsEditingBilling(!isEditingBilling);
+  };
+  const toggleHandleEditSaveBilling = (): void => {
+    handleToggleEditSaveBilling().catch((error) => {
+      console.error('Error handling save click:', error);
+    });
+  };
+  const handleDeleteClick = (): void => {
+    // logic
   };
 
   const handleDeleteClickBilling = (): void => {
     // logic
   };
-
   return (
     <div style={{ minHeight: '800px' }}>
       <Typography
@@ -152,27 +276,42 @@ function Addresses(): ReactElement {
       </Typography>
       <TextField
         value={shippingStreet}
-        onChange={handleChangeShippingStreet}
+        onInput={handleChangeShippingStreet}
         fullWidth
         label="Street"
         disabled={!isEditing}
         style={{ marginBottom: '16px' }}
+        error={!(errors.street1 == null)}
+        helperText={
+          errors.street1 != null ? errors.street1.message?.toString() : ''
+        }
+        {...register('street1')}
       />
       <TextField
         value={shippingCity}
-        onChange={handleChangeShippingCity}
+        onInput={handleChangeShippingCity}
         fullWidth
         label="City"
         disabled={!isEditing}
         style={{ marginBottom: '16px' }}
+        error={!(errors.city1 == null)}
+        helperText={
+          errors.city1 != null ? errors.city1.message?.toString() : ''
+        }
+        {...register('city1')}
       />
       <TextField
         value={shippingCode}
-        onChange={handleChangeShippingCode}
+        onInput={handleChangeShippingCode}
         fullWidth
         label="Code"
         disabled={!isEditing}
         style={{ marginBottom: '16px' }}
+        error={!(errors.post1 == null)}
+        helperText={
+          errors.post1 != null ? errors.post1.message?.toString() : ''
+        }
+        {...register('post1')}
       />
       <FormControl fullWidth variant="filled">
         <InputLabel>Country</InputLabel>
@@ -206,7 +345,7 @@ function Addresses(): ReactElement {
       </Typography>
       <Button
         startIcon={isEditing ? <Save /> : <Edit />}
-        onClick={handleToggleEditSave}
+        onClick={toggleHandleEditSave}
       >
         {isEditing ? 'Save' : 'Edit'}
       </Button>
@@ -222,27 +361,42 @@ function Addresses(): ReactElement {
       </Typography>
       <TextField
         value={billingStreet}
-        onChange={handleChangeBillingStreet}
+        onInput={handleChangeBillingStreet}
         fullWidth
         label="Street"
         disabled={!isEditingBilling}
         style={{ marginBottom: '16px' }}
+        error={!(errors.street2 == null)}
+        helperText={
+          errors.street2 != null ? errors.street2.message?.toString() : ''
+        }
+        {...register('street2')}
       />
       <TextField
         value={billingCity}
-        onChange={handleChangeBillingCity}
+        onInput={handleChangeBillingCity}
         fullWidth
         label="City"
         disabled={!isEditingBilling}
         style={{ marginBottom: '16px' }}
+        error={!(errors.city2 == null)}
+        helperText={
+          errors.city2 != null ? errors.city2.message?.toString() : ''
+        }
+        {...register('city2')}
       />
       <TextField
         value={billingCode}
-        onChange={handleChangeBillingCode}
+        onInput={handleChangeBillingCode}
         fullWidth
         label="Code"
         disabled={!isEditingBilling}
         style={{ marginBottom: '16px' }}
+        error={!(errors.post2 == null)}
+        helperText={
+          errors.post2 != null ? errors.post2.message?.toString() : ''
+        }
+        {...register('post2')}
       />
       <FormControl fullWidth variant="filled">
         <InputLabel>Country</InputLabel>
@@ -275,14 +429,22 @@ function Addresses(): ReactElement {
         Set as default
       </Typography>
       <Button
-        startIcon={isEditing ? <Save /> : <Edit />}
-        onClick={handleToggleEditSaveBilling}
+        startIcon={isEditingBilling ? <Save /> : <Edit />}
+        onClick={toggleHandleEditSaveBilling}
       >
         {isEditingBilling ? 'Save' : 'Edit'}
       </Button>
       <Button startIcon={<Delete />} onClick={handleDeleteClickBilling}>
         Delete
       </Button>
+      <CustomDialog
+        open={dialogOpen}
+        onClose={() => {
+          setDialogOpen(false);
+        }}
+        title={dialogTitle}
+        content={dialogContent}
+      />
     </div>
   );
 }
