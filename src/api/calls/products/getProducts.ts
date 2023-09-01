@@ -29,6 +29,7 @@ interface QueryArgs {
 }
 
 interface PropsType {
+  text?: string;
   limit?: number;
   pageNumber?: number;
   sort?: {
@@ -77,11 +78,12 @@ const createQueryArgs = (props: PropsType): QueryArgs => {
     limit: props.limit === undefined ? 5 : props.limit,
     offset,
     sort:
-      props.sort !== undefined
+      props.sort !== undefined && props.text === undefined
         ? `${props.sort.field} ${props.sort.order}`
         : 'id asc',
     filter: createFilters(props),
     markMatchingVariants: true,
+    // 'text.en-US': `${props.text}`,
   };
 };
 

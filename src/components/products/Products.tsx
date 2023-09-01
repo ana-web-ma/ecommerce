@@ -8,6 +8,8 @@ import {
   Stack,
   Typography,
   Link as MuiLink,
+  IconButton,
+  SwipeableDrawer,
 } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -22,6 +24,8 @@ import { getProducts } from '../../api/calls/products/getProducts';
 import { getCategories } from '../../api/calls/categories/getCategories';
 import { getCategoryById } from '../../api/calls/categories/getCategoryById';
 import NavigationCatalog from './NavigationCatalog';
+import FilterIcon from '../ui/icons/FilterIcon';
+import FilterBar from './FilterBar';
 
 const getPageQty = (total: number): number => Math.ceil(total / 6);
 
@@ -50,6 +54,44 @@ const Products = (): ReactElement => {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(1);
   const [pageQty, setPageQty] = useState(0);
+
+  const [openFilterBar, setOpenFilterBar] = useState(false);
+  const [selectedFloralAttr, setSelectedFloralAttr] = useState(false);
+  const [selectedWoodyAttr, setSelectedWoodyAttr] = useState(false);
+  const [selectedCitrusAttr, setSelectedCitrusAttr] = useState(false);
+  const [selectedAmberAttr, setSelectedAmberAttr] = useState(false);
+  const [selectedSummerCollection, setSelectedSummerCollection] =
+    useState(false);
+  const [selectedWeddingCollection, setSelectedWeddingCollection] =
+    useState(false);
+  const [selectedPrice, setSelectedPrice] = useState({
+    price: {
+      from: 0,
+      to: 2500,
+    },
+  });
+
+  const toggleDrawer =
+    (isOpen: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === 'keydown' &&
+        ((event as React.KeyboardEvent).key === 'Tab' ||
+          (event as React.KeyboardEvent).key === 'Shift')
+      ) {
+        return;
+      }
+
+      setOpenFilterBar(isOpen);
+    };
+
+  console.log({
+    selectedFloralAttr,
+    selectedWoodyAttr,
+    selectedCitrusAttr,
+    selectedAmberAttr,
+    selectedSummerCollection,
+    selectedWeddingCollection,
+  });
 
   useEffect(() => {
     if (Object.keys(params).length !== 0) {
@@ -204,6 +246,43 @@ const Products = (): ReactElement => {
           )}
         </Breadcrumbs>
       </div>
+
+      <Stack direction="row" width="100%">
+        <IconButton
+          onClick={toggleDrawer(true)}
+          color="primary"
+          disabled={openFilterBar}
+        >
+          <FilterIcon color={openFilterBar ? 'disabled' : 'primary'} />
+          <Typography pl={1} variant="subtitle2">
+            Filter
+          </Typography>
+        </IconButton>
+      </Stack>
+
+      <SwipeableDrawer
+        anchor={'left'}
+        open={openFilterBar}
+        onClose={toggleDrawer(false)}
+        onOpen={toggleDrawer(true)}
+      >
+        <FilterBar
+          selectedPrice={selectedPrice}
+          setSelectedPrice={setSelectedPrice}
+          selectedFloralAttr={selectedFloralAttr}
+          setSelectedFloralAttr={setSelectedFloralAttr}
+          selectedWoodyAttr={selectedWoodyAttr}
+          setSelectedWoodyAttr={setSelectedWoodyAttr}
+          selectedCitrusAttr={selectedCitrusAttr}
+          setSelectedCitrusAttr={setSelectedCitrusAttr}
+          selectedAmberAttr={selectedAmberAttr}
+          setSelectedAmberAttr={setSelectedAmberAttr}
+          selectedSummerCollection={selectedSummerCollection}
+          setSelectedSummerCollection={setSelectedSummerCollection}
+          selectedWeddingCollection={selectedWeddingCollection}
+          setSelectedWeddingCollection={setSelectedWeddingCollection}
+        />
+      </SwipeableDrawer>
 
       <Grid container justifyContent="center" spacing={1}>
         {products.map((card, index) => {

@@ -108,8 +108,17 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           transition: 'all .3s ease-in-out',
+          path: {
+            transition: 'all .3s ease-in-out',
+          },
           '&:hover': {
             backgroundColor: '#00000000',
+            color: '#00000050',
+            path: {
+              stroke: '#00000050',
+            },
+          },
+          '&.Mui-disabled': {
             path: {
               stroke: '#00000050',
             },

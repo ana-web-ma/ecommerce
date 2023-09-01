@@ -31,10 +31,10 @@ export const searchProducts = async (
         limit: props.limit === undefined ? 5 : props.limit,
         offset,
         fuzzy: true,
-        // sort:
-        //   props.sort !== undefined
-        //     ? `${props.sort.field} ${props.sort.order}`
-        //     : 'id asc',
+        sort:
+          props.sort !== undefined && props.text === undefined
+            ? `${props.sort.field} ${props.sort.order}`
+            : 'id asc',
         markMatchingVariants: true,
         // where: `name(en-US="${props.text}")`,
         staged: true,
