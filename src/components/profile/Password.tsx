@@ -70,16 +70,11 @@ function Password(): ReactElement {
       currentPassword,
       newPassword,
     })
-      .then((resp) => {
+      .then(() => {
         openDialog('Successfully', 'Password changed');
-        console.log(resp);
       })
       .catch((err) => {
-        if (err.statusCode === 400) {
-          openDialog('Error', 'The given current password does not match');
-        } else {
-          openDialog('Error', err.message);
-        }
+        openDialog('Error', err.toString());
       });
   };
   const changePasswordChecked = (): void => {

@@ -70,8 +70,8 @@ function ProfileForm(): ReactElement {
         );
         openDialog('Successfully', 'First name changed');
       })
-      .catch(() => {
-        openDialog('Error', 'Try later');
+      .catch((err) => {
+        openDialog('Error', err.toString());
       });
   };
 
@@ -99,8 +99,8 @@ function ProfileForm(): ReactElement {
         );
         openDialog('Successfully', 'Last name changed');
       })
-      .catch(() => {
-        openDialog('Error', 'Try later');
+      .catch((err) => {
+        openDialog('Error', err.toString());
       });
   };
 
@@ -127,8 +127,8 @@ function ProfileForm(): ReactElement {
         );
         openDialog('Successfully', 'Birthdate changed');
       })
-      .catch(() => {
-        openDialog('Error', 'Try later');
+      .catch((err) => {
+        openDialog('Error', err.toString());
       });
   };
   const handleSaveBirthdateClick = (): void => {
@@ -154,8 +154,8 @@ function ProfileForm(): ReactElement {
         );
         openDialog('Successfully', 'Email changed');
       })
-      .catch(() => {
-        openDialog('Error', 'Try later');
+      .catch((err) => {
+        openDialog('Error', err.toString());
       });
   };
   const handleSaveEmailClick = (): void => {
@@ -205,8 +205,8 @@ function ProfileForm(): ReactElement {
         );
         openDialog('Successfully', 'Data changed');
       })
-      .catch(() => {
-        openDialog('Error', 'Try later');
+      .catch((err) => {
+        openDialog('Error', err.toString());
       });
   };
   const handleTabChange = (
