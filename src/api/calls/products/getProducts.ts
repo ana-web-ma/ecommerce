@@ -28,18 +28,22 @@ interface QueryArgs {
   [key: string]: QueryParam;
 }
 
+export interface FilterPropsType {
+  productsByCategoryId?: { id: string };
+  productByKey?: { key: string };
+  productsByPrice?: { from: number; to: number };
+  productsByAttributeKey?: { key: 'floral' | 'woody' | 'citrus' | 'amber' };
+}
+
 interface PropsType {
+  text?: string;
   limit?: number;
   pageNumber?: number;
   sort?: {
     field: string;
     order: 'asc' | 'desc';
   };
-  filter?: {
-    productsByCategoryId?: { id: string };
-    productByKey?: { key: string };
-    productByPrice?: { from: number; to: number };
-  };
+  filter?: FilterPropsType;
 }
 
 const createFilters = (props: PropsType): string[] => {
@@ -52,9 +56,16 @@ const createFilters = (props: PropsType): string[] => {
   if (props.filter?.productByKey?.key !== undefined) {
     filterResult.push(`key: "${props.filter.productByKey.key}"`);
   }
-  if (props.filter?.productByPrice !== undefined) {
+  if (props.filter?.productsByPrice !== undefined) {
     filterResult.push(
-      `variants.price.centAmount:range (${props.filter?.productByPrice.from} to ${props.filter?.productByPrice.to})`,
+      `variants.price.centAmount:range (${
+        Number(props.filter?.productsByPrice.from) * 100
+      } to ${Number(props.filter?.productsByPrice.to) * 100})`,
+    );
+  }
+  if (props.filter?.productsByAttributeKey !== undefined) {
+    filterResult.push(
+      `variants.attributes.olfactory.key:"${props.filter.productsByAttributeKey.key}"`,
     );
   }
 
@@ -71,10 +82,17 @@ const createQueryArgs = (props: PropsType): QueryArgs => {
     limit: props.limit === undefined ? 5 : props.limit,
     offset,
     sort:
-      props.sort !== undefined
+      props.sort !== undefined && props.text === undefined
         ? `${props.sort.field} ${props.sort.order}`
         : 'id asc',
     filter: createFilters(props),
+    // markMatchingVariants: true,
+    // localeProjection: 'en-US',
+
+    // staged: true,
+    // fuzzy: true,
+    // fuzzyLevel: 1,
+    'text.en-US': props.text,
   };
 };
 

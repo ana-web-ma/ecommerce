@@ -14,7 +14,6 @@ import {
   Stack,
   TextField,
   Tooltip,
-  Typography,
   styled,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -29,7 +28,8 @@ import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SearchIcon from '../ui/icons/SearchIcon';
 import logo from './img/logo.png';
 import { useAppDispatch, useIsLogged } from '../../helpers/hooks/Hooks';
-import { logout, search } from '../../store/reducers/CustomerSlice';
+import { logout } from '../../store/reducers/CustomerSlice';
+import { search } from '../../store/reducers/ProductsSlice';
 import imageHomeDecor from './img/home-decor.jpg';
 import imageFragrances from './img/Fragrances.avif';
 import imageCollections from './img/collections.avif';
@@ -86,6 +86,7 @@ const Header = (): ReactElement => {
   const [hoverCollections, setHoverCollections] = useState(false);
   const [openSearchModal, setOpenSearchModal] = React.useState(false);
   const [searchText, setSearchText] = React.useState('');
+  const [showToolTip, setShowToolTip] = React.useState(false);
 
   const handleDrawerToggle = (action: boolean): void => {
     setCheckedMenu(action);
@@ -286,18 +287,20 @@ const Header = (): ReactElement => {
               key={`speedDial-${ind}`}
               sx={{ display: link.isLogged ? 'block' : 'none' }}
               icon={
-                <IconButton
-                  component={Link}
-                  onClick={(): void => {
-                    if (link.path !== null) {
-                      navigate(link.path);
-                    } else {
-                      setOpenSearchModal(true);
-                    }
-                  }}
-                >
-                  {link.icon}
-                </IconButton>
+                <span>
+                  <IconButton
+                    component={Link}
+                    onClick={(): void => {
+                      if (link.path !== null) {
+                        navigate(link.path);
+                      } else {
+                        setOpenSearchModal(true);
+                      }
+                    }}
+                  >
+                    {link.icon}
+                  </IconButton>
+                </span>
               }
               tooltipTitle={link.tooltip}
             />
@@ -497,6 +500,13 @@ const Header = (): ReactElement => {
             fullWidth
             onChange={(event) => {
               setSearchText(event.target.value);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                dispatch(search(searchText));
+                setOpenSearchModal(false);
+                navigate('/catalog/search');
+              }
             }}
             InputProps={{
               startAdornment: (

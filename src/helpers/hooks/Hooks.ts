@@ -5,6 +5,7 @@ import {
 } from 'react-redux';
 import { type Customer } from '@commercetools/platform-sdk';
 import { type RootState, type AppDispatch } from '../../store/Store';
+import { type IProductsState } from '../../store/reducers/ProductsSlice';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const useAppDispatch = () => useDispatch<AppDispatch>();
@@ -71,6 +72,11 @@ export const useCustomer = (): Customer | null => {
 };
 
 export const useSearchText = (): string | null => {
-  const { searchText } = useAppSelector((state) => state.customerReducer);
+  const { searchText } = useAppSelector((state) => state.productsReducer);
   return searchText;
+};
+
+export const useAllProducts = (): IProductsState => {
+  const data = useAppSelector((state) => state.productsReducer);
+  return data;
 };

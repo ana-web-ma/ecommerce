@@ -15,38 +15,41 @@ import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
 import EuroIcon from '@mui/icons-material/Euro';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {
-  type Category,
-  type ProductProjection,
-} from '@commercetools/platform-sdk';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import { getProducts } from '../../api/calls/products/getProducts';
 import { getCategoryById } from '../../api/calls/categories/getCategoryById';
 import NavigationCatalog from './NavigationCatalog';
 import { getCategoryByKey } from '../../api/calls/categories/getCategoriesByKey';
-import { useSearchText } from '../../helpers/hooks/Hooks';
-import { searchAPI } from '../../api/calls/products/searchProducts';
+import {
+  useAllProducts,
+  useAppDispatch,
+  useSearchText,
+} from '../../helpers/hooks/Hooks';
+import {
+  allProducts,
+  search,
+  categoryRequest,
+} from '../../store/reducers/ProductsSlice';
 
-const getPageQty = (total: number): number => Math.ceil(total / 6);
-
-const testNumber = (value: string): boolean => {
-  return Number.isNaN(Number(value));
-};
-
-const returnNumber = (value: string): number | null => {
-  return Number.isNaN(Number(value)) ? null : Number(value);
+const returnNumberFromPath = (value: string | undefined): number => {
+  // если в url path есть '=', то вернет значение с номером страницы, иначе 1.
+  if (value !== undefined) {
+    const split = value.split('=')[1];
+    return split !== undefined ? Number(split) : 1;
+  }
+  return 1;
 };
 
 const parentPath = (array: (string | undefined)[]): string => {
+  // Принимает значения params, вернет название категории если оно есть в строке url
   if (array === undefined || array.length === 0) return '';
-  let temp: string | undefined = '';
-  if (Number.isNaN(Number(array[array.length - 1]))) {
-    return `/${array.join('/')}`;
+  if (array[0] !== undefined) {
+    return array[0].includes('=') ? '' : `/${array[0]}`;
   }
-  temp = array.pop();
-  return array.length === 0 ? '' : `/${array.join('/')}`;
+  return '';
 };
+
 interface IBreadCrump {
   name: string;
   path: string;
@@ -54,155 +57,129 @@ interface IBreadCrump {
 
 const Products = (): ReactElement => {
   const params = useParams();
+  const location = useLocation();
   const navigation = useNavigate();
-  const [products, setProducts] = useState<ProductProjection[]>([]);
+  const dispatch = useAppDispatch();
+  const [pageNumber, setPageNumber] = useState(
+    returnNumberFromPath(location.pathname),
+  );
   const [arrayForBread, setArrayForBread] = useState<IBreadCrump[]>([]);
-  const [responseCategoryByKey, setResponseCategoryByKey] = useState<
-    Category | undefined
-  >(undefined);
-  const [category, setCategory] = useState<string | undefined>(undefined);
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(1);
-  const [pageQty, setPageQty] = useState(1);
+
+  const [titlePage, setTitlePage] = useState('All products');
   const [checkedSort, setCheckedSort] = useState(true);
   const [checkedTypeSort, setCheckedTypeSort] = useState(false);
-  const [tempTextState, setTempTextState] = useState<string | null>(null);
-  const tempText: string | null = useSearchText();
+
+  const { products } = useAllProducts();
+  const { totalCount } = useAllProducts();
+  const { pageQty } = useAllProducts();
+
+  const { category } = useAllProducts();
+
+  const searchTextFromState: string | null = useSearchText();
 
   useEffect(() => {
-    if (category !== undefined) {
-      getCategoryByKey({ key: category })
+    const categoryFromUrl = parentPath(Object.values(params)).substring(1);
+    if (categoryFromUrl !== 'search' && categoryFromUrl !== '') {
+      getCategoryByKey({ key: parentPath(Object.values(params)).substring(1) })
         .then((resp) => {
-          setResponseCategoryByKey(resp.body);
+          dispatch(categoryRequest(resp.body));
+          const temp = [
+            {
+              name: resp.body.name['en-US'],
+              path: '/catalog',
+            },
+          ];
+          if (resp.body.ancestors.length !== 0) {
+            getCategoryById({ id: resp.body.ancestors[0].id })
+              .then((response) => {
+                temp.unshift({
+                  name: response.body.name['en-US'],
+                  path: `/${response.body.slug['en-US']}`,
+                });
+                setArrayForBread(temp);
+              })
+              .catch((err) => {
+                throw new Error(err);
+              });
+          } else setArrayForBread(temp);
         })
         .catch((err) => {
           throw new Error(err);
         });
-    } else setResponseCategoryByKey(undefined);
-  }, [category]);
-
-  useEffect(() => {
-    setTempTextState(tempText);
-    if (Object.values(params).length === 0) {
-      setPage(1);
-      setCategory(undefined);
-    } else if (Object.values(params).length === 2) {
-      if (params.id !== undefined) {
-        const tempNumber = returnNumber(params.id);
-        if (tempNumber !== null && tempNumber !== page) setPage(tempNumber);
-      }
-      if (params.category !== undefined) {
-        setCategory(params.category);
-      }
-    } else if (Object.values(params).length === 1) {
-      if (params.id !== undefined) {
-        if (params.id === 'search') {
-          if (tempTextState !== null) {
-            searchAPI({ text: tempTextState, pageNumber: page })
-              .then((resp) => {
-                setProducts(resp.body.results);
-                if (resp.body.total != null) {
-                  setTotal(resp.body.total);
-                  setPageQty(getPageQty(resp.body.total));
-                }
-                setTempTextState(null);
-              })
-              .catch((err) => {
-                navigation('/404');
-                throw new Error(err);
-              });
-          }
-        } else {
-          const tempNumber = returnNumber(params.id);
-          if (tempNumber !== null && tempNumber !== page) setPage(tempNumber);
-          else if (tempNumber === null) {
-            setCategory(params.id);
-            setPage(1);
-          }
-        }
-      }
+    } else if (categoryFromUrl === 'search') {
+      setTitlePage('Search results');
+      dispatch(categoryRequest(null));
+    } else {
+      dispatch(categoryRequest(null));
+      setTitlePage('All products');
     }
-  }, [page, params]);
+  }, [location]);
 
-  useEffect(() => {
+  useEffect((): void => {
     setArrayForBread([]);
-    if (responseCategoryByKey !== undefined) {
-      const tempArray: IBreadCrump[] = [
-        {
-          name: responseCategoryByKey.name['en-US'],
-          path: '/catalog',
-        },
-      ];
-      if (responseCategoryByKey.ancestors.length === 0) {
-        setArrayForBread(tempArray);
-      } else {
-        responseCategoryByKey.ancestors.map(async (parent) => {
-          return getCategoryById({ id: parent.id })
-            .then((resp) => {
-              const temp = {
-                name: resp.body.name['en-US'],
-                path: `/${resp.body.slug['en-US']}`,
-              };
-              tempArray.unshift(temp);
-              setArrayForBread(tempArray);
-            })
-            .catch((err) => {
-              throw new Error(err);
-            });
-        });
-      }
+    if (!Object.values(params).includes('search')) {
+      dispatch(search(null)); // если уходим со страницы search, обнуляем поле в store, где храним значение с инпута
+    } else if (
+      Object.values(params).includes('search') &&
+      searchTextFromState === null
+    ) {
+      dispatch(search(null));
+      console.log('Поиск не дал результатов'); // ToDo: idk how to do it
     }
-  }, [responseCategoryByKey, category, products]);
+    setPageNumber(returnNumberFromPath(location.pathname));
+  }, [location]);
 
-  useEffect(() => {
+  useEffect((): void => {
     getProducts({
       limit: 6,
-      pageNumber: page,
+      pageNumber,
       sort: {
         field: checkedTypeSort ? 'price' : 'name.en-US',
         order: checkedSort ? 'asc' : 'desc',
       },
       filter:
-        responseCategoryByKey !== undefined
+        category !== null
           ? {
               productsByCategoryId: {
-                id: responseCategoryByKey.id,
+                id: category.id,
               },
             }
           : {},
+      text: searchTextFromState !== null ? searchTextFromState : undefined,
     })
       .then((resp) => {
-        setProducts(resp.body.results);
-        if (resp.body.total != null) {
-          setTotal(resp.body.total);
-          setPageQty(getPageQty(resp.body.total));
-        }
+        dispatch(allProducts(resp.body));
       })
       .catch((err) => {
-        navigation('/404');
         throw new Error(err);
       });
-  }, [responseCategoryByKey, page, checkedSort, checkedTypeSort]);
+  }, [
+    pageNumber,
+    location,
+    category,
+    searchTextFromState,
+    checkedSort,
+    checkedTypeSort,
+  ]);
 
   return (
     <>
       <Stack mt={3} direction="row" gap={0.5} alignItems="end">
         <Typography variant="h2">
-          {responseCategoryByKey?.name['en-US'] ?? 'All products'}
+          {category?.name['en-US'] ?? titlePage}
         </Typography>
         <Typography pb={0.4} sx={{ whiteSpace: 'nowrap' }} variant="body2">
-          ({total} Products)
+          ( {totalCount} Products)
         </Typography>
       </Stack>
-
-      <NavigationCatalog category={responseCategoryByKey?.name['en-US']} />
+      <NavigationCatalog category={category?.name['en-US']} />
 
       <div style={{ width: '100%' }} role="presentation">
         <Breadcrumbs aria-label="breadcrumb">
           <MuiLink component={Link} to="/">
             Home
           </MuiLink>
-          {responseCategoryByKey !== undefined ? (
+          {category !== undefined ? (
             <MuiLink component={Link} to="/catalog">
               Catalog
             </MuiLink>
@@ -307,17 +284,19 @@ const Products = (): ReactElement => {
 
       <Pagination
         count={pageQty}
-        page={page}
+        page={pageNumber}
         shape="rounded"
         onChange={(_, number) => {
-          setPage(number);
+          setPageNumber(number);
         }}
         renderItem={(item) => (
           <PaginationItem
             component={Link}
             to={
               item.page !== null
-                ? `/catalog${parentPath(Object.values(params))}/${item.page}`
+                ? `/catalog${parentPath(Object.values(params))}/page=${
+                    item.page
+                  }`
                 : `/catalog/`
             }
             {...item}
