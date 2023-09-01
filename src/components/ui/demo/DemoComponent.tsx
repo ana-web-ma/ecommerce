@@ -19,7 +19,6 @@ import { getMe } from '../../../api/calls/getMe';
 import { getProducts } from '../../../api/calls/products/getProducts';
 import { getCategories } from '../../../api/calls/categories/getCategories';
 import { getCategoryById } from '../../../api/calls/categories/getCategoryById';
-import { searchProducts } from '../../../api/calls/products/searchProducts';
 
 function DemoComponent(): ReactElement {
   const user = {
@@ -91,21 +90,19 @@ function DemoComponent(): ReactElement {
   };
 
   const handleProductsSubmit = (e: { preventDefault: () => void }): void => {
-    searchProducts({
-      text: 'roses',
-
-      limit: 100,
-      pageNumber: 1,
-      // sort: {
-      //   field: 'id',
-      //   order: 'desc',
-      // },
-    })
-      .then((resp) => {
-        console.log('resp', resp.body.results);
-      })
-      .catch(console.log);
-
+    // searchProducts({
+    //   text: 'eau des',
+    //   limit: 100,
+    //   pageNumber: 1,
+    //   // sort: {
+    //   //   field: 'id',
+    //   //   order: 'desc',
+    //   // },
+    // })
+    //   .then((resp) => {
+    //     console.log('resp', resp.body.results);
+    //   })
+    //   .catch(console.log);
     // getProducts({
     //   limit: 100,
     //   pageNumber: 1,

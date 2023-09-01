@@ -20,7 +20,10 @@ import {
 } from '@commercetools/platform-sdk';
 import { Link, useParams } from 'react-router-dom';
 import ProductCard from './ProductCard';
-import { getProducts } from '../../api/calls/products/getProducts';
+import {
+  type FilterPropsType,
+  getProducts,
+} from '../../api/calls/products/getProducts';
 import { getCategories } from '../../api/calls/categories/getCategories';
 import { getCategoryById } from '../../api/calls/categories/getCategoryById';
 import NavigationCatalog from './NavigationCatalog';
@@ -56,20 +59,61 @@ const Products = (): ReactElement => {
   const [pageQty, setPageQty] = useState(0);
 
   const [openFilterBar, setOpenFilterBar] = useState(false);
-  const [selectedFloralAttr, setSelectedFloralAttr] = useState(false);
-  const [selectedWoodyAttr, setSelectedWoodyAttr] = useState(false);
-  const [selectedCitrusAttr, setSelectedCitrusAttr] = useState(false);
-  const [selectedAmberAttr, setSelectedAmberAttr] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [selectedAttribute, setSelectedAttribute] = useState(
+    'none' as 'none' | 'floral' | 'woody' | 'citrus' | 'amber',
+  );
   const [selectedSummerCollection, setSelectedSummerCollection] =
     useState(false);
   const [selectedWeddingCollection, setSelectedWeddingCollection] =
     useState(false);
   const [selectedPrice, setSelectedPrice] = useState({
-    price: {
-      from: 0,
-      to: 2500,
-    },
+    from: 0,
+    to: 2500,
   });
+
+  const updateCatalog = (): void => {
+    console.log({
+      searchText,
+      selectedAttribute,
+      selectedSummerCollection,
+      selectedWeddingCollection,
+      selectedPrice,
+    });
+    const pageCurrent = !Number.isNaN(Number(params.id))
+      ? Number(params.id)
+      : 1;
+
+    const filterObj: FilterPropsType = {
+      productsByPrice: selectedPrice,
+    };
+    // if (
+    //   selectedAttribute !== 'none' &&
+    //   filterObj.productsByAttributeKey !== undefined
+    // )
+    //   filterObj.productsByAttributeKey.key = selectedAttribute;
+
+    getProducts({
+      limit: 6,
+      pageNumber: pageCurrent,
+      // sort: {
+      //   field: 'name.en-US',
+      //   order: 'asc',
+      // },
+      filter: filterObj,
+    })
+      .then((resp) => {
+        setProducts(resp.body.results);
+        console.log('response', resp.body.results);
+        if (resp.body.total != null) {
+          setTotal(resp.body.total);
+          setPageQty(getPageQty(resp.body.total));
+        }
+      })
+      .catch((err) => {
+        throw new Error(err);
+      });
+  };
 
   const toggleDrawer =
     (isOpen: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -84,14 +128,15 @@ const Products = (): ReactElement => {
       setOpenFilterBar(isOpen);
     };
 
-  console.log({
-    selectedFloralAttr,
-    selectedWoodyAttr,
-    selectedCitrusAttr,
-    selectedAmberAttr,
-    selectedSummerCollection,
-    selectedWeddingCollection,
-  });
+  // console.log({
+  //   selectedFloralAttr,
+  //   selectedWoodyAttr,
+  //   selectedCitrusAttr,
+  //   selectedAmberAttr,
+  //   selectedSummerCollection,
+  //   selectedWeddingCollection,
+  // selectedPrice,
+  // });
 
   useEffect(() => {
     if (Object.keys(params).length !== 0) {
@@ -269,18 +314,13 @@ const Products = (): ReactElement => {
         <FilterBar
           selectedPrice={selectedPrice}
           setSelectedPrice={setSelectedPrice}
-          selectedFloralAttr={selectedFloralAttr}
-          setSelectedFloralAttr={setSelectedFloralAttr}
-          selectedWoodyAttr={selectedWoodyAttr}
-          setSelectedWoodyAttr={setSelectedWoodyAttr}
-          selectedCitrusAttr={selectedCitrusAttr}
-          setSelectedCitrusAttr={setSelectedCitrusAttr}
-          selectedAmberAttr={selectedAmberAttr}
-          setSelectedAmberAttr={setSelectedAmberAttr}
+          selectedAttribute={selectedAttribute}
+          setSelectedAttribute={setSelectedAttribute}
           selectedSummerCollection={selectedSummerCollection}
           setSelectedSummerCollection={setSelectedSummerCollection}
           selectedWeddingCollection={selectedWeddingCollection}
           setSelectedWeddingCollection={setSelectedWeddingCollection}
+          updateCatalog={updateCatalog}
         />
       </SwipeableDrawer>
 
