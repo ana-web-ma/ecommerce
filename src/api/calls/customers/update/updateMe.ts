@@ -29,7 +29,7 @@ export const updateMe = async (props: {
     addressId: string;
   };
   setDefaultShippingAddress?: {
-    addressId: string;
+    addressId: string | undefined;
   };
   addShippingAddressId?: {
     addressId: string;
@@ -38,7 +38,7 @@ export const updateMe = async (props: {
     addressId: string;
   };
   setDefaultBillingAddress?: {
-    addressId: string;
+    addressId: string | undefined;
   };
   addBillingAddressId?: {
     addressId: string;

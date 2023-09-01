@@ -50,8 +50,6 @@ function Addresses(): ReactElement {
     billingIndex = 1;
   }
 
-  console.log(ProfileDataObj.addresses[0].id === shippingId);
-  console.log(ProfileDataObj.addresses[0].id === billingId);
   const [shippingStreet, setShippingStreet] = useState(
     ProfileDataObj.addresses[shippingIndex].streetName,
   );
@@ -181,6 +179,9 @@ function Addresses(): ReactElement {
             postalCode: shippingCode,
           },
         },
+        setDefaultShippingAddress: {
+          addressId: undefined,
+        },
       })
         .then((res) => {
           localStorage.setItem(
@@ -238,6 +239,9 @@ function Addresses(): ReactElement {
             streetName: billingStreet,
             postalCode: billingCode,
           },
+        },
+        setDefaultBillingAddress: {
+          addressId: undefined,
         },
       })
         .then((res) => {
