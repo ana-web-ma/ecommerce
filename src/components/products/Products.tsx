@@ -9,6 +9,8 @@ import {
   Typography,
   Link as MuiLink,
   Checkbox,
+  IconButton,
+  SwipeableDrawer,
 } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
@@ -17,7 +19,11 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import ProductCard from './ProductCard';
-import { getProducts } from '../../api/calls/products/getProducts';
+import {
+  type FilterPropsType,
+  getProducts,
+} from '../../api/calls/products/getProducts';
+import { getCategories } from '../../api/calls/categories/getCategories';
 import { getCategoryById } from '../../api/calls/categories/getCategoryById';
 import NavigationCatalog from './NavigationCatalog';
 import { getCategoryByKey } from '../../api/calls/categories/getCategoriesByKey';
@@ -37,6 +43,8 @@ import {
   sortDirectionChecked,
   sortTypeChecked,
 } from '../../store/reducers/ProductsSlice';
+import FilterIcon from '../ui/icons/FilterIcon';
+import FilterBar from './FilterBar';
 
 const returnNumberFromPath = (value: string | undefined): number => {
   // если в url path есть '=', то вернет значение с номером страницы, иначе 1.
@@ -86,6 +94,63 @@ const Products = (): ReactElement => {
   const { category } = useAllProducts();
 
   const searchTextFromState: string | null = useSearchText();
+
+  const [openFilterBar, setOpenFilterBar] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [selectedAttribute, setSelectedAttribute] = useState(
+    'none' as 'none' | 'floral' | 'woody' | 'citrus' | 'amber',
+  );
+  const [selectedSummerCollection, setSelectedSummerCollection] =
+    useState(false);
+  const [selectedWeddingCollection, setSelectedWeddingCollection] =
+    useState(false);
+  const [selectedPrice, setSelectedPrice] = useState({
+    from: 0,
+    to: 2500,
+  });
+
+  const updateCatalog = (): void => {
+    console.log({
+      searchText,
+      selectedAttribute,
+      selectedSummerCollection,
+      selectedWeddingCollection,
+      selectedPrice,
+    });
+  };
+  const pageCurrent = !Number.isNaN(Number(params.id)) ? Number(params.id) : 1;
+
+  const filterObj: FilterPropsType = {
+    productsByPrice: selectedPrice,
+  };
+  // if (
+  //   selectedAttribute !== 'none' &&
+  //   filterObj.productsByAttributeKey !== undefined
+  // )
+  //   filterObj.productsByAttributeKey.key = selectedAttribute;
+
+  const toggleDrawer =
+    (isOpen: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === 'keydown' &&
+        ((event as React.KeyboardEvent).key === 'Tab' ||
+          (event as React.KeyboardEvent).key === 'Shift')
+      ) {
+        return;
+      }
+
+      setOpenFilterBar(isOpen);
+    };
+
+  // console.log({
+  //   selectedFloralAttr,
+  //   selectedWoodyAttr,
+  //   selectedCitrusAttr,
+  //   selectedAmberAttr,
+  //   selectedSummerCollection,
+  //   selectedWeddingCollection,
+  // selectedPrice,
+  // });
 
   useEffect(() => {
     const categoryFromUrl = parentPath(Object.values(params)).substring(1);
@@ -280,6 +345,38 @@ const Products = (): ReactElement => {
           />
         </Stack>
       </Stack>
+
+      <Stack direction="row" width="100%">
+        <IconButton
+          onClick={toggleDrawer(true)}
+          color="primary"
+          disabled={openFilterBar}
+        >
+          <FilterIcon color={openFilterBar ? 'disabled' : 'primary'} />
+          <Typography pl={1} variant="subtitle2">
+            Filter
+          </Typography>
+        </IconButton>
+      </Stack>
+
+      <SwipeableDrawer
+        anchor={'left'}
+        open={openFilterBar}
+        onClose={toggleDrawer(false)}
+        onOpen={toggleDrawer(true)}
+      >
+        <FilterBar
+          selectedPrice={selectedPrice}
+          setSelectedPrice={setSelectedPrice}
+          selectedAttribute={selectedAttribute}
+          setSelectedAttribute={setSelectedAttribute}
+          selectedSummerCollection={selectedSummerCollection}
+          setSelectedSummerCollection={setSelectedSummerCollection}
+          selectedWeddingCollection={selectedWeddingCollection}
+          setSelectedWeddingCollection={setSelectedWeddingCollection}
+          updateCatalog={updateCatalog}
+        />
+      </SwipeableDrawer>
 
       <Grid container justifyContent="center" spacing={1}>
         {products.map((card, index) => {

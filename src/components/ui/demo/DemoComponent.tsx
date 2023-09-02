@@ -90,26 +90,40 @@ function DemoComponent(): ReactElement {
   };
 
   const handleProductsSubmit = (e: { preventDefault: () => void }): void => {
-    getProducts({
-      limit: 100,
-      pageNumber: 1,
-      sort: {
-        field: 'id',
-        order: 'desc',
-      },
-      filter: {
-        productsByCategoryId: { id: '8c4a5815-b067-4f86-b565-9409d38672d3' },
-        // productByKey: { key: '34 Boulevard Saint Germain' },
-        // productByPrice: {
-        //   from: 0,
-        //   to: 10000,
-        // },
-      },
-    })
-      .then((resp) => {
-        console.log('resp', resp.body.results);
-      })
-      .catch(console.log);
+    // searchProducts({
+    //   text: 'eau des',
+    //   limit: 100,
+    //   pageNumber: 1,
+    //   // sort: {
+    //   //   field: 'id',
+    //   //   order: 'desc',
+    //   // },
+    // })
+    //   .then((resp) => {
+    //     console.log('resp', resp.body.results);
+    //   })
+    //   .catch(console.log);
+    // getProducts({
+    //   limit: 100,
+    //   pageNumber: 1,
+    //   sort: {
+    //     field: 'id',
+    //     order: 'desc',
+    //   },
+    //   filter: {
+    //     // productsByCategoryId: { id: '8c4a5815-b067-4f86-b565-9409d38672d3' },
+    //     // productByKey: { key: '34 Boulevard Saint Germain' },
+    //     // productByPrice: {
+    //     //   from: 0,
+    //     //   to: 10000,
+    //     // },
+    //     productByAttributeKey: { key: 'amber' },
+    //   },
+    // })
+    //   .then((resp) => {
+    //     console.log('resp', resp.body.results);
+    //   })
+    //   .catch(console.log);
   };
 
   const handleCategoriesSubmit = (e: { preventDefault: () => void }): void => {
@@ -121,7 +135,8 @@ function DemoComponent(): ReactElement {
 
     getCategories()
       .then((resp) => {
-        console.log('resp', resp.body.results);
+        // console.log('resp', resp.body.results);
+        console.log('resp', resp.body);
       })
       .catch(console.log);
   };

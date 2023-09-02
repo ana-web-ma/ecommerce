@@ -118,7 +118,7 @@ export const getProducts = async (
 //   filter: {
 //     productsByCategoryId: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
 //     // productByKey: { key: '34 Boulevard Saint Germain' },
-//     productByPrice: {
+//     productsByPrice: {
 //       from: 0,
 //       to: 10000,
 //     },
