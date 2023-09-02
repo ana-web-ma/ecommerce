@@ -3,6 +3,11 @@
   --swiper-pagination-bullet-inactive-color: #8a8a8a;
 }
 
+.swiper-pagination-bullet {
+  width: var(--swiper-pagination-bullet-width, var(--swiper-pagination-bullet-size, 20px));
+  height: var(--swiper-pagination-bullet-height, var(--swiper-pagination-bullet-size, 20px));
+}
+
 /* .MuiGrid-item img {
   border: 1px solid #000000;
 } */

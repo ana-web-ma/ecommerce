@@ -375,15 +375,9 @@ const Header = (): ReactElement => {
             path="catalog/collections"
           />
           <Stack spacing={3}>
-            <HeaderLink
-              text="Summer collection"
-              path="catalog/collections/summer"
-            />
+            <HeaderLink text="Summer collection" path="catalog/summer" />
             <Divider />
-            <HeaderLink
-              text="Wedding collection"
-              path="catalog/collections/wedding"
-            />
+            <HeaderLink text="Wedding collection" path="catalog/wedding" />
           </Stack>
           <Img src={imageCollections} />
         </StackHover>
@@ -407,11 +401,11 @@ const Header = (): ReactElement => {
         >
           <HeaderLink text="Fragrances" size="26px" path="catalog/fragrances" />
           <Stack spacing={3}>
-            <HeaderLink text="Candles" path="catalog/fragrances/candles" />
+            <HeaderLink text="Candles" path="catalog/candles" />
             <Divider />
-            <HeaderLink text="Perfume" path="catalog/fragrances/perfume" />
+            <HeaderLink text="Perfume" path="catalog/perfume" />
             <Divider />
-            <HeaderLink text="Diffusers" path="catalog/fragrances/diffusers" />
+            <HeaderLink text="Diffusers" path="catalog/diffusers" />
           </Stack>
           <Img src={imageFragrances} />
         </StackHover>
@@ -435,19 +429,13 @@ const Header = (): ReactElement => {
         >
           <HeaderLink text="Home decor" size="26px" path="catalog/home-decor" />
           <Stack spacing={3}>
-            <HeaderLink
-              text="Accessories"
-              path="catalog/home-decor/accessories"
-            />
+            <HeaderLink text="Accessories" path="catalog/accessories" />
             <Divider />
-            <HeaderLink text="Vases" path="catalog/home-decor/vases" />
+            <HeaderLink text="Vases" path="catalog/vases" />
             <Divider />
-            <HeaderLink
-              text="Candle holders"
-              path="catalog/home-decor/candle-holders"
-            />
+            <HeaderLink text="Candle holders" path="catalog/candle-holders" />
             <Divider />
-            <HeaderLink text="Tableware" path="catalog/home-decor/tableware" />
+            <HeaderLink text="Tableware" path="catalog/tableware" />
           </Stack>
           <Img src={imageHomeDecor} />
         </StackHover>

@@ -15,152 +15,152 @@ const NavigationCatalog = (props: {
     tempArr = [
       {
         title: 'Summer collection',
-        path: 'collections/summer',
+        path: 'summer',
       },
       {
         title: 'Wedding collection',
-        path: 'collections/wedding',
+        path: 'wedding',
       },
     ];
   } else if (props.category === 'wedding collection') {
     tempArr = [
       {
         title: 'Summer collection',
-        path: 'collections/summer',
+        path: 'summer',
       },
     ];
   } else if (props.category === 'summer collection') {
     tempArr = [
       {
         title: 'Wedding collection',
-        path: 'collections/wedding',
+        path: 'wedding',
       },
     ];
   } else if (props.category === 'fragrances') {
     tempArr = [
       {
         title: 'Candles',
-        path: 'fragrances/candles',
+        path: 'candles',
       },
       {
         title: 'Perfume',
-        path: 'fragrances/perfume',
+        path: 'perfume',
       },
       {
         title: 'Diffusers',
-        path: 'fragrances/diffusers',
+        path: 'diffusers',
       },
     ];
   } else if (props.category === 'candles') {
     tempArr = [
       {
         title: 'Perfume',
-        path: 'fragrances/perfume',
+        path: 'perfume',
       },
       {
         title: 'Diffusers',
-        path: 'fragrances/diffusers',
+        path: 'diffusers',
       },
     ];
   } else if (props.category === 'perfume') {
     tempArr = [
       {
         title: 'Candles',
-        path: 'fragrances/candles',
+        path: 'candles',
       },
       {
         title: 'Diffusers',
-        path: 'fragrances/diffusers',
+        path: 'diffusers',
       },
     ];
   } else if (props.category === 'diffusers') {
     tempArr = [
       {
         title: 'Candles',
-        path: 'fragrances/candles',
+        path: 'candles',
       },
       {
         title: 'Perfume',
-        path: 'fragrances/perfume',
+        path: 'perfume',
       },
     ];
   } else if (props.category === 'home decor') {
     tempArr = [
       {
         title: 'Accessories',
-        path: 'home-decor/accessories',
+        path: 'accessories',
       },
       {
         title: 'Candle holders',
-        path: 'home-decor/candle-holders',
+        path: 'candle-holders',
       },
       {
         title: 'Tableware',
-        path: 'home-decor/tableware',
+        path: 'tableware',
       },
       {
         title: 'Vases',
-        path: 'home-decor/vases',
+        path: 'vases',
       },
     ];
   } else if (props.category === 'accessories') {
     tempArr = [
       {
         title: 'Candle holders',
-        path: 'home-decor/candle-holders',
+        path: 'candle-holders',
       },
       {
         title: 'Tableware',
-        path: 'home-decor/tableware',
+        path: 'tableware',
       },
       {
         title: 'Vases',
-        path: 'home-decor/vases',
+        path: 'vases',
       },
     ];
   } else if (props.category === 'candle holders') {
     tempArr = [
       {
         title: 'Accessories',
-        path: 'home-decor/accessories',
+        path: 'accessories',
       },
       {
         title: 'Tableware',
-        path: 'home-decor/tableware',
+        path: 'tableware',
       },
       {
         title: 'Vases',
-        path: 'home-decor/vases',
+        path: 'vases',
       },
     ];
   } else if (props.category === 'tableware') {
     tempArr = [
       {
         title: 'Accessories',
-        path: 'home-decor/accessories',
+        path: 'accessories',
       },
       {
         title: 'Candle holders',
-        path: 'home-decor/candle-holders',
+        path: 'candle-holders',
       },
       {
         title: 'Vases',
-        path: 'home-decor/vases',
+        path: 'vases',
       },
     ];
   } else if (props.category === 'vases') {
     tempArr = [
       {
         title: 'Accessories',
-        path: 'home-decor/accessories',
+        path: 'accessories',
       },
       {
         title: 'Candle holders',
-        path: 'home-decor/candle-holders',
+        path: 'candle-holders',
       },
       {
         title: 'Tableware',
-        path: 'home-decor/tableware',
+        path: 'tableware',
       },
     ];
   }
