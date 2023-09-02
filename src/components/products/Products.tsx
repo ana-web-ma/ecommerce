@@ -8,6 +8,8 @@ import {
   Stack,
   Typography,
   Link as MuiLink,
+  IconButton,
+  SwipeableDrawer,
 } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -18,10 +20,16 @@ import {
 } from '@commercetools/platform-sdk';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import ProductCard from './ProductCard';
-import { getProducts } from '../../api/calls/products/getProducts';
+import {
+  type FilterPropsType,
+  getProducts,
+} from '../../api/calls/products/getProducts';
+import { getCategories } from '../../api/calls/categories/getCategories';
 import { getCategoryById } from '../../api/calls/categories/getCategoryById';
 import NavigationCatalog from './NavigationCatalog';
 import { getCategoryByKey } from '../../api/calls/categories/getCategoriesByKey';
+import FilterIcon from '../ui/icons/FilterIcon';
+import FilterBar from './FilterBar';
 
 const getPageQty = (total: number): number => Math.ceil(total / 6);
 
@@ -59,6 +67,86 @@ const Products = (): ReactElement => {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(1);
   const [pageQty, setPageQty] = useState(1);
+
+  const [openFilterBar, setOpenFilterBar] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [selectedAttribute, setSelectedAttribute] = useState(
+    'none' as 'none' | 'floral' | 'woody' | 'citrus' | 'amber',
+  );
+  const [selectedSummerCollection, setSelectedSummerCollection] =
+    useState(false);
+  const [selectedWeddingCollection, setSelectedWeddingCollection] =
+    useState(false);
+  const [selectedPrice, setSelectedPrice] = useState({
+    from: 0,
+    to: 2500,
+  });
+
+  const updateCatalog = (): void => {
+    console.log({
+      searchText,
+      selectedAttribute,
+      selectedSummerCollection,
+      selectedWeddingCollection,
+      selectedPrice,
+    });
+    const pageCurrent = !Number.isNaN(Number(params.id))
+      ? Number(params.id)
+      : 1;
+
+    const filterObj: FilterPropsType = {
+      productsByPrice: selectedPrice,
+    };
+    // if (
+    //   selectedAttribute !== 'none' &&
+    //   filterObj.productsByAttributeKey !== undefined
+    // )
+    //   filterObj.productsByAttributeKey.key = selectedAttribute;
+
+    getProducts({
+      limit: 6,
+      pageNumber: pageCurrent,
+      // sort: {
+      //   field: 'name.en-US',
+      //   order: 'asc',
+      // },
+      filter: filterObj,
+    })
+      .then((resp) => {
+        setProducts(resp.body.results);
+        console.log('response', resp.body.results);
+        if (resp.body.total != null) {
+          setTotal(resp.body.total);
+          setPageQty(getPageQty(resp.body.total));
+        }
+      })
+      .catch((err) => {
+        throw new Error(err);
+      });
+  };
+
+  const toggleDrawer =
+    (isOpen: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === 'keydown' &&
+        ((event as React.KeyboardEvent).key === 'Tab' ||
+          (event as React.KeyboardEvent).key === 'Shift')
+      ) {
+        return;
+      }
+
+      setOpenFilterBar(isOpen);
+    };
+
+  // console.log({
+  //   selectedFloralAttr,
+  //   selectedWoodyAttr,
+  //   selectedCitrusAttr,
+  //   selectedAmberAttr,
+  //   selectedSummerCollection,
+  //   selectedWeddingCollection,
+  // selectedPrice,
+  // });
 
   useEffect(() => {
     if (category !== undefined) {
@@ -198,6 +286,38 @@ const Products = (): ReactElement => {
           })}
         </Breadcrumbs>
       </div>
+
+      <Stack direction="row" width="100%">
+        <IconButton
+          onClick={toggleDrawer(true)}
+          color="primary"
+          disabled={openFilterBar}
+        >
+          <FilterIcon color={openFilterBar ? 'disabled' : 'primary'} />
+          <Typography pl={1} variant="subtitle2">
+            Filter
+          </Typography>
+        </IconButton>
+      </Stack>
+
+      <SwipeableDrawer
+        anchor={'left'}
+        open={openFilterBar}
+        onClose={toggleDrawer(false)}
+        onOpen={toggleDrawer(true)}
+      >
+        <FilterBar
+          selectedPrice={selectedPrice}
+          setSelectedPrice={setSelectedPrice}
+          selectedAttribute={selectedAttribute}
+          setSelectedAttribute={setSelectedAttribute}
+          selectedSummerCollection={selectedSummerCollection}
+          setSelectedSummerCollection={setSelectedSummerCollection}
+          selectedWeddingCollection={selectedWeddingCollection}
+          setSelectedWeddingCollection={setSelectedWeddingCollection}
+          updateCatalog={updateCatalog}
+        />
+      </SwipeableDrawer>
 
       <Grid container justifyContent="center" spacing={1}>
         {products.map((card, index) => {
