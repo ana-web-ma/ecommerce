@@ -5,7 +5,7 @@ import { type Price } from '@commercetools/platform-sdk';
 export default function PriceComponent(props: { price: Price }): ReactElement {
   return props.price.discounted !== undefined ? (
     <Stack flexDirection={'row'} columnGap={1}>
-      <Typography variant="subtitle2">
+      <Typography variant="subtitle2" sx={{ whiteSpace: 'nowrap' }}>
         {`${Number(props.price.discounted.value.centAmount) / 100} €`}
       </Typography>
       <Typography
@@ -14,6 +14,7 @@ export default function PriceComponent(props: { price: Price }): ReactElement {
           textDecorationLine: 'line-through',
           opacity: '0.6',
           fontWeight: 400,
+          whiteSpace: 'nowrap',
         }}
       >
         {`${Number(props.price.value.centAmount) / 100} €`}
@@ -21,7 +22,7 @@ export default function PriceComponent(props: { price: Price }): ReactElement {
     </Stack>
   ) : (
     <Stack>
-      <Typography variant="subtitle2">
+      <Typography variant="subtitle2" sx={{ whiteSpace: 'nowrap' }}>
         {`${Number(props.price.value.centAmount) / 100} €`}
       </Typography>
     </Stack>
