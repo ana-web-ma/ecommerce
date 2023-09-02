@@ -11,6 +11,12 @@ export interface IProductsState {
   pageQty: number;
   searchText: null | string;
   category: Category | null;
+  categoryFilter: 'wedding' | 'summer' | 'new' | null;
+  sortDirection: boolean;
+  sortType: boolean;
+  productsByAttributeKey: {
+    key: 'floral' | 'woody' | 'citrus' | 'amber' | null;
+  };
 }
 
 const initialState: IProductsState = {
@@ -19,6 +25,10 @@ const initialState: IProductsState = {
   pageQty: 1,
   searchText: null,
   category: null,
+  categoryFilter: null,
+  sortDirection: true,
+  sortType: false,
+  productsByAttributeKey: { key: null },
 };
 
 export const productsSlice = createSlice({
@@ -44,8 +54,37 @@ export const productsSlice = createSlice({
     ) {
       state.category = action.payload;
     },
+    sortDirectionChecked(
+      state: IProductsState,
+      action: PayloadAction<boolean>,
+    ) {
+      state.sortDirection = action.payload;
+    },
+    sortTypeChecked(state: IProductsState, action: PayloadAction<boolean>) {
+      state.sortType = action.payload;
+    },
+    attributeKey(
+      state: IProductsState,
+      action: PayloadAction<'floral' | 'woody' | 'citrus' | 'amber' | null>,
+    ) {
+      state.productsByAttributeKey.key = action.payload;
+    },
+    categoryChecked(
+      state: IProductsState,
+      action: PayloadAction<'wedding' | 'summer' | 'new' | null>,
+    ) {
+      state.categoryFilter = action.payload;
+    },
   },
 });
 
-export const { allProducts, search, categoryRequest } = productsSlice.actions;
+export const {
+  allProducts,
+  search,
+  categoryRequest,
+  sortTypeChecked,
+  sortDirectionChecked,
+  attributeKey,
+  categoryChecked,
+} = productsSlice.actions;
 export default productsSlice.reducer;

@@ -24,12 +24,18 @@ import { getCategoryByKey } from '../../api/calls/categories/getCategoriesByKey'
 import {
   useAllProducts,
   useAppDispatch,
+  useAttributeKey,
+  useCategoryChecked,
   useSearchText,
+  useSortDirection,
+  useSortType,
 } from '../../helpers/hooks/Hooks';
 import {
   allProducts,
   search,
   categoryRequest,
+  sortDirectionChecked,
+  sortTypeChecked,
 } from '../../store/reducers/ProductsSlice';
 
 const returnNumberFromPath = (value: string | undefined): number => {
@@ -64,10 +70,14 @@ const Products = (): ReactElement => {
     returnNumberFromPath(location.pathname),
   );
   const [arrayForBread, setArrayForBread] = useState<IBreadCrump[]>([]);
-
   const [titlePage, setTitlePage] = useState('All products');
-  const [checkedSort, setCheckedSort] = useState(true);
-  const [checkedTypeSort, setCheckedTypeSort] = useState(false);
+
+  const [checkedFilter, setCheckedFilter] = useState(false);
+  const categoryFilter = useCategoryChecked();
+  const attributeByKey = useAttributeKey();
+
+  const sortDirection = useSortDirection();
+  const sortType = useSortType();
 
   const { products } = useAllProducts();
   const { totalCount } = useAllProducts();
@@ -134,8 +144,8 @@ const Products = (): ReactElement => {
       limit: 6,
       pageNumber,
       sort: {
-        field: checkedTypeSort ? 'price' : 'name.en-US',
-        order: checkedSort ? 'asc' : 'desc',
+        field: sortType ? 'price' : 'name.en-US',
+        order: sortDirection ? 'asc' : 'desc',
       },
       filter:
         category !== null
@@ -158,8 +168,8 @@ const Products = (): ReactElement => {
     location,
     category,
     searchTextFromState,
-    checkedSort,
-    checkedTypeSort,
+    sortType,
+    sortDirection,
   ]);
 
   return (
@@ -206,8 +216,13 @@ const Products = (): ReactElement => {
         </Breadcrumbs>
       </div>
 
-      <Stack direction={'row'} width={'100%'} justifyContent={'space-between'}>
-        <Stack>
+      <Stack
+        sx={{ position: 'relative' }}
+        direction={'row'}
+        width={'100%'}
+        justifyContent={'space-between'}
+      >
+        <Stack sx={{ position: 'relative' }}>
           <Checkbox
             sx={{
               '& .MuiSvgIcon-root': {
@@ -215,8 +230,27 @@ const Products = (): ReactElement => {
               },
             }}
             icon={<TuneIcon />}
+            checkedIcon={<ExpandLessIcon />}
+            checked={checkedFilter}
+            onChange={(event): void => {
+              setCheckedFilter(event.target.checked);
+            }}
           />
+          <Stack
+            rowGap={2}
+            p={3}
+            sx={{
+              position: 'absolute',
+              top: '50px',
+              left: { xs: '0px', md: '-25px' },
+              zIndex: '500',
+              backgroundColor: 'white',
+              border: '0.5px solid #D9D9D9',
+              display: !checkedFilter ? 'none' : 'flex',
+            }}
+          ></Stack>
         </Stack>
+
         <Stack direction={'row'}>
           <Checkbox
             sx={{
@@ -226,9 +260,9 @@ const Products = (): ReactElement => {
             }}
             icon={<SortByAlphaIcon />}
             checkedIcon={<EuroIcon />}
-            checked={checkedTypeSort}
+            checked={sortType}
             onChange={(event): void => {
-              setCheckedTypeSort(event.target.checked);
+              dispatch(sortTypeChecked(event.target.checked));
             }}
           />
           <Checkbox
@@ -239,9 +273,9 @@ const Products = (): ReactElement => {
             }}
             icon={<ExpandMoreIcon />}
             checkedIcon={<ExpandLessIcon />}
-            checked={checkedSort}
+            checked={sortDirection}
             onChange={(event): void => {
-              setCheckedSort(event.target.checked);
+              dispatch(sortDirectionChecked(event.target.checked));
             }}
           />
         </Stack>

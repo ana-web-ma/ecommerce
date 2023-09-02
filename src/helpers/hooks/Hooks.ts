@@ -80,3 +80,31 @@ export const useAllProducts = (): IProductsState => {
   const data = useAppSelector((state) => state.productsReducer);
   return data;
 };
+
+export const useSortType = (): boolean => {
+  const sortType = useAppSelector((state) => state.productsReducer.sortType);
+  return sortType;
+};
+
+export const useSortDirection = (): boolean => {
+  const sortDirection = useAppSelector(
+    (state) => state.productsReducer.sortDirection,
+  );
+  return sortDirection;
+};
+
+export const useAttributeKey = (): {
+  key: 'floral' | 'woody' | 'citrus' | 'amber' | null;
+} => {
+  const attributeKey = useAppSelector(
+    (state) => state.productsReducer.productsByAttributeKey,
+  );
+  return attributeKey;
+};
+
+export const useCategoryChecked = (): 'wedding' | 'summer' | 'new' | null => {
+  const categoryChecked = useAppSelector(
+    (state) => state.productsReducer.categoryFilter,
+  );
+  return categoryChecked;
+};
