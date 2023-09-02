@@ -3,6 +3,7 @@ import { type Customer } from '@commercetools/platform-sdk';
 
 interface ICustomerState {
   customer: Customer | null;
+  searchText: string | null;
   isLogged: boolean;
 }
 
@@ -10,6 +11,7 @@ const customerJson = localStorage.getItem('EPERFUME_CUSTOMER_DATA');
 
 const initialState: ICustomerState = {
   customer: customerJson != null ? JSON.parse(customerJson) : null,
+  searchText: null,
   isLogged: !(localStorage.getItem('EPERFUME_CUSTOMER_TOKEN') == null),
 };
 
@@ -38,8 +40,12 @@ export const customerSlice = createSlice({
       localStorage.removeItem('EPERFUME_CUSTOMER_TOKEN');
       localStorage.removeItem('EPERFUME_CUSTOMER_DATA');
     },
+    search(state: ICustomerState, action: PayloadAction<string>) {
+      // eslint-disable-next-line no-param-reassign
+      state.searchText = action.payload;
+    },
   },
 });
 
-export const { login, logout } = customerSlice.actions;
+export const { login, logout, search } = customerSlice.actions;
 export default customerSlice.reducer;

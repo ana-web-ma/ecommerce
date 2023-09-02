@@ -92,7 +92,7 @@ const createQueryArgs = (props: PropsType): QueryArgs => {
     // staged: true,
     // fuzzy: true,
     // fuzzyLevel: 1,
-    // 'text.en-US': `${props.text}`,
+    'text.en-US': props.text,
   };
 };
 

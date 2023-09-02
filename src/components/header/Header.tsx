@@ -1,14 +1,18 @@
 import React, { useState, type ReactElement } from 'react';
 import {
   Box,
+  Button,
   Checkbox,
   Divider,
   Drawer,
   IconButton,
+  InputAdornment,
   Link,
+  Modal,
   SpeedDial,
   SpeedDialAction,
   Stack,
+  TextField,
   Tooltip,
   styled,
 } from '@mui/material';
@@ -25,6 +29,7 @@ import SearchIcon from '../ui/icons/SearchIcon';
 import logo from './img/logo.png';
 import { useAppDispatch, useIsLogged } from '../../helpers/hooks/Hooks';
 import { logout } from '../../store/reducers/CustomerSlice';
+import { search } from '../../store/reducers/ProductsSlice';
 import imageHomeDecor from './img/home-decor.jpg';
 import imageFragrances from './img/Fragrances.avif';
 import imageCollections from './img/collections.avif';
@@ -56,6 +61,22 @@ const Img = styled('img')({
   objectFit: 'contain',
 });
 
+const styleSearchModal = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '20px',
+  alignItems: 'center',
+  transform: 'translate(-50%, -50%)',
+  width: { xs: '350px', md: '500px' },
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
 const Header = (): ReactElement => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -63,13 +84,21 @@ const Header = (): ReactElement => {
   const [hoverFragrances, setHoverFragrances] = useState(false);
   const [hoverHomeDecor, setHoverHomeDecor] = useState(false);
   const [hoverCollections, setHoverCollections] = useState(false);
+  const [openSearchModal, setOpenSearchModal] = React.useState(false);
+  const [searchText, setSearchText] = React.useState('');
+  const [showSpeedDial, setShowSpeedDial] = React.useState(false);
 
   const handleDrawerToggle = (action: boolean): void => {
     setCheckedMenu(action);
   };
 
   const actionLink = [
-    { isLogged: true, icon: <SearchIcon />, tooltip: 'Search', path: '/' },
+    {
+      isLogged: true,
+      icon: <SearchIcon />,
+      tooltip: 'Search',
+      path: null,
+    },
     {
       isLogged: useIsLogged(),
       icon: <PermIdentityIcon />,
@@ -251,23 +280,34 @@ const Header = (): ReactElement => {
             right: 16,
             display: { md: 'none', xs: 'block' },
           }}
+          open={showSpeedDial}
           icon={<SpeedDialIcon />}
+          onClick={() => {
+            if (showSpeedDial) setShowSpeedDial(false);
+            else setShowSpeedDial(true);
+          }}
         >
           {actionLink.map((link, ind) => (
             <SpeedDialAction
               key={`speedDial-${ind}`}
               sx={{ display: link.isLogged ? 'block' : 'none' }}
               icon={
-                <IconButton
-                  component={Link}
-                  onClick={(): void => {
-                    navigate(link.path);
-                  }}
-                >
-                  {link.icon}
-                </IconButton>
+                <span>
+                  <IconButton
+                    component={Link}
+                    onClick={(): void => {
+                      setShowSpeedDial(false);
+                      if (link.path !== null) {
+                        navigate(link.path);
+                      } else {
+                        setOpenSearchModal(true);
+                      }
+                    }}
+                  >
+                    {link.icon}
+                  </IconButton>
+                </span>
               }
-              tooltipTitle={link.tooltip}
             />
           ))}
           <SpeedDialAction
@@ -277,6 +317,7 @@ const Header = (): ReactElement => {
               <IconButton
                 component={Link}
                 onClick={() => {
+                  setShowSpeedDial(false);
                   dispatch(logout());
                   navigate('/login');
                 }}
@@ -284,7 +325,6 @@ const Header = (): ReactElement => {
                 <LogoutIcon />
               </IconButton>
             }
-            tooltipTitle="Log Out"
           />
         </SpeedDial>
 
@@ -304,11 +344,17 @@ const Header = (): ReactElement => {
               title={link.tooltip}
               key={`activeNavLink-${ind}`}
               sx={{ display: link.isLogged ? 'block' : 'none' }}
+              disableTouchListener
+              disableFocusListener
             >
               <IconButton
                 component={Link}
                 onClick={(): void => {
-                  navigate(link.path);
+                  if (link.path !== null) {
+                    navigate(link.path);
+                  } else {
+                    setOpenSearchModal(true);
+                  }
                 }}
               >
                 {link.icon}
@@ -448,6 +494,47 @@ const Header = (): ReactElement => {
           borderColor: '#fff',
         }}
       />
+      <Modal
+        open={openSearchModal}
+        onClose={() => {
+          setOpenSearchModal(false);
+        }}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={styleSearchModal}>
+          <TextField
+            fullWidth
+            onChange={(event) => {
+              setSearchText(event.target.value);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                dispatch(search(searchText));
+                setOpenSearchModal(false);
+                navigate('/catalog/search');
+              }
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Button
+            onClick={() => {
+              dispatch(search(searchText));
+              setOpenSearchModal(false);
+              navigate('/catalog/search');
+            }}
+            variant="contained"
+          >
+            Search
+          </Button>
+        </Box>
+      </Modal>
     </>
   );
 };
