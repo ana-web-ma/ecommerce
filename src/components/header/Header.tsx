@@ -86,7 +86,7 @@ const Header = (): ReactElement => {
   const [hoverCollections, setHoverCollections] = useState(false);
   const [openSearchModal, setOpenSearchModal] = React.useState(false);
   const [searchText, setSearchText] = React.useState('');
-  const [showToolTip, setShowToolTip] = React.useState(false);
+  const [showSpeedDial, setShowSpeedDial] = React.useState(false);
 
   const handleDrawerToggle = (action: boolean): void => {
     setCheckedMenu(action);
@@ -280,7 +280,12 @@ const Header = (): ReactElement => {
             right: 16,
             display: { md: 'none', xs: 'block' },
           }}
+          open={showSpeedDial}
           icon={<SpeedDialIcon />}
+          onClick={() => {
+            if (showSpeedDial) setShowSpeedDial(false);
+            else setShowSpeedDial(true);
+          }}
         >
           {actionLink.map((link, ind) => (
             <SpeedDialAction
@@ -291,6 +296,7 @@ const Header = (): ReactElement => {
                   <IconButton
                     component={Link}
                     onClick={(): void => {
+                      setShowSpeedDial(false);
                       if (link.path !== null) {
                         navigate(link.path);
                       } else {
@@ -302,7 +308,6 @@ const Header = (): ReactElement => {
                   </IconButton>
                 </span>
               }
-              tooltipTitle={link.tooltip}
             />
           ))}
           <SpeedDialAction
@@ -312,6 +317,7 @@ const Header = (): ReactElement => {
               <IconButton
                 component={Link}
                 onClick={() => {
+                  setShowSpeedDial(false);
                   dispatch(logout());
                   navigate('/login');
                 }}
@@ -319,7 +325,6 @@ const Header = (): ReactElement => {
                 <LogoutIcon />
               </IconButton>
             }
-            tooltipTitle="Log Out"
           />
         </SpeedDial>
 
@@ -339,6 +344,8 @@ const Header = (): ReactElement => {
               title={link.tooltip}
               key={`activeNavLink-${ind}`}
               sx={{ display: link.isLogged ? 'block' : 'none' }}
+              disableTouchListener
+              disableFocusListener
             >
               <IconButton
                 component={Link}

@@ -179,13 +179,16 @@ const Products = (): ReactElement => {
           <MuiLink component={Link} to="/">
             Home
           </MuiLink>
-          {category !== undefined ? (
+          {category !== undefined || searchTextFromState !== null ? (
             <MuiLink component={Link} to="/catalog">
               Catalog
             </MuiLink>
           ) : (
             <Typography key="bread-catalog">Catalog</Typography>
           )}
+          {searchTextFromState !== null ? (
+            <Typography key="bread-catalog">Search</Typography>
+          ) : null}
           {arrayForBread.map((bread, ind, arr) => {
             if (ind === 0 && arr.length === 2) {
               return (
