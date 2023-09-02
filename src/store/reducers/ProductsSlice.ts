@@ -7,6 +7,7 @@ import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 export interface IProductsState {
   products: ProductProjection[];
+  pageNumber: number;
   totalCount: number;
   pageQty: number;
   searchText: null | string;
@@ -21,6 +22,7 @@ export interface IProductsState {
 
 const initialState: IProductsState = {
   products: [],
+  pageNumber: 1,
   totalCount: 0,
   pageQty: 1,
   searchText: null,
@@ -44,6 +46,9 @@ export const productsSlice = createSlice({
         state.totalCount = action.payload.total;
         state.pageQty = Math.ceil(action.payload.total / 6);
       }
+    },
+    setPageNumber(state: IProductsState, action: PayloadAction<number>) {
+      state.pageNumber = action.payload;
     },
     search(state: IProductsState, action: PayloadAction<string | null>) {
       state.searchText = action.payload;
@@ -81,6 +86,7 @@ export const productsSlice = createSlice({
 export const {
   allProducts,
   search,
+  setPageNumber,
   categoryRequest,
   sortTypeChecked,
   sortDirectionChecked,

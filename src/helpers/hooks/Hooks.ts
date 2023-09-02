@@ -81,6 +81,13 @@ export const useAllProducts = (): IProductsState => {
   return data;
 };
 
+export const useGetPageNumber = (): number => {
+  const pageNumber = useAppSelector(
+    (state) => state.productsReducer.pageNumber,
+  );
+  return pageNumber;
+};
+
 export const useSortType = (): boolean => {
   const sortType = useAppSelector((state) => state.productsReducer.sortType);
   return sortType;

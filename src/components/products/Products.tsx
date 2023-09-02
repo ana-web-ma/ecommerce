@@ -32,12 +32,14 @@ import {
   useAppDispatch,
   useAttributeKey,
   useCategoryChecked,
+  useGetPageNumber,
   useSearchText,
   useSortDirection,
   useSortType,
 } from '../../helpers/hooks/Hooks';
 import {
   allProducts,
+  setPageNumber,
   search,
   categoryRequest,
   sortDirectionChecked,
@@ -74,13 +76,10 @@ const Products = (): ReactElement => {
   const location = useLocation();
   const navigation = useNavigate();
   const dispatch = useAppDispatch();
-  const [pageNumber, setPageNumber] = useState(
-    returnNumberFromPath(location.pathname),
-  );
+  const pageNumber = useGetPageNumber();
   const [arrayForBread, setArrayForBread] = useState<IBreadCrump[]>([]);
   const [titlePage, setTitlePage] = useState('All products');
 
-  const [checkedFilter, setCheckedFilter] = useState(false);
   const categoryFilter = useCategoryChecked();
   const attributeByKey = useAttributeKey();
 
@@ -201,7 +200,7 @@ const Products = (): ReactElement => {
       dispatch(search(null));
       console.log('Поиск не дал результатов'); // ToDo: idk how to do it
     }
-    setPageNumber(returnNumberFromPath(location.pathname));
+    dispatch(setPageNumber(returnNumberFromPath(location.pathname)));
   }, [location]);
 
   useEffect((): void => {
@@ -287,34 +286,37 @@ const Products = (): ReactElement => {
         width={'100%'}
         justifyContent={'space-between'}
       >
-        <Stack sx={{ position: 'relative' }}>
-          <Checkbox
-            sx={{
-              '& .MuiSvgIcon-root': {
-                color: 'black',
-              },
-            }}
-            icon={<TuneIcon />}
-            checkedIcon={<ExpandLessIcon />}
-            checked={checkedFilter}
-            onChange={(event): void => {
-              setCheckedFilter(event.target.checked);
-            }}
-          />
-          <Stack
-            rowGap={2}
-            p={3}
-            sx={{
-              position: 'absolute',
-              top: '50px',
-              left: { xs: '0px', md: '-25px' },
-              zIndex: '500',
-              backgroundColor: 'white',
-              border: '0.5px solid #D9D9D9',
-              display: !checkedFilter ? 'none' : 'flex',
-            }}
-          ></Stack>
+        <Stack direction="row" width="100%">
+          <IconButton
+            onClick={toggleDrawer(true)}
+            color="primary"
+            disabled={openFilterBar}
+          >
+            <FilterIcon color={openFilterBar ? 'disabled' : 'primary'} />
+            <Typography pl={1} variant="subtitle2">
+              Filter
+            </Typography>
+          </IconButton>
         </Stack>
+
+        <SwipeableDrawer
+          anchor={'left'}
+          open={openFilterBar}
+          onClose={toggleDrawer(false)}
+          onOpen={toggleDrawer(true)}
+        >
+          <FilterBar
+            selectedPrice={selectedPrice}
+            setSelectedPrice={setSelectedPrice}
+            selectedAttribute={selectedAttribute}
+            setSelectedAttribute={setSelectedAttribute}
+            selectedSummerCollection={selectedSummerCollection}
+            setSelectedSummerCollection={setSelectedSummerCollection}
+            selectedWeddingCollection={selectedWeddingCollection}
+            setSelectedWeddingCollection={setSelectedWeddingCollection}
+            updateCatalog={updateCatalog}
+          />
+        </SwipeableDrawer>
 
         <Stack direction={'row'}>
           <Checkbox
@@ -345,38 +347,6 @@ const Products = (): ReactElement => {
           />
         </Stack>
       </Stack>
-
-      <Stack direction="row" width="100%">
-        <IconButton
-          onClick={toggleDrawer(true)}
-          color="primary"
-          disabled={openFilterBar}
-        >
-          <FilterIcon color={openFilterBar ? 'disabled' : 'primary'} />
-          <Typography pl={1} variant="subtitle2">
-            Filter
-          </Typography>
-        </IconButton>
-      </Stack>
-
-      <SwipeableDrawer
-        anchor={'left'}
-        open={openFilterBar}
-        onClose={toggleDrawer(false)}
-        onOpen={toggleDrawer(true)}
-      >
-        <FilterBar
-          selectedPrice={selectedPrice}
-          setSelectedPrice={setSelectedPrice}
-          selectedAttribute={selectedAttribute}
-          setSelectedAttribute={setSelectedAttribute}
-          selectedSummerCollection={selectedSummerCollection}
-          setSelectedSummerCollection={setSelectedSummerCollection}
-          selectedWeddingCollection={selectedWeddingCollection}
-          setSelectedWeddingCollection={setSelectedWeddingCollection}
-          updateCatalog={updateCatalog}
-        />
-      </SwipeableDrawer>
 
       <Grid container justifyContent="center" spacing={1}>
         {products.map((card, index) => {
@@ -421,7 +391,7 @@ const Products = (): ReactElement => {
         page={pageNumber}
         shape="rounded"
         onChange={(_, number) => {
-          setPageNumber(number);
+          dispatch(setPageNumber(number));
         }}
         renderItem={(item) => (
           <PaginationItem

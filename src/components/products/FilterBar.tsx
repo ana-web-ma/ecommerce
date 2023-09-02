@@ -14,6 +14,11 @@ import {
   Typography,
 } from '@mui/material';
 import React from 'react';
+import {
+  categoryChecked,
+  attributeKey,
+} from '../../store/reducers/ProductsSlice';
+import { useAppDispatch } from '../../helpers/hooks/Hooks';
 
 interface SelectedPrice {
   from: number;
@@ -37,6 +42,7 @@ export default function FilterBar(props: {
   setSelectedWeddingCollection: React.Dispatch<React.SetStateAction<boolean>>;
   updateCatalog: () => void;
 }): React.ReactElement {
+  const dispatch = useAppDispatch();
   const [priceValue, setPriceValue] = React.useState<number[]>([0, 2500]);
   const [attributeValue, setAttributeValue] = React.useState('none');
   const [summerCollectionChecked, setSummerCollectionChecked] =
