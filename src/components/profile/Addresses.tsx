@@ -34,22 +34,12 @@ function Addresses(): ReactElement {
   const { id } = ProfileDataObj;
 
   const shippingId = ProfileDataObj.shippingAddressIds[0];
-  const billingId = ProfileDataObj.billingAddressIds[0];
-
-  let billingIndex = 0;
   let shippingIndex = 0;
-
   if (ProfileDataObj.addresses[0].id === shippingId) {
     shippingIndex = 0;
   } else if (ProfileDataObj.addresses[1].id === shippingId) {
     shippingIndex = 1;
   }
-  if (ProfileDataObj.addresses[0].id === billingId) {
-    billingIndex = 0;
-  } else if (ProfileDataObj.addresses[1].id === billingId) {
-    billingIndex = 1;
-  }
-
   const [shippingStreet, setShippingStreet] = useState(
     ProfileDataObj.addresses[shippingIndex].streetName,
   );
@@ -62,7 +52,18 @@ function Addresses(): ReactElement {
   const [shippingCountry, setShippingCountry] = useState(
     ProfileDataObj.addresses[shippingIndex].country,
   );
+  const [isDefaultShipping, setIsDefaultShipping] = useState(
+    ProfileDataObj.shippingAddressIds[0] ===
+      ProfileDataObj.defaultShippingAddressId,
+  );
 
+  const billingId = ProfileDataObj.billingAddressIds[0];
+  let billingIndex = 0;
+  if (ProfileDataObj.addresses[0].id === billingId) {
+    billingIndex = 0;
+  } else if (ProfileDataObj.addresses[1].id === billingId) {
+    billingIndex = 1;
+  }
   const [billingStreet, setBillingStreet] = useState(
     ProfileDataObj.addresses[billingIndex].streetName,
   );
@@ -75,18 +76,13 @@ function Addresses(): ReactElement {
   const [billingCountry, setBillingCountry] = useState(
     ProfileDataObj.addresses[billingIndex].country,
   );
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [isDefaultShipping, setIsDefaultShipping] = useState(
-    ProfileDataObj.shippingAddressIds[0] ===
-      ProfileDataObj.defaultShippingAddressId,
-  );
-
-  const [isEditingBilling, setIsEditingBilling] = useState(false);
   const [isDefaultBilling, setIsDefaultBilling] = useState(
     ProfileDataObj.billingAddressIds[0] ===
       ProfileDataObj.defaultBillingAddressId,
   );
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingBilling, setIsEditingBilling] = useState(false);
 
   const handleChangeShippingStreet = (
     event: ChangeEvent<HTMLInputElement>,
@@ -262,8 +258,28 @@ function Addresses(): ReactElement {
       console.error('Error handling save click:', error);
     });
   };
-  const handleDeleteClick = (): void => {
-    // logic
+  const handleDeleteClick = async (): Promise<void> => {
+    // updateMe({
+    //   id,
+    //   removeAddress: {
+    //     addressId: shippingId,
+    //   },
+    // })
+    //   .then((res) => {
+    //     localStorage.setItem(
+    //       'EPERFUME_CUSTOMER_DATA',
+    //       JSON.stringify(res.body),
+    //     );
+    //     console.log(res);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+  };
+  const handleClickDelete = (): void => {
+    handleDeleteClick().catch((error) => {
+      console.error('Error handling save click:', error);
+    });
   };
 
   const handleDeleteClickBilling = (): void => {
@@ -353,7 +369,7 @@ function Addresses(): ReactElement {
       >
         {isEditing ? 'Save' : 'Edit'}
       </Button>
-      <Button startIcon={<Delete />} onClick={handleDeleteClick}>
+      <Button startIcon={<Delete />} onClick={handleClickDelete}>
         Delete
       </Button>
       <Typography
