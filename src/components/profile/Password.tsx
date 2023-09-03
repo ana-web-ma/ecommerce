@@ -7,6 +7,10 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { RegisterSchema } from '../../helpers/yup/Yup';
 import { updatePassword } from '../../api/calls/customers/update/updatePassword';
 import { CustomDialog } from '../register/DialogModule';
+import { authPasswordCustomer } from '../../api/calls/customers/authPasswordCustomer';
+import { useAppDispatch } from '../../helpers/hooks/Hooks';
+import { login } from '../../store/reducers/CustomerSlice';
+import { tokenCache } from '../../api/tokenCache';
 
 export function onPromise<T>(
   promise: (event: React.SyntheticEvent) => Promise<T>,
@@ -63,6 +67,7 @@ function Password(): ReactElement {
     setDialogContent(content);
     setDialogOpen(true);
   };
+  const dispatch = useAppDispatch();
 
   const changePassword = async (): Promise<void> => {
     updatePassword({
@@ -70,8 +75,27 @@ function Password(): ReactElement {
       currentPassword,
       newPassword,
     })
-      .then(() => {
+      .then((resp) => {
         openDialog('Successfully', 'Password changed');
+        // const customerData = {
+        //   email: resp.body.email,
+        //   password: newPassword,
+        // };
+        // console.log(resp.body.email);
+        // console.log(newPassword);
+        // authPasswordCustomer(customerData)
+        //   .then(async (response): Promise<void> => {
+        //     dispatch(
+        //       login({
+        //         customer: response.body.customer,
+        //         token: tokenCache.get().token,
+        //       }),
+        //     );
+        //     console.log('OK');
+        //   })
+        //   .catch((err) => {
+        //     setErrorMessage(err.message);
+        //   });
       })
       .catch((err) => {
         openDialog('Error', err.toString());
