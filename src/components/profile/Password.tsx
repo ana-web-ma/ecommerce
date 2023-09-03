@@ -77,25 +77,26 @@ function Password(): ReactElement {
     })
       .then((resp) => {
         openDialog('Successfully', 'Password changed');
-        // const customerData = {
-        //   email: resp.body.email,
-        //   password: newPassword,
-        // };
-        // console.log(resp.body.email);
-        // console.log(newPassword);
-        // authPasswordCustomer(customerData)
-        //   .then(async (response): Promise<void> => {
-        //     dispatch(
-        //       login({
-        //         customer: response.body.customer,
-        //         token: tokenCache.get().token,
-        //       }),
-        //     );
-        //     console.log('OK');
-        //   })
-        //   .catch((err) => {
-        //     setErrorMessage(err.message);
-        //   });
+        tokenCache.set({ expirationTime: 0, token: '' });
+        const customerData = {
+          email: resp.body.email,
+          password: newPassword,
+        };
+        console.log(resp.body.email);
+        console.log(newPassword);
+        authPasswordCustomer(customerData)
+          .then(async (response): Promise<void> => {
+            dispatch(
+              login({
+                customer: response.body.customer,
+                token: tokenCache.get().token,
+              }),
+            );
+            console.log('OK');
+          })
+          .catch((err) => {
+            setErrorMessage(err.message);
+          });
       })
       .catch((err) => {
         openDialog('Error', err.toString());
