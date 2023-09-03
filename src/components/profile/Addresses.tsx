@@ -366,6 +366,9 @@ function Addresses(): ReactElement {
       <Button
         startIcon={isEditing ? <Save /> : <Edit />}
         onClick={toggleHandleEditSave}
+        disabled={
+          errors.street1 != null || errors.city1 != null || errors.post1 != null
+        }
       >
         {isEditing ? 'Save' : 'Edit'}
       </Button>
@@ -451,6 +454,9 @@ function Addresses(): ReactElement {
       <Button
         startIcon={isEditingBilling ? <Save /> : <Edit />}
         onClick={toggleHandleEditSaveBilling}
+        disabled={
+          errors.street2 != null || errors.city2 != null || errors.post2 != null
+        }
       >
         {isEditingBilling ? 'Save' : 'Edit'}
       </Button>
