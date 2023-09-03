@@ -100,18 +100,35 @@ export const useSortDirection = (): boolean => {
   return sortDirection;
 };
 
-export const useAttributeKey = (): {
-  key: 'floral' | 'woody' | 'citrus' | 'amber' | null;
-} => {
+export const useAttributeKey = ():
+  | 'floral'
+  | 'woody'
+  | 'citrus'
+  | 'amber'
+  | 'none' => {
   const attributeKey = useAppSelector(
-    (state) => state.productsReducer.productsByAttributeKey,
+    (state) => state.productsReducer.productsByAttributeKey.key,
   );
   return attributeKey;
 };
 
-export const useCategoryChecked = (): 'wedding' | 'summer' | 'new' | null => {
+export const useCategoryChecked = (): string[] => {
   const categoryChecked = useAppSelector(
     (state) => state.productsReducer.categoryFilter,
   );
   return categoryChecked;
+};
+
+export const usePriceValue = (): number[] => {
+  const PriceValue = useAppSelector(
+    (state) => state.productsReducer.priceValue,
+  );
+  return PriceValue;
+};
+
+export const useOpenFilterBar = (): boolean => {
+  const openFilterBar = useAppSelector(
+    (state) => state.productsReducer.openFilterBar,
+  );
+  return openFilterBar;
 };

@@ -29,10 +29,12 @@ interface QueryArgs {
 }
 
 export interface FilterPropsType {
-  productsByCategoryId?: { id: string };
+  productsByCategoryId?: { ids: string[] };
   productByKey?: { key: string };
   productsByPrice?: { from: number; to: number };
-  productsByAttributeKey?: { key: 'floral' | 'woody' | 'citrus' | 'amber' };
+  productsByAttributeKey?: {
+    key: 'floral' | 'woody' | 'citrus' | 'amber' | 'none';
+  };
 }
 
 interface PropsType {
@@ -48,10 +50,10 @@ interface PropsType {
 
 const createFilters = (props: PropsType): string[] => {
   const filterResult = [];
-  if (props.filter?.productsByCategoryId?.id !== undefined) {
-    filterResult.push(
-      `categories.id: subtree("${props.filter.productsByCategoryId.id}")`,
-    );
+  if (props.filter?.productsByCategoryId?.ids !== undefined) {
+    props.filter?.productsByCategoryId?.ids.forEach((e) => {
+      filterResult.push(`categories.id: subtree("${e}")`);
+    });
   }
   if (props.filter?.productByKey?.key !== undefined) {
     filterResult.push(`key: "${props.filter.productByKey.key}"`);
@@ -63,7 +65,10 @@ const createFilters = (props: PropsType): string[] => {
       } to ${Number(props.filter?.productsByPrice.to) * 100})`,
     );
   }
-  if (props.filter?.productsByAttributeKey !== undefined) {
+  if (
+    props.filter?.productsByAttributeKey !== undefined &&
+    props.filter.productsByAttributeKey.key !== 'none'
+  ) {
     filterResult.push(
       `variants.attributes.olfactory.key:"${props.filter.productsByAttributeKey.key}"`,
     );

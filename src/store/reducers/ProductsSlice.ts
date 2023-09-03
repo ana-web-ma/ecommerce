@@ -12,12 +12,14 @@ export interface IProductsState {
   pageQty: number;
   searchText: null | string;
   category: Category | null;
-  categoryFilter: 'wedding' | 'summer' | 'new' | null;
+  categoryFilter: string[];
   sortDirection: boolean;
   sortType: boolean;
   productsByAttributeKey: {
-    key: 'floral' | 'woody' | 'citrus' | 'amber' | null;
+    key: 'floral' | 'woody' | 'citrus' | 'amber' | 'none';
   };
+  priceValue: number[];
+  openFilterBar: boolean;
 }
 
 const initialState: IProductsState = {
@@ -27,10 +29,12 @@ const initialState: IProductsState = {
   pageQty: 1,
   searchText: null,
   category: null,
-  categoryFilter: null,
+  categoryFilter: [],
   sortDirection: true,
   sortType: false,
-  productsByAttributeKey: { key: null },
+  productsByAttributeKey: { key: 'none' },
+  priceValue: [0, 2500],
+  openFilterBar: false,
 };
 
 export const productsSlice = createSlice({
@@ -46,6 +50,12 @@ export const productsSlice = createSlice({
         state.totalCount = action.payload.total;
         state.pageQty = Math.ceil(action.payload.total / 6);
       }
+    },
+    setProducts(
+      state: IProductsState,
+      action: PayloadAction<ProductProjection[]>,
+    ) {
+      state.products = action.payload;
     },
     setPageNumber(state: IProductsState, action: PayloadAction<number>) {
       state.pageNumber = action.payload;
@@ -70,21 +80,25 @@ export const productsSlice = createSlice({
     },
     attributeKey(
       state: IProductsState,
-      action: PayloadAction<'floral' | 'woody' | 'citrus' | 'amber' | null>,
+      action: PayloadAction<'floral' | 'woody' | 'citrus' | 'amber' | 'none'>,
     ) {
       state.productsByAttributeKey.key = action.payload;
     },
-    categoryChecked(
-      state: IProductsState,
-      action: PayloadAction<'wedding' | 'summer' | 'new' | null>,
-    ) {
+    categoryChecked(state: IProductsState, action: PayloadAction<string[]>) {
       state.categoryFilter = action.payload;
+    },
+    setPriceValue(state: IProductsState, action: PayloadAction<number[]>) {
+      state.priceValue = action.payload;
+    },
+    setOpenFilterBar(state: IProductsState, action: PayloadAction<boolean>) {
+      state.openFilterBar = action.payload;
     },
   },
 });
 
 export const {
   allProducts,
+  setProducts,
   search,
   setPageNumber,
   categoryRequest,
@@ -92,5 +106,7 @@ export const {
   sortDirectionChecked,
   attributeKey,
   categoryChecked,
+  setPriceValue,
+  setOpenFilterBar,
 } = productsSlice.actions;
 export default productsSlice.reducer;
