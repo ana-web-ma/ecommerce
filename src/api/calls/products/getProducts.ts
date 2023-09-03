@@ -29,10 +29,12 @@ interface QueryArgs {
 }
 
 export interface FilterPropsType {
-  productsByCategoryId?: { id: string };
+  productsByCategoryId?: { ids: string[] | undefined };
   productByKey?: { key: string };
   productsByPrice?: { from: number; to: number };
-  productsByAttributeKey?: { key: 'floral' | 'woody' | 'citrus' | 'amber' };
+  productsByAttributeKey?: {
+    key: 'floral' | 'woody' | 'citrus' | 'amber' | 'none';
+  };
 }
 
 interface PropsType {
@@ -48,10 +50,10 @@ interface PropsType {
 
 const createFilters = (props: PropsType): string[] => {
   const filterResult = [];
-  if (props.filter?.productsByCategoryId?.id !== undefined) {
-    filterResult.push(
-      `categories.id: subtree("${props.filter.productsByCategoryId.id}")`,
-    );
+  if (props.filter?.productsByCategoryId?.ids !== undefined) {
+    props.filter?.productsByCategoryId?.ids.forEach((e) => {
+      filterResult.push(`categories.id: subtree("${e}")`);
+    });
   }
   if (props.filter?.productByKey?.key !== undefined) {
     filterResult.push(`key: "${props.filter.productByKey.key}"`);
@@ -63,7 +65,10 @@ const createFilters = (props: PropsType): string[] => {
       } to ${Number(props.filter?.productsByPrice.to) * 100})`,
     );
   }
-  if (props.filter?.productsByAttributeKey !== undefined) {
+  if (
+    props.filter?.productsByAttributeKey !== undefined &&
+    props.filter.productsByAttributeKey.key !== 'none'
+  ) {
     filterResult.push(
       `variants.attributes.olfactory.key:"${props.filter.productsByAttributeKey.key}"`,
     );
@@ -86,12 +91,6 @@ const createQueryArgs = (props: PropsType): QueryArgs => {
         ? `${props.sort.field} ${props.sort.order}`
         : 'id asc',
     filter: createFilters(props),
-    // markMatchingVariants: true,
-    // localeProjection: 'en-US',
-
-    // staged: true,
-    // fuzzy: true,
-    // fuzzyLevel: 1,
     'text.en-US': props.text,
   };
 };
@@ -109,22 +108,25 @@ export const getProducts = async (
 // How to use:
 
 // getProducts({
-//   limit: 100,
-//   pageNumber: 0,
+//   limit: 6,
+//   pageNumber,
 //   sort: {
-//     field: 'id',
-//     order: 'desc',
+//     field: sortType ? 'price' : 'name.en-US',
+//     order: sortDirection ? 'asc' : 'desc',
 //   },
 //   filter: {
-//     productsByCategoryId: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
-//     // productByKey: { key: '34 Boulevard Saint Germain' },
-//     productsByPrice: {
-//       from: 0,
-//       to: 10000,
+//     productsByCategoryId: {
+//       ids: createCategoryArr(),
 //     },
+//     productsByAttributeKey: { key: selectedAttribute },
+//     productsByPrice: selectedPrice,
 //   },
+//   text: searchTextFromState !== null ? searchTextFromState : undefined,
 // })
 //   .then((resp) => {
-//     console.log('resp', resp.body.results);
+//     console.log('Resp', resp.body.results);
+//     dispatch(allProducts(resp.body));
 //   })
-//   .catch(console.log);
+//   .catch((err) => {
+//     throw new Error(err);
+//   });
