@@ -215,7 +215,7 @@ const Products = (): ReactElement => {
         category !== null
           ? {
               productsByCategoryId: {
-                id: category.id,
+                ids: [category.id],
               },
             }
           : {},
