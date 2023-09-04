@@ -37,7 +37,6 @@ import {
 } from '../../helpers/hooks/Hooks';
 import {
   allProducts,
-  setProducts,
   search,
   categoryRequest,
   sortDirectionChecked,
@@ -95,11 +94,6 @@ const Products = (): ReactElement => {
   const openFilterBar = useOpenFilterBar();
   const filterChecked = useFilterChecked();
 
-  const [selectedPrice, setSelectedPrice] = useState({
-    from: 0,
-    to: 2500,
-  });
-
   const toggleDrawer =
     (isOpen: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
       if (
@@ -153,6 +147,10 @@ const Products = (): ReactElement => {
   }, [location]);
 
   useEffect((): void => {
+    setPageNumber(1);
+  }, [filterChecked]);
+
+  useEffect((): void => {
     setPageNumber(returnNumberFromPath(location.pathname));
     setArrayForBread([]);
     if (!Object.values(params).includes('search')) {
@@ -204,6 +202,7 @@ const Products = (): ReactElement => {
     sortType,
     sortDirection,
     categoryFilter,
+    pageNumber,
   ]);
 
   return (
