@@ -20,6 +20,7 @@ export interface IProductsState {
   };
   priceValue: number[];
   openFilterBar: boolean;
+  filterChecked: boolean;
 }
 
 const initialState: IProductsState = {
@@ -35,6 +36,7 @@ const initialState: IProductsState = {
   productsByAttributeKey: { key: 'none' },
   priceValue: [0, 2500],
   openFilterBar: false,
+  filterChecked: false,
 };
 
 export const productsSlice = createSlice({
@@ -93,6 +95,9 @@ export const productsSlice = createSlice({
     setOpenFilterBar(state: IProductsState, action: PayloadAction<boolean>) {
       state.openFilterBar = action.payload;
     },
+    setFilterChecked(state: IProductsState, action: PayloadAction<boolean>) {
+      state.filterChecked = action.payload;
+    },
   },
 });
 
@@ -108,5 +113,6 @@ export const {
   categoryChecked,
   setPriceValue,
   setOpenFilterBar,
+  setFilterChecked,
 } = productsSlice.actions;
 export default productsSlice.reducer;

@@ -16,6 +16,7 @@ import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
 import EuroIcon from '@mui/icons-material/Euro';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AdjustIcon from '@mui/icons-material/Adjust';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import { getProducts } from '../../api/calls/products/getProducts';
@@ -27,6 +28,7 @@ import {
   useAppDispatch,
   useAttributeKey,
   useCategoryChecked,
+  useFilterChecked,
   useOpenFilterBar,
   usePriceValue,
   useSearchText,
@@ -91,6 +93,7 @@ const Products = (): ReactElement => {
   const searchTextFromState: string | null = useSearchText();
 
   const openFilterBar = useOpenFilterBar();
+  const filterChecked = useFilterChecked();
 
   const [selectedPrice, setSelectedPrice] = useState({
     from: 0,
@@ -252,8 +255,9 @@ const Products = (): ReactElement => {
         direction={'row'}
         width={'100%'}
         justifyContent={'space-between'}
+        alignItems={'center'}
       >
-        <Stack direction="row" width="100%">
+        <Stack direction="row" alignItems={'center'}>
           <IconButton
             onClick={toggleDrawer(true)}
             color="primary"
@@ -264,6 +268,13 @@ const Products = (): ReactElement => {
               Filter
             </Typography>
           </IconButton>
+          <AdjustIcon
+            fontSize="small"
+            style={{
+              display: !filterChecked ? 'none' : 'block',
+              color: '#A70000',
+            }}
+          />
         </Stack>
 
         <SwipeableDrawer
@@ -274,6 +285,12 @@ const Products = (): ReactElement => {
         >
           <FilterBar />
         </SwipeableDrawer>
+
+        <Typography variant="subtitle2">
+          {searchTextFromState !== null
+            ? `Matched: ${searchTextFromState}`
+            : ''}
+        </Typography>
 
         <Stack direction={'row'}>
           <Checkbox

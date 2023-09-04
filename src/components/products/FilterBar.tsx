@@ -2,11 +2,7 @@ import {
   Box,
   Button,
   Checkbox,
-  Divider,
-  FormControl,
   FormControlLabel,
-  FormGroup,
-  FormLabel,
   Radio,
   RadioGroup,
   Slider,
@@ -19,17 +15,13 @@ import {
   attributeKey,
   setOpenFilterBar,
   setPriceValue,
+  setFilterChecked,
 } from '../../store/reducers/ProductsSlice';
 import {
   useAppDispatch,
   useAttributeKey,
   usePriceValue,
 } from '../../helpers/hooks/Hooks';
-
-interface SelectedPrice {
-  from: number;
-  to: number;
-}
 
 function valuetext(value: number): string {
   return `${value}`;
@@ -74,6 +66,7 @@ export default function FilterBar(): React.ReactElement {
       TempArray.push('ce1f8f50-574d-4dd4-b912-7608b2017328');
     dispatch(categoryChecked(TempArray));
     dispatch(setOpenFilterBar(false));
+    dispatch(setFilterChecked(true));
   };
 
   const resetFilterProps = (): void => {
@@ -83,6 +76,7 @@ export default function FilterBar(): React.ReactElement {
     setNewCollectionChecked(false);
     setWeddingCollectionChecked(false);
     dispatch(categoryChecked([]));
+    dispatch(setFilterChecked(false));
   };
 
   const handleCheckboxChange = (

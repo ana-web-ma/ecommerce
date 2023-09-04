@@ -87,7 +87,7 @@ const createQueryArgs = (props: PropsType): QueryArgs => {
     limit: props.limit === undefined ? 5 : props.limit,
     offset,
     sort:
-      props.sort !== undefined && props.text === undefined
+      props.sort !== undefined
         ? `${props.sort.field} ${props.sort.order}`
         : 'id asc',
     filter: createFilters(props),
