@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   TextField,
   Button,
@@ -17,6 +17,9 @@ import { useForm } from 'react-hook-form';
 import { updateMe } from '../../api/calls/customers/update/updateMe';
 import { CustomDialog } from '../register/DialogModule';
 import { RegisterSchema } from '../../helpers/yup/Yup';
+import { useAppDispatch, useCustomer } from '../../helpers/hooks/Hooks';
+import { getMe } from '../../api/calls/getMe';
+import { setCustomer } from '../../store/reducers/CustomerSlice';
 
 function Addresses(): ReactElement {
   const {
@@ -26,63 +29,69 @@ function Addresses(): ReactElement {
     mode: 'onChange',
     resolver: yupResolver(RegisterSchema),
   });
-  const ProfileData = localStorage.getItem('EPERFUME_CUSTOMER_DATA');
-  let ProfileDataObj = null;
-  if (ProfileData !== null) {
-    ProfileDataObj = JSON.parse(ProfileData);
-  }
-  const { id } = ProfileDataObj;
+  const dispatch = useAppDispatch();
 
-  const shippingId = ProfileDataObj.shippingAddressIds[0];
-  let shippingIndex = 0;
-  if (ProfileDataObj.addresses[0].id === shippingId) {
-    shippingIndex = 0;
-  } else if (ProfileDataObj.addresses[1].id === shippingId) {
-    shippingIndex = 1;
-  }
-  const [shippingStreet, setShippingStreet] = useState(
-    ProfileDataObj.addresses[shippingIndex].streetName,
-  );
-  const [shippingCity, setShippingCity] = useState(
-    ProfileDataObj.addresses[shippingIndex].city,
-  );
-  const [shippingCode, setShippingCode] = useState(
-    ProfileDataObj.addresses[shippingIndex].postalCode,
-  );
-  const [shippingCountry, setShippingCountry] = useState(
-    ProfileDataObj.addresses[shippingIndex].country,
-  );
-  const [isDefaultShipping, setIsDefaultShipping] = useState(
-    ProfileDataObj.shippingAddressIds[0] ===
-      ProfileDataObj.defaultShippingAddressId,
-  );
+  const ProfileDataId = localStorage.getItem('EPERFUME_CUSTOMER_ID');
 
-  const billingId = ProfileDataObj.billingAddressIds[0];
-  let billingIndex = 0;
-  if (ProfileDataObj.addresses[0].id === billingId) {
-    billingIndex = 0;
-  } else if (ProfileDataObj.addresses[1].id === billingId) {
-    billingIndex = 1;
-  }
-  const [billingStreet, setBillingStreet] = useState(
-    ProfileDataObj.addresses[billingIndex].streetName,
-  );
-  const [billingCity, setBillingCity] = useState(
-    ProfileDataObj.addresses[billingIndex].city,
-  );
-  const [billingCode, setBillingCode] = useState(
-    ProfileDataObj.addresses[billingIndex].postalCode,
-  );
-  const [billingCountry, setBillingCountry] = useState(
-    ProfileDataObj.addresses[billingIndex].country,
-  );
-  const [isDefaultBilling, setIsDefaultBilling] = useState(
-    ProfileDataObj.billingAddressIds[0] ===
-      ProfileDataObj.defaultBillingAddressId,
-  );
+  const ProfileDataObj = useCustomer();
+
+  const id = ProfileDataObj?.id;
+
+  const [shippingId, setShippingId] = useState<string>('');
+  const [billingId, setBillingId] = useState<string>('');
+  const [shippingStreet, setShippingStreet] = useState<string | undefined>('');
+  const [shippingCity, setShippingCity] = useState<string | undefined>('');
+  const [shippingCode, setShippingCode] = useState<string | undefined>('');
+  const [shippingCountry, setShippingCountry] = useState('FR');
+  const [isDefaultShipping, setIsDefaultShipping] = useState<boolean>(false);
+
+  const [billingStreet, setBillingStreet] = useState<string | undefined>('');
+  const [billingCity, setBillingCity] = useState<string | undefined>('');
+  const [billingCode, setBillingCode] = useState<string | undefined>('');
+  const [billingCountry, setBillingCountry] = useState('FR');
+  const [isDefaultBilling, setIsDefaultBilling] = useState<boolean>(false);
 
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingBilling, setIsEditingBilling] = useState(false);
+
+  useEffect(() => {
+    if (ProfileDataId !== null) {
+      getMe({ id: JSON.parse(ProfileDataId) })
+        .then((data) => {
+          dispatch(setCustomer(data.body));
+          if (data.body.shippingAddressIds !== undefined)
+            setShippingId(data.body.shippingAddressIds[0]);
+          let shippingIndex = 0;
+          if (data.body.addresses[0].id === shippingId) {
+            shippingIndex = 0;
+          } else if (data.body.addresses[1].id === shippingId) {
+            shippingIndex = 1;
+          }
+          if (data.body.billingAddressIds !== undefined)
+            setBillingId(data.body.billingAddressIds[0]);
+          let billingIndex = 0;
+          if (data.body.addresses[0].id === billingId) {
+            billingIndex = 0;
+          } else if (data.body.addresses[1].id === billingId) {
+            billingIndex = 1;
+          }
+          setShippingStreet(data.body.addresses[shippingIndex].streetName);
+          setShippingCity(data.body.addresses[shippingIndex].city);
+          setShippingCode(data.body.addresses[shippingIndex].postalCode);
+          setShippingCountry(data.body.addresses[shippingIndex].country);
+          setIsDefaultShipping(
+            shippingId === data.body.defaultShippingAddressId,
+          );
+
+          setBillingStreet(data.body.addresses[billingIndex].streetName);
+          setBillingCity(data.body.addresses[billingIndex].city);
+          setBillingCode(data.body.addresses[billingIndex].postalCode);
+          setBillingCountry(data.body.addresses[billingIndex].country);
+          setIsDefaultBilling(billingId === data.body.defaultBillingAddressId);
+        })
+        .catch(console.error);
+    }
+  }, []);
 
   const handleChangeShippingStreet = (
     event: ChangeEvent<HTMLInputElement>,
@@ -100,7 +109,7 @@ function Addresses(): ReactElement {
     setShippingCode(event.target.value);
   };
   const handleChangeShippingCountry = (
-    event: SelectChangeEvent<HTMLInputElement>,
+    event: SelectChangeEvent<string>,
   ): void => {
     setShippingCountry(event.target.value);
   };
@@ -121,7 +130,7 @@ function Addresses(): ReactElement {
     setBillingCode(event.target.value);
   };
   const handleChangeBillingCountry = (
-    event: SelectChangeEvent<HTMLInputElement>,
+    event: SelectChangeEvent<string>,
   ): void => {
     setBillingCountry(event.target.value);
   };
@@ -137,13 +146,13 @@ function Addresses(): ReactElement {
   };
 
   const handleToggleEditSave = async (): Promise<void> => {
-    if (isEditing && isDefaultShipping) {
+    if (ProfileDataId !== null && isEditing && isDefaultShipping) {
       updateMe({
-        id,
+        id: JSON.parse(ProfileDataId),
         changeAddress: {
           addressId: shippingId,
           address: {
-            country: shippingCountry,
+            country: typeof shippingCountry === 'string' ? shippingCountry : '',
             city: shippingCity,
             streetName: shippingStreet,
             postalCode: shippingCode,
@@ -154,22 +163,19 @@ function Addresses(): ReactElement {
         },
       })
         .then((res) => {
-          localStorage.setItem(
-            'EPERFUME_CUSTOMER_DATA',
-            JSON.stringify(res.body),
-          );
+          dispatch(setCustomer(res.body));
           openDialog('Successfully', 'Address changed');
         })
         .catch((err) => {
           openDialog('Error', err.toString());
         });
-    } else if (isEditing && !isDefaultShipping) {
+    } else if (ProfileDataId !== null && isEditing && !isDefaultShipping) {
       updateMe({
-        id,
+        id: JSON.parse(ProfileDataId),
         changeAddress: {
           addressId: shippingId,
           address: {
-            country: shippingCountry,
+            country: typeof shippingCountry === 'string' ? shippingCountry : '',
             city: shippingCity,
             streetName: shippingStreet,
             postalCode: shippingCode,
@@ -180,10 +186,7 @@ function Addresses(): ReactElement {
         },
       })
         .then((res) => {
-          localStorage.setItem(
-            'EPERFUME_CUSTOMER_DATA',
-            JSON.stringify(res.body),
-          );
+          dispatch(setCustomer(res.body));
           openDialog('Successfully', 'Address changed');
         })
         .catch((err) => {
@@ -198,13 +201,13 @@ function Addresses(): ReactElement {
     });
   };
   const handleToggleEditSaveBilling = async (): Promise<void> => {
-    if (isEditingBilling && isDefaultBilling) {
+    if (ProfileDataId !== null && isEditingBilling && isDefaultBilling) {
       updateMe({
-        id,
+        id: JSON.parse(ProfileDataId),
         changeAddress: {
           addressId: billingId,
           address: {
-            country: billingCountry,
+            country: typeof billingCountry === 'string' ? billingCountry : '',
             city: billingCity,
             streetName: billingStreet,
             postalCode: billingCode,
@@ -215,22 +218,23 @@ function Addresses(): ReactElement {
         },
       })
         .then((res) => {
-          localStorage.setItem(
-            'EPERFUME_CUSTOMER_DATA',
-            JSON.stringify(res.body),
-          );
+          dispatch(setCustomer(res.body));
           openDialog('Successfully', 'Address changed');
         })
         .catch((err) => {
           openDialog('Error', err.toString());
         });
-    } else if (isEditingBilling && !isDefaultBilling) {
+    } else if (
+      ProfileDataId !== null &&
+      isEditingBilling &&
+      !isDefaultBilling
+    ) {
       updateMe({
-        id,
+        id: JSON.parse(ProfileDataId),
         changeAddress: {
           addressId: billingId,
           address: {
-            country: billingCountry,
+            country: typeof billingCountry === 'string' ? billingCountry : '',
             city: billingCity,
             streetName: billingStreet,
             postalCode: billingCode,
@@ -241,10 +245,7 @@ function Addresses(): ReactElement {
         },
       })
         .then((res) => {
-          localStorage.setItem(
-            'EPERFUME_CUSTOMER_DATA',
-            JSON.stringify(res.body),
-          );
+          dispatch(setCustomer(res.body));
           openDialog('Successfully', 'Address changed');
         })
         .catch((err) => {
@@ -259,22 +260,21 @@ function Addresses(): ReactElement {
     });
   };
   const handleDeleteClick = async (): Promise<void> => {
-    // updateMe({
-    //   id,
-    //   removeAddress: {
-    //     addressId: shippingId,
-    //   },
-    // })
-    //   .then((res) => {
-    //     localStorage.setItem(
-    //       'EPERFUME_CUSTOMER_DATA',
-    //       JSON.stringify(res.body),
-    //     );
-    //     console.log(res);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+    if (ProfileDataId !== null) {
+      updateMe({
+        id: JSON.parse(ProfileDataId),
+        removeAddress: {
+          addressId: shippingId,
+        },
+      })
+        .then((res) => {
+          dispatch(setCustomer(res.body));
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
   const handleClickDelete = (): void => {
     handleDeleteClick().catch((error) => {
