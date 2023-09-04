@@ -64,7 +64,11 @@ const router = createBrowserRouter([
         element: <Catalog />,
         children: [
           {
-            path: '/catalog/:id',
+            path: ':id',
+            element: <Catalog />,
+          },
+          {
+            path: ':category/:id',
             element: <Catalog />,
           },
         ],
@@ -72,6 +76,12 @@ const router = createBrowserRouter([
       {
         path: '/product',
         element: <ProductPage />,
+        children: [
+          {
+            path: ':key',
+            element: <ProductPage />,
+          },
+        ],
       },
     ],
   },

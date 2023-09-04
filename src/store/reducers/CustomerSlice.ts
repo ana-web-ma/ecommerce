@@ -5,6 +5,7 @@ import { tokenCache } from '../../api/tokenCache';
 interface ICustomerState {
   customer: Customer | null;
   id: string | null;
+  searchText: string | null;
   isLogged: boolean;
 }
 
@@ -12,6 +13,7 @@ const initialState: ICustomerState = {
   customer: null,
   isLogged: localStorage.getItem('EPERFUME_CUSTOMER_ID') !== null,
   id: null,
+  searchText: null,
 };
 
 interface ILoginData {
@@ -43,8 +45,12 @@ export const customerSlice = createSlice({
       tokenCache.set({ expirationTime: 0, token: '' });
       localStorage.removeItem('EPERFUME_CUSTOMER_ID');
     },
+    search(state: ICustomerState, action: PayloadAction<string>) {
+      // eslint-disable-next-line no-param-reassign
+      state.searchText = action.payload;
+    },
   },
 });
 
-export const { login, logout, setCustomer } = customerSlice.actions;
+export const { login, logout, search, setCustomer } = customerSlice.actions;
 export default customerSlice.reducer;
