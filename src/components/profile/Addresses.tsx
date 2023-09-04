@@ -330,6 +330,7 @@ function Addresses(): ReactElement {
             >
               Delete
             </Button>
+            <Divider />
           </Box>
         );
       })}
@@ -447,19 +448,6 @@ function Addresses(): ReactElement {
           </Button>
         </Box>
       </Modal>
-      <FormControl fullWidth variant="filled" style={{ margin: '16px 0' }}>
-        <InputLabel>Country</InputLabel>
-        <Select
-          label="Country"
-          value={countryChange}
-          onInput={(e: ChangeEvent<HTMLInputElement>) => {
-            setCountry(e.target.value);
-          }}
-        >
-          <MenuItem value={'US'}>USA</MenuItem>
-          <MenuItem value={'FR'}>France</MenuItem>
-        </Select>
-      </FormControl>
     </div>
   );
 }
