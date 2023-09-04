@@ -206,6 +206,12 @@ const Product = (): ReactElement => {
           >
             {productData?.masterData.current.name['en-US']}
           </Typography>
+          <Typography mb={2} variant="subtitle2">
+            {
+              productData?.masterData.current.masterVariant.attributes?.[0]
+                ?.value.label
+            }
+          </Typography>
           <Collapse in={expanded} timeout="auto" collapsedSize="20px">
             {productData?.masterData.current.description != null &&
               productData.masterData.current.description['en-US']}
