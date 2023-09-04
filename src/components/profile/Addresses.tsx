@@ -117,6 +117,7 @@ function Addresses(): ReactElement {
 
   const handleToggleEditSave = async (id: string): Promise<void> => {
     if (ProfileDataId !== null) {
+      console.log(saveId, id);
       updateMe({
         id: JSON.parse(ProfileDataId),
         changeAddress: {
@@ -129,7 +130,7 @@ function Addresses(): ReactElement {
           },
         },
         setDefaultShippingAddress: {
-          addressId: shippingId,
+          addressId: id,
         },
       })
         .then((res) => {
@@ -143,6 +144,7 @@ function Addresses(): ReactElement {
   };
 
   const toggleHandleEditSave = (id: string): void => {
+    setOpenModal2(false);
     handleToggleEditSave(id).catch((error) => {
       console.error('Error handling save click:', error);
     });
@@ -206,6 +208,7 @@ function Addresses(): ReactElement {
   //     console.error('Error handling save click:', error);
   //   });
   // };
+
   const handleDeleteClick = async (id: string): Promise<void> => {
     if (ProfileDataId !== null) {
       updateMe({
@@ -230,9 +233,6 @@ function Addresses(): ReactElement {
     });
   };
 
-  const handleDeleteClickBilling = (): void => {
-    // logic
-  };
   return (
     <div style={{ minHeight: '800px' }}>
       {ProfileDataObj?.addresses.map((address, ind) => {
@@ -312,6 +312,7 @@ function Addresses(): ReactElement {
                 );
                 setCountry(address.country);
                 setIsDefault(defaultTitle !== '');
+                setSaveId(address.id !== undefined ? address.id : '');
                 setOpenModal2(true);
               }}
             >
@@ -439,7 +440,7 @@ function Addresses(): ReactElement {
           <Button
             startIcon={<Save />}
             onClick={() => {
-              // handleSave(deleteId);
+              toggleHandleEditSave(saveId);
             }}
           >
             Save
