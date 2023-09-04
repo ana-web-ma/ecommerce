@@ -13,3 +13,7 @@
     var(--swiper-pagination-bullet-size, 20px)
   );
 }
+
+/* .MuiGrid-item img {
+  border: 1px solid #000000;
+} */

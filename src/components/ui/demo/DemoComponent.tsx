@@ -19,6 +19,7 @@ import { getMe } from '../../../api/calls/getMe';
 import { getProducts } from '../../../api/calls/products/getProducts';
 import { getCategories } from '../../../api/calls/categories/getCategories';
 import { getCategoryById } from '../../../api/calls/categories/getCategoryById';
+import { updatePassword } from '../../../api/calls/customers/update/updatePassword';
 
 function DemoComponent(): ReactElement {
   const user = {
@@ -141,6 +142,23 @@ function DemoComponent(): ReactElement {
       .catch(console.log);
   };
 
+  const handleUpdPasswordSubmit = (): void => {
+    authPasswordCustomer({ email: 'a@a.aa', password: '!1Aaaaab' })
+      .then((customerResp) => {
+        console.log('customerResp', customerResp);
+        updatePassword({
+          id: customerResp.body.customer.id,
+          currentPassword: '!1Aaaaab',
+          newPassword: '!1Aaaaaa',
+        })
+          .then((updateResp) => {
+            console.log('updateResp', updateResp);
+          })
+          .catch(console.log);
+      })
+      .catch(console.log);
+  };
+
   return (
     <>
       <Container>
@@ -149,6 +167,9 @@ function DemoComponent(): ReactElement {
         </Button>
         <Button variant="contained" onClick={handleUpdateSubmit}>
           UPDATE USER
+        </Button>
+        <Button variant="outlined" onClick={handleUpdPasswordSubmit}>
+          Chsnge password
         </Button>
         <Button variant="outlined" onClick={handleSubmit}>
           ADD USER

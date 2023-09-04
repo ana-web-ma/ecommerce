@@ -91,12 +91,6 @@ const createQueryArgs = (props: PropsType): QueryArgs => {
         ? `${props.sort.field} ${props.sort.order}`
         : 'id asc',
     filter: createFilters(props),
-    // markMatchingVariants: true,
-    // localeProjection: 'en-US',
-
-    // staged: true,
-    // fuzzy: true,
-    // fuzzyLevel: 1,
     'text.en-US': props.text,
   };
 };
@@ -114,22 +108,25 @@ export const getProducts = async (
 // How to use:
 
 // getProducts({
-//   limit: 100,
-//   pageNumber: 0,
+//   limit: 6,
+//   pageNumber,
 //   sort: {
-//     field: 'id',
-//     order: 'desc',
+//     field: sortType ? 'price' : 'name.en-US',
+//     order: sortDirection ? 'asc' : 'desc',
 //   },
 //   filter: {
-//     productsByCategoryId: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
-//     // productByKey: { key: '34 Boulevard Saint Germain' },
-//     productsByPrice: {
-//       from: 0,
-//       to: 10000,
+//     productsByCategoryId: {
+//       ids: createCategoryArr(),
 //     },
+//     productsByAttributeKey: { key: selectedAttribute },
+//     productsByPrice: selectedPrice,
 //   },
+//   text: searchTextFromState !== null ? searchTextFromState : undefined,
 // })
 //   .then((resp) => {
-//     console.log('resp', resp.body.results);
+//     console.log('Resp', resp.body.results);
+//     dispatch(allProducts(resp.body));
 //   })
-//   .catch(console.log);
+//   .catch((err) => {
+//     throw new Error(err);
+//   });
