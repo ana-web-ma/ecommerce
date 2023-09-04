@@ -8,91 +8,355 @@ import {
   Stack,
   Typography,
   Link as MuiLink,
+  Checkbox,
+  IconButton,
+  SwipeableDrawer,
 } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
+import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
+import EuroIcon from '@mui/icons-material/Euro';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { type ProductProjection } from '@commercetools/platform-sdk';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import ProductCard from './ProductCard';
-import { getProducts } from '../../api/calls/products/getProducts';
+import {
+  type FilterPropsType,
+  getProducts,
+} from '../../api/calls/products/getProducts';
+import { getCategories } from '../../api/calls/categories/getCategories';
+import { getCategoryById } from '../../api/calls/categories/getCategoryById';
+import NavigationCatalog from './NavigationCatalog';
+import { getCategoryByKey } from '../../api/calls/categories/getCategoriesByKey';
+import {
+  useAllProducts,
+  useAppDispatch,
+  useAttributeKey,
+  useCategoryChecked,
+  useGetPageNumber,
+  useSearchText,
+  useSortDirection,
+  useSortType,
+} from '../../helpers/hooks/Hooks';
+import {
+  allProducts,
+  setPageNumber,
+  search,
+  categoryRequest,
+  sortDirectionChecked,
+  sortTypeChecked,
+} from '../../store/reducers/ProductsSlice';
+import FilterIcon from '../ui/icons/FilterIcon';
+import FilterBar from './FilterBar';
 
-const getPageQty = (total: number): number => Math.ceil(total / 6);
+const returnNumberFromPath = (value: string | undefined): number => {
+  // если в url path есть '=', то вернет значение с номером страницы, иначе 1.
+  if (value !== undefined) {
+    const split = value.split('=')[1];
+    return split !== undefined ? Number(split) : 1;
+  }
+  return 1;
+};
 
-function handleClick(
-  event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-): void {
-  console.info('You clicked a breadcrumb.');
+const parentPath = (array: (string | undefined)[]): string => {
+  // Принимает значения params, вернет название категории если оно есть в строке url
+  if (array === undefined || array.length === 0) return '';
+  if (array[0] !== undefined) {
+    return array[0].includes('=') ? '' : `/${array[0]}`;
+  }
+  return '';
+};
+
+interface IBreadCrump {
+  name: string;
+  path: string;
 }
 
 const Products = (): ReactElement => {
+  const params = useParams();
   const location = useLocation();
-  const navigate = useNavigate();
-  const [products, setProducts] = useState<ProductProjection[]>([]);
-  const [query, setQuery] = useState('react');
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(1);
-  const [pageQty, setPageQty] = useState(0);
+  const navigation = useNavigate();
+  const dispatch = useAppDispatch();
+  const pageNumber = useGetPageNumber();
+  const [arrayForBread, setArrayForBread] = useState<IBreadCrump[]>([]);
+  const [titlePage, setTitlePage] = useState('All products');
+
+  const categoryFilter = useCategoryChecked();
+  const attributeByKey = useAttributeKey();
+
+  const sortDirection = useSortDirection();
+  const sortType = useSortType();
+
+  const { products } = useAllProducts();
+  const { totalCount } = useAllProducts();
+  const { pageQty } = useAllProducts();
+
+  const { category } = useAllProducts();
+
+  const searchTextFromState: string | null = useSearchText();
+
+  const [openFilterBar, setOpenFilterBar] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [selectedAttribute, setSelectedAttribute] = useState(
+    'none' as 'none' | 'floral' | 'woody' | 'citrus' | 'amber',
+  );
+  const [selectedSummerCollection, setSelectedSummerCollection] =
+    useState(false);
+  const [selectedWeddingCollection, setSelectedWeddingCollection] =
+    useState(false);
+  const [selectedPrice, setSelectedPrice] = useState({
+    from: 0,
+    to: 2500,
+  });
+
+  const updateCatalog = (): void => {
+    console.log({
+      searchText,
+      selectedAttribute,
+      selectedSummerCollection,
+      selectedWeddingCollection,
+      selectedPrice,
+    });
+  };
+  const pageCurrent = !Number.isNaN(Number(params.id)) ? Number(params.id) : 1;
+
+  const filterObj: FilterPropsType = {
+    productsByPrice: selectedPrice,
+  };
+  // if (
+  //   selectedAttribute !== 'none' &&
+  //   filterObj.productsByAttributeKey !== undefined
+  // )
+  //   filterObj.productsByAttributeKey.key = selectedAttribute;
+
+  const toggleDrawer =
+    (isOpen: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === 'keydown' &&
+        ((event as React.KeyboardEvent).key === 'Tab' ||
+          (event as React.KeyboardEvent).key === 'Shift')
+      ) {
+        return;
+      }
+
+      setOpenFilterBar(isOpen);
+    };
+
+  // console.log({
+  //   selectedFloralAttr,
+  //   selectedWoodyAttr,
+  //   selectedCitrusAttr,
+  //   selectedAmberAttr,
+  //   selectedSummerCollection,
+  //   selectedWeddingCollection,
+  // selectedPrice,
+  // });
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    setPage(Number(location.pathname.split('/')[2]) || 1);
+    const categoryFromUrl = parentPath(Object.values(params)).substring(1);
+    if (categoryFromUrl !== 'search' && categoryFromUrl !== '') {
+      getCategoryByKey({ key: parentPath(Object.values(params)).substring(1) })
+        .then((resp) => {
+          dispatch(categoryRequest(resp.body));
+          const temp = [
+            {
+              name: resp.body.name['en-US'],
+              path: '/catalog',
+            },
+          ];
+          if (resp.body.ancestors.length !== 0) {
+            getCategoryById({ id: resp.body.ancestors[0].id })
+              .then((response) => {
+                temp.unshift({
+                  name: response.body.name['en-US'],
+                  path: `/${response.body.slug['en-US']}`,
+                });
+                setArrayForBread(temp);
+              })
+              .catch((err) => {
+                throw new Error(err);
+              });
+          } else setArrayForBread(temp);
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
+    } else if (categoryFromUrl === 'search') {
+      setTitlePage('Search results');
+      dispatch(categoryRequest(null));
+    } else {
+      dispatch(categoryRequest(null));
+      setTitlePage('All products');
+    }
+  }, [location]);
+
+  useEffect((): void => {
+    setArrayForBread([]);
+    if (!Object.values(params).includes('search')) {
+      dispatch(search(null)); // если уходим со страницы search, обнуляем поле в store, где храним значение с инпута
+    } else if (
+      Object.values(params).includes('search') &&
+      searchTextFromState === null
+    ) {
+      dispatch(search(null));
+      console.log('Поиск не дал результатов'); // ToDo: idk how to do it
+    }
+    dispatch(setPageNumber(returnNumberFromPath(location.pathname)));
+  }, [location]);
+
+  useEffect((): void => {
     getProducts({
       limit: 6,
-      pageNumber: page,
+      pageNumber,
       sort: {
-        field: 'id',
-        order: 'desc',
+        field: sortType ? 'price' : 'name.en-US',
+        order: sortDirection ? 'asc' : 'desc',
       },
+      filter:
+        category !== null
+          ? {
+              productsByCategoryId: {
+                id: category.id,
+              },
+            }
+          : {},
+      text: searchTextFromState !== null ? searchTextFromState : undefined,
     })
       .then((resp) => {
-        setProducts(resp.body.results);
-        if (resp.body.total != null) {
-          setTotal(resp.body.total);
-          setPageQty(getPageQty(resp.body.total));
-        }
+        dispatch(allProducts(resp.body));
       })
-      .catch(console.log);
-  }, [query, page, location]);
-
-  useEffect(() => {
-    if (page > pageQty && page !== 1) navigate('/404');
-  }, [page, pageQty, location]);
+      .catch((err) => {
+        throw new Error(err);
+      });
+  }, [
+    pageNumber,
+    location,
+    category,
+    searchTextFromState,
+    sortType,
+    sortDirection,
+  ]);
 
   return (
     <>
-      <Stack
-        mt={3}
-        direction="row"
-        gap={1}
-        width="100%"
-        justifyContent="start"
-        alignItems="end"
-      >
-        <Typography variant="h2">All products</Typography>
-        <Typography pb={0.7} variant="body1">
-          ({total} Products)
+      <Stack mt={3} direction="row" gap={0.5} alignItems="end">
+        <Typography variant="h2">
+          {category?.name['en-US'] ?? titlePage}
+        </Typography>
+        <Typography pb={0.4} sx={{ whiteSpace: 'nowrap' }} variant="body2">
+          ( {totalCount} Products)
         </Typography>
       </Stack>
+      <NavigationCatalog category={category?.name['en-US']} />
 
-      <div role="presentation" onClick={handleClick}>
+      <div style={{ width: '100%' }} role="presentation">
         <Breadcrumbs aria-label="breadcrumb">
-          <MuiLink underline="hover" color="inherit" href="/">
+          <MuiLink component={Link} to="/">
             Home
           </MuiLink>
-          <MuiLink underline="hover" color="inherit" href="/catalog">
-            Catalog
-          </MuiLink>
-          <Typography color="text.primary">Breadcrumbs</Typography>
+          {category !== undefined || searchTextFromState !== null ? (
+            <MuiLink component={Link} to="/catalog">
+              Catalog
+            </MuiLink>
+          ) : (
+            <Typography key="bread-catalog">Catalog</Typography>
+          )}
+          {searchTextFromState !== null ? (
+            <Typography key="bread-catalog">Search</Typography>
+          ) : null}
+          {arrayForBread.map((bread, ind, arr) => {
+            if (ind === 0 && arr.length === 2) {
+              return (
+                <MuiLink
+                  component={Link}
+                  key={`bread-${ind}`}
+                  to={`/catalog${bread.path}`}
+                >
+                  {bread.name}
+                </MuiLink>
+              );
+            }
+            return <Typography key={`bread-title`}>{bread.name}</Typography>;
+          })}
         </Breadcrumbs>
       </div>
 
-      <Stack direction="row" justifyContent="space-between"></Stack>
+      <Stack
+        sx={{ position: 'relative' }}
+        direction={'row'}
+        width={'100%'}
+        justifyContent={'space-between'}
+      >
+        <Stack direction="row" width="100%">
+          <IconButton
+            onClick={toggleDrawer(true)}
+            color="primary"
+            disabled={openFilterBar}
+          >
+            <FilterIcon color={openFilterBar ? 'disabled' : 'primary'} />
+            <Typography pl={1} variant="subtitle2">
+              Filter
+            </Typography>
+          </IconButton>
+        </Stack>
 
-      <Grid mt={2} container justifyContent="center" spacing={1}>
+        <SwipeableDrawer
+          anchor={'left'}
+          open={openFilterBar}
+          onClose={toggleDrawer(false)}
+          onOpen={toggleDrawer(true)}
+        >
+          <FilterBar
+            selectedPrice={selectedPrice}
+            setSelectedPrice={setSelectedPrice}
+            selectedAttribute={selectedAttribute}
+            setSelectedAttribute={setSelectedAttribute}
+            selectedSummerCollection={selectedSummerCollection}
+            setSelectedSummerCollection={setSelectedSummerCollection}
+            selectedWeddingCollection={selectedWeddingCollection}
+            setSelectedWeddingCollection={setSelectedWeddingCollection}
+            updateCatalog={updateCatalog}
+          />
+        </SwipeableDrawer>
+
+        <Stack direction={'row'}>
+          <Checkbox
+            sx={{
+              '& .MuiSvgIcon-root': {
+                color: 'black',
+              },
+            }}
+            icon={<SortByAlphaIcon />}
+            checkedIcon={<EuroIcon />}
+            checked={sortType}
+            onChange={(event): void => {
+              dispatch(sortTypeChecked(event.target.checked));
+            }}
+          />
+          <Checkbox
+            sx={{
+              '& .MuiSvgIcon-root': {
+                color: 'black',
+              },
+            }}
+            icon={<ExpandMoreIcon />}
+            checkedIcon={<ExpandLessIcon />}
+            checked={sortDirection}
+            onChange={(event): void => {
+              dispatch(sortDirectionChecked(event.target.checked));
+            }}
+          />
+        </Stack>
+      </Stack>
+
+      <Grid container justifyContent="center" spacing={1}>
         {products.map((card, index) => {
           const cardData = {
             id: card.id,
+            attribute:
+              card.masterVariant.attributes !== undefined &&
+              card.masterVariant.attributes.length !== 0
+                ? card.masterVariant.attributes[0].value.key
+                : '',
             image:
               card.masterVariant.images !== undefined
                 ? card.masterVariant.images[0].url
@@ -102,18 +366,20 @@ const Products = (): ReactElement => {
                 ? card.masterVariant.images[1].url
                 : null,
             name: card.key,
-            category: 'Unique',
-            price: '23$',
+            keyValue: card.key !== undefined ? card.key : '',
+            description:
+              card.description !== undefined ? card.description['en-US'] : '',
+            price: card.masterVariant.prices,
           };
           if (index <= 1) {
             return (
-              <Grid key={card.id} item xs={10} sm={12} md={9} lg={6}>
+              <Grid key={`catalog-${index}`} item xs={10} sm={12} md={9} lg={6}>
                 <ProductCard product={cardData} small={false} />
               </Grid>
             );
           }
           return (
-            <Grid key={card.id} item xs={10} sm={6} md={4.5} lg={3}>
+            <Grid key={`catalog-${index}`} item xs={10} sm={6} md={4.5} lg={3}>
               <ProductCard product={cardData} small={true} />
             </Grid>
           );
@@ -122,15 +388,21 @@ const Products = (): ReactElement => {
 
       <Pagination
         count={pageQty}
-        page={page}
+        page={pageNumber}
         shape="rounded"
         onChange={(_, number) => {
-          setPage(number);
+          dispatch(setPageNumber(number));
         }}
         renderItem={(item) => (
           <PaginationItem
             component={Link}
-            to={item.page !== null ? `/catalog/${item.page}` : '`/catalog/1`'}
+            to={
+              item.page !== null
+                ? `/catalog${parentPath(Object.values(params))}/page=${
+                    item.page
+                  }`
+                : `/catalog/`
+            }
             {...item}
           />
         )}

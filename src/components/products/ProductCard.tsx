@@ -1,23 +1,29 @@
 import React, { useState, type ReactElement } from 'react';
 import {
-  ButtonBase,
   Fade,
   IconButton,
   Paper,
   Stack,
+  Tooltip,
   Typography,
   styled,
 } from '@mui/material';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import { NavLink } from 'react-router-dom';
+import { type Price, type Attribute } from '@commercetools/platform-sdk';
+import HighlightAltIcon from '@mui/icons-material/HighlightAlt';
+import PriceComponent from '../ui/Price';
 
 interface IProduct {
   id: string;
+  attribute: string;
+  category?: string;
+  keyValue: string;
   image?: string;
   image2?: string | null;
   name: string | undefined;
-  category: string;
-  price: string;
+  description: string;
+  price: Price[] | undefined;
 }
 
 interface IProductCard {
@@ -35,7 +41,6 @@ const Img = styled('img')({
 
 const ProductCard = (props: IProductCard): ReactElement => {
   const [hoverEffect, setHoverEffect] = useState(false);
-
   return (
     <>
       <Paper
@@ -51,10 +56,9 @@ const ProductCard = (props: IProductCard): ReactElement => {
       >
         <NavLink
           style={{ textDecoration: 'none', color: 'inherit' }}
-          to={`/catalog/${props.product.id}`}
-          key={props.product.id}
+          to={`/product/${props.product.keyValue}`}
         >
-          <Stack alignItems="center">
+          <Stack alignItems="center" sx={{ position: 'relative' }}>
             <Stack
               direction="row"
               width="100%"
@@ -63,15 +67,18 @@ const ProductCard = (props: IProductCard): ReactElement => {
             >
               <Typography
                 textAlign="left"
-                width="100%"
                 variant="subtitle2"
                 pl={1}
                 minHeight={30}
               >
-                {props.product.category !== undefined
-                  ? props.product.category
-                  : ''}
+                {props.product.attribute}
               </Typography>
+              <Tooltip title={props.product.description} placement="top">
+                <Stack direction={'row'} gap={1}>
+                  <HighlightAltIcon sx={{ fontSize: '20px' }} />
+                  <Typography variant="body2">Description</Typography>
+                </Stack>
+              </Tooltip>
               <IconButton
                 onClick={(): void => {
                   console.log('Add in bag');
@@ -81,7 +88,6 @@ const ProductCard = (props: IProductCard): ReactElement => {
               </IconButton>
             </Stack>
             <div
-              style={{ position: 'relative', width: 'auto' }}
               onMouseEnter={() => {
                 setHoverEffect(true);
               }}
@@ -90,7 +96,11 @@ const ProductCard = (props: IProductCard): ReactElement => {
               }}
             >
               <Fade
-                style={{ position: 'absolute' }}
+                style={{
+                  position: 'absolute',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                }}
                 timeout={600}
                 in={!hoverEffect}
               >
@@ -129,7 +139,11 @@ const ProductCard = (props: IProductCard): ReactElement => {
               alignItems="center"
             >
               <Typography variant="subtitle2">{props.product.name}</Typography>
-              <Typography variant="subtitle2">{props.product.price}</Typography>
+              {props.product.price !== undefined ? (
+                <PriceComponent price={props.product.price[0]} />
+              ) : (
+                ''
+              )}
             </Stack>
           </Stack>
         </NavLink>

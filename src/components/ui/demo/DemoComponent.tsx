@@ -19,6 +19,7 @@ import { getMe } from '../../../api/calls/getMe';
 import { getProducts } from '../../../api/calls/products/getProducts';
 import { getCategories } from '../../../api/calls/categories/getCategories';
 import { getCategoryById } from '../../../api/calls/categories/getCategoryById';
+import { updatePassword } from '../../../api/calls/customers/update/updatePassword';
 
 function DemoComponent(): ReactElement {
   const user = {
@@ -90,26 +91,40 @@ function DemoComponent(): ReactElement {
   };
 
   const handleProductsSubmit = (e: { preventDefault: () => void }): void => {
-    getProducts({
-      limit: 100,
-      pageNumber: 0,
-      sort: {
-        field: 'id',
-        order: 'desc',
-      },
-      filter: {
-        productsByCategoryId: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
-        // productByKey: { key: '34 Boulevard Saint Germain' },
-        productByPrice: {
-          from: 0,
-          to: 10000,
-        },
-      },
-    })
-      .then((resp) => {
-        console.log('resp', resp.body.results);
-      })
-      .catch(console.log);
+    // searchProducts({
+    //   text: 'eau des',
+    //   limit: 100,
+    //   pageNumber: 1,
+    //   // sort: {
+    //   //   field: 'id',
+    //   //   order: 'desc',
+    //   // },
+    // })
+    //   .then((resp) => {
+    //     console.log('resp', resp.body.results);
+    //   })
+    //   .catch(console.log);
+    // getProducts({
+    //   limit: 100,
+    //   pageNumber: 1,
+    //   sort: {
+    //     field: 'id',
+    //     order: 'desc',
+    //   },
+    //   filter: {
+    //     // productsByCategoryId: { id: '8c4a5815-b067-4f86-b565-9409d38672d3' },
+    //     // productByKey: { key: '34 Boulevard Saint Germain' },
+    //     // productByPrice: {
+    //     //   from: 0,
+    //     //   to: 10000,
+    //     // },
+    //     productByAttributeKey: { key: 'amber' },
+    //   },
+    // })
+    //   .then((resp) => {
+    //     console.log('resp', resp.body.results);
+    //   })
+    //   .catch(console.log);
   };
 
   const handleCategoriesSubmit = (e: { preventDefault: () => void }): void => {
@@ -121,7 +136,25 @@ function DemoComponent(): ReactElement {
 
     getCategories()
       .then((resp) => {
-        console.log('resp', resp.body.results);
+        // console.log('resp', resp.body.results);
+        console.log('resp', resp.body);
+      })
+      .catch(console.log);
+  };
+
+  const handleUpdPasswordSubmit = (): void => {
+    authPasswordCustomer({ email: 'a@a.aa', password: '!1Aaaaab' })
+      .then((customerResp) => {
+        console.log('customerResp', customerResp);
+        updatePassword({
+          id: customerResp.body.customer.id,
+          currentPassword: '!1Aaaaab',
+          newPassword: '!1Aaaaaa',
+        })
+          .then((updateResp) => {
+            console.log('updateResp', updateResp);
+          })
+          .catch(console.log);
       })
       .catch(console.log);
   };
@@ -134,6 +167,9 @@ function DemoComponent(): ReactElement {
         </Button>
         <Button variant="contained" onClick={handleUpdateSubmit}>
           UPDATE USER
+        </Button>
+        <Button variant="outlined" onClick={handleUpdPasswordSubmit}>
+          Chsnge password
         </Button>
         <Button variant="outlined" onClick={handleSubmit}>
           ADD USER

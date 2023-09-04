@@ -28,33 +28,49 @@ interface QueryArgs {
   [key: string]: QueryParam;
 }
 
+export interface FilterPropsType {
+  productsByCategoryId?: { ids: string[] | undefined };
+  productByKey?: { key: string };
+  productsByPrice?: { from: number; to: number };
+  productsByAttributeKey?: {
+    key: 'floral' | 'woody' | 'citrus' | 'amber' | 'none';
+  };
+}
+
 interface PropsType {
+  text?: string;
   limit?: number;
   pageNumber?: number;
   sort?: {
     field: string;
     order: 'asc' | 'desc';
   };
-  filter?: {
-    productsByCategoryId?: { id: string };
-    productByKey?: { key: string };
-    productByPrice?: { from: number; to: number };
-  };
+  filter?: FilterPropsType;
 }
 
 const createFilters = (props: PropsType): string[] => {
   const filterResult = [];
-  if (props.filter?.productsByCategoryId?.id !== undefined) {
-    filterResult.push(
-      `categories.id: subtree("${props.filter.productsByCategoryId.id}")`,
-    );
+  if (props.filter?.productsByCategoryId?.ids !== undefined) {
+    props.filter?.productsByCategoryId?.ids.forEach((e) => {
+      filterResult.push(`categories.id: subtree("${e}")`);
+    });
   }
   if (props.filter?.productByKey?.key !== undefined) {
     filterResult.push(`key: "${props.filter.productByKey.key}"`);
   }
-  if (props.filter?.productByPrice !== undefined) {
+  if (props.filter?.productsByPrice !== undefined) {
     filterResult.push(
-      `variants.price.centAmount:range (${props.filter?.productByPrice.from} to ${props.filter?.productByPrice.to})`,
+      `variants.price.centAmount:range (${
+        Number(props.filter?.productsByPrice.from) * 100
+      } to ${Number(props.filter?.productsByPrice.to) * 100})`,
+    );
+  }
+  if (
+    props.filter?.productsByAttributeKey !== undefined &&
+    props.filter.productsByAttributeKey.key !== 'none'
+  ) {
+    filterResult.push(
+      `variants.attributes.olfactory.key:"${props.filter.productsByAttributeKey.key}"`,
     );
   }
 
@@ -71,10 +87,11 @@ const createQueryArgs = (props: PropsType): QueryArgs => {
     limit: props.limit === undefined ? 5 : props.limit,
     offset,
     sort:
-      props.sort !== undefined
+      props.sort !== undefined && props.text === undefined
         ? `${props.sort.field} ${props.sort.order}`
         : 'id asc',
     filter: createFilters(props),
+    'text.en-US': props.text,
   };
 };
 
@@ -91,22 +108,25 @@ export const getProducts = async (
 // How to use:
 
 // getProducts({
-//   limit: 100,
-//   pageNumber: 0,
+//   limit: 6,
+//   pageNumber,
 //   sort: {
-//     field: 'id',
-//     order: 'desc',
+//     field: sortType ? 'price' : 'name.en-US',
+//     order: sortDirection ? 'asc' : 'desc',
 //   },
 //   filter: {
-//     productsByCategoryId: { id: '3af6470b-59b5-4d4e-9a7b-81133a440499' },
-//     // productByKey: { key: '34 Boulevard Saint Germain' },
-//     productByPrice: {
-//       from: 0,
-//       to: 10000,
+//     productsByCategoryId: {
+//       ids: createCategoryArr(),
 //     },
+//     productsByAttributeKey: { key: selectedAttribute },
+//     productsByPrice: selectedPrice,
 //   },
+//   text: searchTextFromState !== null ? searchTextFromState : undefined,
 // })
 //   .then((resp) => {
-//     console.log('resp', resp.body.results);
+//     console.log('Resp', resp.body.results);
+//     dispatch(allProducts(resp.body));
 //   })
-//   .catch(console.log);
+//   .catch((err) => {
+//     throw new Error(err);
+//   });

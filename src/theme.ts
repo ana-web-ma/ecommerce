@@ -11,7 +11,7 @@ const theme = createTheme({
       main: '#000000',
     },
     secondary: {
-      main: '#00000020',
+      main: '#888888',
     },
     error: {
       main: red.A400,
@@ -82,8 +82,7 @@ const theme = createTheme({
     },
     MuiButtonBase: {
       defaultProps: {
-        // The props to change the default for.
-        disableRipple: true, // No more ripple, on the whole application 💣!
+        disableRipple: true,
       },
     },
     MuiContainer: {
@@ -109,8 +108,17 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           transition: 'all .3s ease-in-out',
+          path: {
+            transition: 'all .3s ease-in-out',
+          },
           '&:hover': {
             backgroundColor: '#00000000',
+            color: '#00000050',
+            path: {
+              stroke: '#00000050',
+            },
+          },
+          '&.Mui-disabled': {
             path: {
               stroke: '#00000050',
             },
@@ -193,7 +201,7 @@ const theme = createTheme({
           props: { variant: 'h2' },
           style: {
             fontFamily: PLAYFAIR_FONT,
-            fontSize: '60px',
+            fontSize: '40px',
             textTransform: 'uppercase',
           },
         },
