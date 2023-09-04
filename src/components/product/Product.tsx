@@ -10,7 +10,8 @@ import {
 } from '@mui/material';
 import React, { useEffect, type ReactElement } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Zoom } from 'swiper/modules';
+import type TypeSwiper from 'swiper/Swiper';
+import { Controller, Pagination, Zoom } from 'swiper/modules';
 import { type SwiperOptions } from 'swiper/types/swiper-options';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -23,26 +24,6 @@ import Image from '../ui/Image';
 import PriceComponent from '../ui/Price';
 import { getProductByKey } from '../../api/calls/products/getProductByKey';
 
-const swiperParams: SwiperOptions = {
-  slidesPerView: 1,
-  pagination: {
-    clickable: true,
-  },
-  modules: [Pagination],
-};
-
-const zoomedSwiperParams: SwiperOptions = {
-  slidesPerView: 1,
-  pagination: {
-    clickable: true,
-  },
-  modules: [Zoom, Pagination],
-  zoom: {
-    maxRatio: 5,
-    minRatio: 5,
-  },
-};
-
 const Product = (): ReactElement => {
   const navigation = useNavigate();
   const [expanded, setExpanded] = React.useState(false);
@@ -51,6 +32,32 @@ const Product = (): ReactElement => {
     null,
   );
   const [openModal, setOpenModal] = React.useState(false);
+  const [firstSwiper, setFirstSwiper] = React.useState<TypeSwiper | null>(null);
+  const [secondSwiper, setSecondSwiper] = React.useState<TypeSwiper | null>(
+    null,
+  );
+
+  const swiperParams: SwiperOptions = {
+    slidesPerView: 1,
+    pagination: {
+      clickable: true,
+    },
+    modules: [Pagination, Controller],
+    controller: { control: secondSwiper },
+  };
+
+  const zoomedSwiperParams: SwiperOptions = {
+    slidesPerView: 1,
+    pagination: {
+      clickable: true,
+    },
+    modules: [Zoom, Pagination, Controller],
+    zoom: {
+      maxRatio: 5,
+      minRatio: 5,
+    },
+    controller: { control: firstSwiper },
+  };
 
   const params = useParams();
   useEffect(() => {
@@ -103,7 +110,6 @@ const Product = (): ReactElement => {
       <Grid
         sx={{
           flexDirection: { xs: 'column-reverse', sm: 'row' },
-          // maxHeight: { sm: '50vh', md: '50vh' },
         }}
         container
         spacing={0}
@@ -123,7 +129,11 @@ const Product = (): ReactElement => {
             (variant, variantIndex) =>
               activeVariant === variantIndex && (
                 <div key={variant.id}>
-                  <Swiper className="mySwiper" {...swiperParams}>
+                  <Swiper
+                    onSwiper={setFirstSwiper}
+                    className="mySwiper"
+                    {...swiperParams}
+                  >
                     {variant.images?.map((image, index) => (
                       <SwiperSlide
                         onClick={handleOpenModal}
@@ -163,7 +173,11 @@ const Product = (): ReactElement => {
                       >
                         <CloseRoundedIcon />
                       </IconButton>
-                      <Swiper className="mySwiper" {...zoomedSwiperParams}>
+                      <Swiper
+                        onSwiper={setSecondSwiper}
+                        className="mySwiper"
+                        {...zoomedSwiperParams}
+                      >
                         {variant.images?.map((image, index) => (
                           <SwiperSlide key={image.url} virtualIndex={index}>
                             <div className="swiper-zoom-container">

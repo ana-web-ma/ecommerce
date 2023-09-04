@@ -2,11 +2,7 @@ import {
   Box,
   Button,
   Checkbox,
-  Divider,
-  FormControl,
   FormControlLabel,
-  FormGroup,
-  FormLabel,
   Radio,
   RadioGroup,
   Slider,
@@ -17,54 +13,70 @@ import React from 'react';
 import {
   categoryChecked,
   attributeKey,
+  setOpenFilterBar,
+  setPriceValue,
+  setFilterChecked,
 } from '../../store/reducers/ProductsSlice';
-import { useAppDispatch } from '../../helpers/hooks/Hooks';
-
-interface SelectedPrice {
-  from: number;
-  to: number;
-}
+import {
+  useAppDispatch,
+  useAttributeKey,
+  usePriceValue,
+} from '../../helpers/hooks/Hooks';
 
 function valuetext(value: number): string {
-  return `${value}°C`;
+  return `${value}`;
 }
 
-export default function FilterBar(props: {
-  selectedPrice: SelectedPrice;
-  setSelectedPrice: React.Dispatch<React.SetStateAction<SelectedPrice>>;
-  selectedAttribute: 'none' | 'floral' | 'woody' | 'citrus' | 'amber';
-  setSelectedAttribute: React.Dispatch<
-    React.SetStateAction<'none' | 'floral' | 'woody' | 'citrus' | 'amber'>
-  >;
-  selectedSummerCollection: boolean;
-  setSelectedSummerCollection: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedWeddingCollection: boolean;
-  setSelectedWeddingCollection: React.Dispatch<React.SetStateAction<boolean>>;
-  updateCatalog: () => void;
-}): React.ReactElement {
+export default function FilterBar(): React.ReactElement {
   const dispatch = useAppDispatch();
-  const [priceValue, setPriceValue] = React.useState<number[]>([0, 2500]);
-  const [attributeValue, setAttributeValue] = React.useState('none');
+  const priceValue = usePriceValue();
+  const attributeValue = useAttributeKey();
   const [summerCollectionChecked, setSummerCollectionChecked] =
     React.useState(false);
   const [weddingCollectionChecked, setWeddingCollectionChecked] =
     React.useState(false);
+  const [newCollectionChecked, setNewCollectionChecked] = React.useState(false);
 
   const handlePriceChange = (
     event: Event,
     newPriceValue: number | number[],
   ): void => {
-    setPriceValue(newPriceValue as number[]);
-    props.setSelectedPrice({ from: priceValue[0], to: priceValue[1] });
+    dispatch(setPriceValue(newPriceValue as number[]));
   };
 
   const handleRadioChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ): void => {
-    setAttributeValue(event.target.value);
-    props.setSelectedAttribute(
-      event.target.value as 'floral' | 'woody' | 'citrus' | 'amber',
+    dispatch(
+      attributeKey(
+        event.target.value as 'floral' | 'woody' | 'citrus' | 'amber' | 'none',
+      ),
     );
+  };
+
+  const saveFilterProps = (): void => {
+    dispatch(attributeKey(attributeValue));
+    dispatch(setPriceValue(priceValue));
+    const TempArray: string[] = [];
+    if (summerCollectionChecked)
+      TempArray.push('8c4a5815-b067-4f86-b565-9409d38672d3');
+    if (weddingCollectionChecked)
+      TempArray.push('93fee5ed-79af-4985-a5b5-5fc0a6e141aa');
+    if (newCollectionChecked)
+      TempArray.push('ce1f8f50-574d-4dd4-b912-7608b2017328');
+    dispatch(categoryChecked(TempArray));
+    dispatch(setOpenFilterBar(false));
+    dispatch(setFilterChecked(true));
+  };
+
+  const resetFilterProps = (): void => {
+    dispatch(attributeKey('none'));
+    dispatch(setPriceValue([0, 2500]));
+    setSummerCollectionChecked(false);
+    setNewCollectionChecked(false);
+    setWeddingCollectionChecked(false);
+    dispatch(categoryChecked([]));
+    dispatch(setFilterChecked(false));
   };
 
   const handleCheckboxChange = (
@@ -72,12 +84,13 @@ export default function FilterBar(props: {
   ): void => {
     switch (event.target.value) {
       case 'summer':
-        props.setSelectedSummerCollection(!summerCollectionChecked);
         setSummerCollectionChecked(!summerCollectionChecked);
         break;
       case 'wedding':
-        props.setSelectedWeddingCollection(!weddingCollectionChecked);
         setWeddingCollectionChecked(!weddingCollectionChecked);
+        break;
+      case 'new':
+        setNewCollectionChecked(!newCollectionChecked);
         break;
       default:
         break;
@@ -107,10 +120,10 @@ export default function FilterBar(props: {
         </Typography>
         <RadioGroup
           aria-labelledby="olfactory-family-radio-buttons-group-label"
-          defaultValue="none"
           name="Olfactory family"
           value={attributeValue}
           onChange={handleRadioChange}
+          defaultValue="none"
         >
           <FormControlLabel value="none" control={<Radio />} label="none" />
           <FormControlLabel value="floral" control={<Radio />} label="floral" />
@@ -146,10 +159,24 @@ export default function FilterBar(props: {
             }
             label="Wedding"
           />
+          <FormControlLabel
+            value="new"
+            control={
+              <Checkbox
+                checked={newCollectionChecked}
+                onChange={handleCheckboxChange}
+                inputProps={{ 'aria-label': 'olfactory checkbox' }}
+              />
+            }
+            label="New"
+          />
         </Stack>
       </Box>
-      <Button variant="contained" onClick={props.updateCatalog}>
+      <Button variant="contained" onClick={saveFilterProps}>
         Apply
+      </Button>
+      <Button variant="outlined" onClick={resetFilterProps}>
+        Reset filters
       </Button>
     </Stack>
   );

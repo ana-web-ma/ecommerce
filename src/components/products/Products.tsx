@@ -12,18 +12,14 @@ import {
   IconButton,
   SwipeableDrawer,
 } from '@mui/material';
-import TuneIcon from '@mui/icons-material/Tune';
 import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
 import EuroIcon from '@mui/icons-material/Euro';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AdjustIcon from '@mui/icons-material/Adjust';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import ProductCard from './ProductCard';
-import {
-  type FilterPropsType,
-  getProducts,
-} from '../../api/calls/products/getProducts';
-import { getCategories } from '../../api/calls/categories/getCategories';
+import { getProducts } from '../../api/calls/products/getProducts';
 import { getCategoryById } from '../../api/calls/categories/getCategoryById';
 import NavigationCatalog from './NavigationCatalog';
 import { getCategoryByKey } from '../../api/calls/categories/getCategoriesByKey';
@@ -32,18 +28,20 @@ import {
   useAppDispatch,
   useAttributeKey,
   useCategoryChecked,
-  useGetPageNumber,
+  useFilterChecked,
+  useOpenFilterBar,
+  usePriceValue,
   useSearchText,
   useSortDirection,
   useSortType,
 } from '../../helpers/hooks/Hooks';
 import {
   allProducts,
-  setPageNumber,
   search,
   categoryRequest,
   sortDirectionChecked,
   sortTypeChecked,
+  setOpenFilterBar,
 } from '../../store/reducers/ProductsSlice';
 import FilterIcon from '../ui/icons/FilterIcon';
 import FilterBar from './FilterBar';
@@ -76,13 +74,13 @@ const Products = (): ReactElement => {
   const location = useLocation();
   const navigation = useNavigate();
   const dispatch = useAppDispatch();
-  const pageNumber = useGetPageNumber();
+  const [pageNumber, setPageNumber] = useState(1);
   const [arrayForBread, setArrayForBread] = useState<IBreadCrump[]>([]);
   const [titlePage, setTitlePage] = useState('All products');
 
+  const priceValue = usePriceValue();
   const categoryFilter = useCategoryChecked();
   const attributeByKey = useAttributeKey();
-
   const sortDirection = useSortDirection();
   const sortType = useSortType();
 
@@ -91,42 +89,10 @@ const Products = (): ReactElement => {
   const { pageQty } = useAllProducts();
 
   const { category } = useAllProducts();
-
   const searchTextFromState: string | null = useSearchText();
 
-  const [openFilterBar, setOpenFilterBar] = useState(false);
-  const [searchText, setSearchText] = useState('');
-  const [selectedAttribute, setSelectedAttribute] = useState(
-    'none' as 'none' | 'floral' | 'woody' | 'citrus' | 'amber',
-  );
-  const [selectedSummerCollection, setSelectedSummerCollection] =
-    useState(false);
-  const [selectedWeddingCollection, setSelectedWeddingCollection] =
-    useState(false);
-  const [selectedPrice, setSelectedPrice] = useState({
-    from: 0,
-    to: 2500,
-  });
-
-  const updateCatalog = (): void => {
-    console.log({
-      searchText,
-      selectedAttribute,
-      selectedSummerCollection,
-      selectedWeddingCollection,
-      selectedPrice,
-    });
-  };
-  const pageCurrent = !Number.isNaN(Number(params.id)) ? Number(params.id) : 1;
-
-  const filterObj: FilterPropsType = {
-    productsByPrice: selectedPrice,
-  };
-  // if (
-  //   selectedAttribute !== 'none' &&
-  //   filterObj.productsByAttributeKey !== undefined
-  // )
-  //   filterObj.productsByAttributeKey.key = selectedAttribute;
+  const openFilterBar = useOpenFilterBar();
+  const filterChecked = useFilterChecked();
 
   const toggleDrawer =
     (isOpen: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -137,21 +103,11 @@ const Products = (): ReactElement => {
       ) {
         return;
       }
-
-      setOpenFilterBar(isOpen);
+      dispatch(setOpenFilterBar(isOpen));
     };
 
-  // console.log({
-  //   selectedFloralAttr,
-  //   selectedWoodyAttr,
-  //   selectedCitrusAttr,
-  //   selectedAmberAttr,
-  //   selectedSummerCollection,
-  //   selectedWeddingCollection,
-  // selectedPrice,
-  // });
-
   useEffect(() => {
+    setPageNumber(returnNumberFromPath(location.pathname));
     const categoryFromUrl = parentPath(Object.values(params)).substring(1);
     if (categoryFromUrl !== 'search' && categoryFromUrl !== '') {
       getCategoryByKey({ key: parentPath(Object.values(params)).substring(1) })
@@ -185,11 +141,17 @@ const Products = (): ReactElement => {
       dispatch(categoryRequest(null));
     } else {
       dispatch(categoryRequest(null));
+      console.log('ku', pageNumber);
       setTitlePage('All products');
     }
   }, [location]);
 
   useEffect((): void => {
+    setPageNumber(1);
+  }, [filterChecked]);
+
+  useEffect((): void => {
+    setPageNumber(returnNumberFromPath(location.pathname));
     setArrayForBread([]);
     if (!Object.values(params).includes('search')) {
       dispatch(search(null)); // если уходим со страницы search, обнуляем поле в store, где храним значение с инпута
@@ -200,7 +162,6 @@ const Products = (): ReactElement => {
       dispatch(search(null));
       console.log('Поиск не дал результатов'); // ToDo: idk how to do it
     }
-    dispatch(setPageNumber(returnNumberFromPath(location.pathname)));
   }, [location]);
 
   useEffect((): void => {
@@ -211,14 +172,21 @@ const Products = (): ReactElement => {
         field: sortType ? 'price' : 'name.en-US',
         order: sortDirection ? 'asc' : 'desc',
       },
-      filter:
-        category !== null
-          ? {
-              productsByCategoryId: {
-                ids: [category.id],
-              },
-            }
-          : {},
+      filter: {
+        productsByCategoryId: {
+          ids:
+            category !== null
+              ? [category.id, ...categoryFilter]
+              : [...categoryFilter],
+        },
+        productsByAttributeKey: {
+          key: attributeByKey,
+        },
+        productsByPrice: {
+          from: priceValue[0],
+          to: priceValue[1],
+        },
+      },
       text: searchTextFromState !== null ? searchTextFromState : undefined,
     })
       .then((resp) => {
@@ -228,12 +196,13 @@ const Products = (): ReactElement => {
         throw new Error(err);
       });
   }, [
-    pageNumber,
     location,
     category,
     searchTextFromState,
     sortType,
     sortDirection,
+    categoryFilter,
+    pageNumber,
   ]);
 
   return (
@@ -285,8 +254,9 @@ const Products = (): ReactElement => {
         direction={'row'}
         width={'100%'}
         justifyContent={'space-between'}
+        alignItems={'center'}
       >
-        <Stack direction="row" width="100%">
+        <Stack direction="row" alignItems={'center'}>
           <IconButton
             onClick={toggleDrawer(true)}
             color="primary"
@@ -297,6 +267,13 @@ const Products = (): ReactElement => {
               Filter
             </Typography>
           </IconButton>
+          <AdjustIcon
+            fontSize="small"
+            style={{
+              display: !filterChecked ? 'none' : 'block',
+              color: '#A70000',
+            }}
+          />
         </Stack>
 
         <SwipeableDrawer
@@ -305,18 +282,14 @@ const Products = (): ReactElement => {
           onClose={toggleDrawer(false)}
           onOpen={toggleDrawer(true)}
         >
-          <FilterBar
-            selectedPrice={selectedPrice}
-            setSelectedPrice={setSelectedPrice}
-            selectedAttribute={selectedAttribute}
-            setSelectedAttribute={setSelectedAttribute}
-            selectedSummerCollection={selectedSummerCollection}
-            setSelectedSummerCollection={setSelectedSummerCollection}
-            selectedWeddingCollection={selectedWeddingCollection}
-            setSelectedWeddingCollection={setSelectedWeddingCollection}
-            updateCatalog={updateCatalog}
-          />
+          <FilterBar />
         </SwipeableDrawer>
+
+        <Typography variant="subtitle2">
+          {searchTextFromState !== null
+            ? `Matched: ${searchTextFromState}`
+            : ''}
+        </Typography>
 
         <Stack direction={'row'}>
           <Checkbox
@@ -391,7 +364,7 @@ const Products = (): ReactElement => {
         page={pageNumber}
         shape="rounded"
         onChange={(_, number) => {
-          dispatch(setPageNumber(number));
+          setPageNumber(number);
         }}
         renderItem={(item) => (
           <PaginationItem
