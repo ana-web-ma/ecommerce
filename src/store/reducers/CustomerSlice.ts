@@ -1,16 +1,17 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { type Customer } from '@commercetools/platform-sdk';
+import { tokenCache } from '../../api/tokenCache';
 
 interface ICustomerState {
   customer: Customer | null;
+  id: string | null;
   isLogged: boolean;
 }
 
-const customerJson = localStorage.getItem('EPERFUME_CUSTOMER_DATA');
-
 const initialState: ICustomerState = {
-  customer: customerJson != null ? JSON.parse(customerJson) : null,
-  isLogged: !(localStorage.getItem('EPERFUME_CUSTOMER_TOKEN') == null),
+  customer: null,
+  isLogged: localStorage.getItem('EPERFUME_CUSTOMER_ID') !== null,
+  id: null,
 };
 
 interface ILoginData {
@@ -28,18 +29,22 @@ export const customerSlice = createSlice({
       // eslint-disable-next-line no-param-reassign
       state.customer = action.payload.customer;
       localStorage.setItem(
-        'EPERFUME_CUSTOMER_DATA',
-        JSON.stringify(action.payload.customer),
+        'EPERFUME_CUSTOMER_ID',
+        JSON.stringify(action.payload.customer.id),
       );
+    },
+    setCustomer(state: ICustomerState, action: PayloadAction<Customer>) {
+      // eslint-disable-next-line no-param-reassign
+      state.customer = action.payload;
     },
     logout(state: ICustomerState) {
       // eslint-disable-next-line no-param-reassign
       state.isLogged = false;
-      localStorage.removeItem('EPERFUME_CUSTOMER_TOKEN');
-      localStorage.removeItem('EPERFUME_CUSTOMER_DATA');
+      tokenCache.set({ expirationTime: 0, token: '' });
+      localStorage.removeItem('EPERFUME_CUSTOMER_ID');
     },
   },
 });
 
-export const { login, logout } = customerSlice.actions;
+export const { login, logout, setCustomer } = customerSlice.actions;
 export default customerSlice.reducer;

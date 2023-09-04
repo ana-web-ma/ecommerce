@@ -8,7 +8,7 @@ import { RegisterSchema } from '../../helpers/yup/Yup';
 import { updatePassword } from '../../api/calls/customers/update/updatePassword';
 import { CustomDialog } from '../register/DialogModule';
 import { authPasswordCustomer } from '../../api/calls/customers/authPasswordCustomer';
-import { useAppDispatch } from '../../helpers/hooks/Hooks';
+import { useAppDispatch, useCustomer } from '../../helpers/hooks/Hooks';
 import { login } from '../../store/reducers/CustomerSlice';
 import { tokenCache } from '../../api/tokenCache';
 
@@ -31,15 +31,18 @@ function Password(): ReactElement {
     mode: 'onChange',
     resolver: yupResolver(RegisterSchema),
   });
+  const dispatch = useAppDispatch();
+
+  const ProfileDataId = localStorage.getItem('EPERFUME_CUSTOMER_ID');
+
+  const ProfileDataObj = useCustomer();
+
+  const id = ProfileDataObj?.id ?? ProfileDataId;
+
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
-  const ProfileData = localStorage.getItem('EPERFUME_CUSTOMER_DATA');
-  let ProfileDataObj = null;
-  if (ProfileData !== null) {
-    ProfileDataObj = JSON.parse(ProfileData);
-  }
-  const { id } = ProfileDataObj;
+
   const handleChangeCurrentPassword = (
     event: React.ChangeEvent<HTMLInputElement>,
   ): void => {
@@ -67,40 +70,41 @@ function Password(): ReactElement {
     setDialogContent(content);
     setDialogOpen(true);
   };
-  const dispatch = useAppDispatch();
 
   const changePassword = async (): Promise<void> => {
-    updatePassword({
-      id,
-      currentPassword,
-      newPassword,
-    })
-      .then((resp) => {
-        openDialog('Successfully', 'Password changed');
-        tokenCache.set({ expirationTime: 0, token: '' });
-        const customerData = {
-          email: resp.body.email,
-          password: newPassword,
-        };
-        console.log(resp.body.email);
-        console.log(newPassword);
-        authPasswordCustomer(customerData)
-          .then(async (response): Promise<void> => {
-            dispatch(
-              login({
-                customer: response.body.customer,
-                token: tokenCache.get().token,
-              }),
-            );
-            console.log('OK');
-          })
-          .catch((err) => {
-            setErrorMessage(err.message);
-          });
+    if (id !== undefined && id !== null) {
+      updatePassword({
+        id,
+        currentPassword,
+        newPassword,
       })
-      .catch((err) => {
-        openDialog('Error', err.toString());
-      });
+        .then((resp) => {
+          openDialog('Successfully', 'Password changed');
+          tokenCache.set({ expirationTime: 0, token: '' });
+          const customerData = {
+            email: resp.body.email,
+            password: newPassword,
+          };
+          authPasswordCustomer(customerData)
+            .then(async (response): Promise<void> => {
+              dispatch(
+                login({
+                  customer: response.body.customer,
+                  token: tokenCache.get().token,
+                }),
+              );
+              setCurrentPassword('');
+              setNewPassword('');
+              setRepeatPassword('');
+            })
+            .catch((err) => {
+              setErrorMessage(err.message);
+            });
+        })
+        .catch((err) => {
+          openDialog('Error', err.toString());
+        });
+    }
   };
   const changePasswordChecked = (): void => {
     changePassword().catch((error) => {
@@ -140,6 +144,7 @@ function Password(): ReactElement {
         type={showOldPassword ? 'text' : 'password'}
         label="current password"
         variant="outlined"
+        value={currentPassword}
         required
         placeholder="Enter your current password"
         onInput={handleChangeCurrentPassword}
@@ -171,6 +176,7 @@ function Password(): ReactElement {
         label="new password"
         variant="outlined"
         required
+        value={newPassword}
         placeholder="Enter your new password"
         onInput={handleChangeNewPassword}
         helperText={
@@ -201,6 +207,7 @@ function Password(): ReactElement {
         type={showRepeatPassword ? 'text' : 'password'}
         label="repeat new password"
         variant="outlined"
+        value={repeatPassword}
         placeholder="Repeat your new password"
         onInput={handleChangeRepeatPassword}
         helperText={

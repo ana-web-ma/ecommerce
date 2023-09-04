@@ -12,7 +12,7 @@ import Cart from '../pages/cart/Cart';
 import ProductPage from '../pages/product/ProductPage';
 
 const isLogged = (): Response | null => {
-  const customerData = localStorage.getItem('EPERFUME_CUSTOMER_TOKEN');
+  const customerData = localStorage.getItem('EPERFUME_CUSTOMER_ID');
   if (customerData !== null) {
     return redirect('/');
   }
@@ -20,7 +20,7 @@ const isLogged = (): Response | null => {
 };
 
 const isNotLogged = (): Response | null => {
-  const customerData = localStorage.getItem('EPERFUME_CUSTOMER_TOKEN');
+  const customerData = localStorage.getItem('EPERFUME_CUSTOMER_ID');
   if (customerData === null) {
     return redirect('/');
   }
