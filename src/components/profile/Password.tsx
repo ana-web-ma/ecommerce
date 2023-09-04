@@ -1,14 +1,15 @@
 import type React from 'react';
 import { useState, type ReactElement } from 'react';
 import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
-import { type FieldValues, type SubmitHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { LoginSchema } from '../../helpers/yup/Yup';
-import { useAppDispatch } from '../../helpers/hooks/Hooks';
-import { login } from '../../store/reducers/CustomerSlice';
+import { RegisterSchema } from '../../helpers/yup/Yup';
+import { updatePassword } from '../../api/calls/customers/update/updatePassword';
+import { CustomDialog } from '../register/DialogModule';
 import { authPasswordCustomer } from '../../api/calls/customers/authPasswordCustomer';
+import { useAppDispatch, useCustomer } from '../../helpers/hooks/Hooks';
+import { login } from '../../store/reducers/CustomerSlice';
 import { tokenCache } from '../../api/tokenCache';
 
 export function onPromise<T>(
@@ -22,45 +23,110 @@ export function onPromise<T>(
 }
 
 function Password(): ReactElement {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const [errorMessage, setErrorMessage] = useState('');
   const {
     register,
     formState: { errors },
-    handleSubmit,
   } = useForm({
     mode: 'onChange',
-    resolver: yupResolver(LoginSchema),
+    resolver: yupResolver(RegisterSchema),
   });
+  const dispatch = useAppDispatch();
 
-  const handleSubmitForm: SubmitHandler<FieldValues> = async (
-    data,
-  ): Promise<void> => {
-    const customerData = {
-      email: data.email,
-      password: data.password,
-    };
-    await authPasswordCustomer(customerData)
-      .then(async (response): Promise<void> => {
-        dispatch(
-          login({
-            customer: response.body.customer,
-            token: tokenCache.get().token,
-          }),
-        );
-        navigate('/');
+  const ProfileDataId = localStorage.getItem('EPERFUME_CUSTOMER_ID');
+
+  const ProfileDataObj = useCustomer();
+
+  const id = ProfileDataObj?.id ?? ProfileDataId;
+
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [repeatPassword, setRepeatPassword] = useState('');
+
+  const handleChangeCurrentPassword = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ): void => {
+    setErrorMessage('');
+    setCurrentPassword(event.target.value);
+  };
+  const handleChangeNewPassword = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ): void => {
+    setErrorMessage('');
+    setNewPassword(event.target.value);
+  };
+  const handleChangeRepeatPassword = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ): void => {
+    setErrorMessage('');
+    setRepeatPassword(event.target.value);
+  };
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
+  const openDialog = (title: string, content: React.ReactNode): void => {
+    setDialogTitle(title);
+    setDialogContent(content);
+    setDialogOpen(true);
+  };
+
+  const changePassword = async (): Promise<void> => {
+    if (id !== undefined && id !== null) {
+      updatePassword({
+        id,
+        currentPassword,
+        newPassword,
       })
-      .catch((err) => {
-        setErrorMessage(err.message);
-      });
+        .then((resp) => {
+          openDialog('Successfully', 'Password changed');
+          tokenCache.set({ expirationTime: 0, token: '' });
+          const customerData = {
+            email: resp.body.email,
+            password: newPassword,
+          };
+          authPasswordCustomer(customerData)
+            .then(async (response): Promise<void> => {
+              dispatch(
+                login({
+                  customer: response.body.customer,
+                  token: tokenCache.get().token,
+                }),
+              );
+              setCurrentPassword('');
+              setNewPassword('');
+              setRepeatPassword('');
+            })
+            .catch((err) => {
+              setErrorMessage(err.message);
+            });
+        })
+        .catch((err) => {
+          openDialog('Error', err.toString());
+        });
+    }
+  };
+  const changePasswordChecked = (): void => {
+    changePassword().catch((error) => {
+      console.error('Error handling save click:', error);
+    });
   };
 
   // Show/Hide Password Functionality 👁️‍🗨️
-  const [showPassword, setShowPassword] = useState(false);
+  const [showOldPassword, setShowOldPassword] = useState(false);
 
-  const handleClickShowPassword = (): void => {
-    setShowPassword((show) => !show);
+  const handleClickShowOldPassword = (): void => {
+    setShowOldPassword((show) => !show);
+  };
+  const [showNewPassword, setShowNewPassword] = useState(false);
+
+  const handleClickShowNewPassword = (): void => {
+    setShowNewPassword((show) => !show);
+  };
+  const [showRepeatPassword, setShowRepeatPassword] = useState(false);
+
+  const handleClickShowRepeatPassword = (): void => {
+    setShowRepeatPassword((show) => !show);
   };
 
   const handleMouseDownPassword = (
@@ -72,95 +138,120 @@ function Password(): ReactElement {
   return (
     <div style={{ minHeight: '800px' }}>
       <TextField
-        error={!(errors.password == null) || errorMessage !== ''}
+        error={!(errors.oldPassword == null) || errorMessage !== ''}
         fullWidth={true}
         margin="normal"
-        type={showPassword ? 'text' : 'password'}
-        label="old password"
+        type={showOldPassword ? 'text' : 'password'}
+        label="current password"
         variant="outlined"
-        placeholder="Enter your old password"
-        onInput={() => {
-          setErrorMessage('');
-        }}
+        value={currentPassword}
+        required
+        placeholder="Enter your current password"
+        onInput={handleChangeCurrentPassword}
         helperText={
-          errors.password != null ? errors.password.message?.toString() : ''
+          errors.oldPassword != null
+            ? errors.oldPassword.message?.toString()
+            : ''
         }
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
                 aria-label="toggle password visibility"
-                onClick={handleClickShowPassword}
+                onClick={handleClickShowOldPassword}
                 onMouseDown={handleMouseDownPassword}
               >
-                {showPassword ? <Visibility /> : <VisibilityOff />}
+                {showOldPassword ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
           ),
         }}
-        {...register('password')}
+        {...register('oldPassword')}
       />
       <TextField
-        error={!(errors.password == null) || errorMessage !== ''}
+        error={!(errors.newPassword == null) || errorMessage !== ''}
         fullWidth={true}
         margin="normal"
-        type={showPassword ? 'text' : 'password'}
+        type={showNewPassword ? 'text' : 'password'}
         label="new password"
         variant="outlined"
+        required
+        value={newPassword}
         placeholder="Enter your new password"
-        onInput={() => {
-          setErrorMessage('');
-        }}
+        onInput={handleChangeNewPassword}
         helperText={
-          errors.password != null ? errors.password.message?.toString() : ''
+          errors.newPassword != null
+            ? errors.newPassword.message?.toString()
+            : ''
         }
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
                 aria-label="toggle password visibility"
-                onClick={handleClickShowPassword}
+                onClick={handleClickShowNewPassword}
                 onMouseDown={handleMouseDownPassword}
               >
-                {showPassword ? <Visibility /> : <VisibilityOff />}
+                {showNewPassword ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
           ),
         }}
-        {...register('password')}
+        {...register('newPassword')}
       />
       <TextField
-        error={!(errors.password == null) || errorMessage !== ''}
+        error={!(errors.repeatPassword == null) || errorMessage !== ''}
         fullWidth={true}
         margin="normal"
-        type={showPassword ? 'text' : 'password'}
+        required
+        type={showRepeatPassword ? 'text' : 'password'}
         label="repeat new password"
         variant="outlined"
+        value={repeatPassword}
         placeholder="Repeat your new password"
-        onInput={() => {
-          setErrorMessage('');
-        }}
+        onInput={handleChangeRepeatPassword}
         helperText={
-          errors.password != null ? errors.password.message?.toString() : ''
+          errors.repeatPassword != null
+            ? errors.repeatPassword.message?.toString()
+            : ''
         }
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
                 aria-label="toggle password visibility"
-                onClick={handleClickShowPassword}
+                onClick={handleClickShowRepeatPassword}
                 onMouseDown={handleMouseDownPassword}
               >
-                {showPassword ? <Visibility /> : <VisibilityOff />}
+                {showRepeatPassword ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
           ),
         }}
-        {...register('password')}
+        {...register('repeatPassword')}
       />
-      <Button type="submit" variant="contained">
-        Login
+      <Button
+        onClick={changePasswordChecked}
+        disabled={
+          errors.oldPassword != null ||
+          errors.newPassword != null ||
+          errors.repeatPassword != null ||
+          currentPassword === '' ||
+          newPassword === '' ||
+          repeatPassword === ''
+        }
+        variant="contained"
+      >
+        Save new password
       </Button>
+      <CustomDialog
+        open={dialogOpen}
+        onClose={() => {
+          setDialogOpen(false);
+        }}
+        title={dialogTitle}
+        content={dialogContent}
+      />
     </div>
   );
 }

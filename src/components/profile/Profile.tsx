@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   TextField,
   Button,
@@ -16,6 +16,9 @@ import Password from './Password';
 import { CustomDialog } from '../register/DialogModule';
 import { updateMe } from '../../api/calls/customers/update/updateMe';
 import { RegisterSchema } from '../../helpers/yup/Yup';
+import { getMe } from '../../api/calls/getMe';
+import { useAppDispatch, useCustomer } from '../../helpers/hooks/Hooks';
+import { setCustomer } from '../../store/reducers/CustomerSlice';
 
 function ProfileForm(): ReactElement {
   const {
@@ -25,23 +28,37 @@ function ProfileForm(): ReactElement {
     mode: 'onChange',
     resolver: yupResolver(RegisterSchema),
   });
-  const ProfileData = localStorage.getItem('EPERFUME_CUSTOMER_DATA');
-  let ProfileDataObj = null;
-  if (ProfileData !== null) {
-    ProfileDataObj = JSON.parse(ProfileData);
-  }
-  const { id } = ProfileDataObj;
-  const [firstName, setFirstName] = useState(ProfileDataObj.firstName);
-  const [lastName, setLastName] = useState(ProfileDataObj.lastName);
-  const [birthdate, setBirthdate] = useState(ProfileDataObj.dateOfBirth);
-  const [email, setEmail] = useState(ProfileDataObj.email);
+  const dispatch = useAppDispatch();
+
+  const ProfileDataId = localStorage.getItem('EPERFUME_CUSTOMER_ID');
+
+  const ProfileDataObj = useCustomer();
+
+  const id = ProfileDataObj?.id;
+  const [firstName, setFirstName] = useState<string | undefined>('');
+  const [lastName, setLastName] = useState<string | undefined>('');
+  const [birthdate, setBirthdate] = useState<string | undefined>('');
+  const [email, setEmail] = useState('');
 
   const [isEditingFName, setIsEditingFName] = useState(false);
   const [isEditingLName, setIsEditingLName] = useState(false);
   const [isEditingBirthdate, setIsEditingBirthdate] = useState(false);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
-
   const [tabValue, setTabValue] = useState(0);
+
+  useEffect(() => {
+    if (ProfileDataId !== null) {
+      getMe({ id: JSON.parse(ProfileDataId) })
+        .then((loggedUserData) => {
+          dispatch(setCustomer(loggedUserData.body));
+          setFirstName(loggedUserData.body.firstName);
+          setBirthdate(loggedUserData.body.dateOfBirth);
+          setEmail(loggedUserData.body.email);
+          setLastName(loggedUserData.body.lastName);
+        })
+        .catch(console.error);
+    }
+  }, []);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogTitle, setDialogTitle] = useState('');
@@ -57,22 +74,21 @@ function ProfileForm(): ReactElement {
   };
   const handleSaveClickFName = async (): Promise<void> => {
     setIsEditingFName(false);
-    updateMe({
-      id,
-      setFirstName: {
-        newFirstName: firstName,
-      },
-    })
-      .then((res) => {
-        localStorage.setItem(
-          'EPERFUME_CUSTOMER_DATA',
-          JSON.stringify(res.body),
-        );
-        openDialog('Successfully', 'First name changed');
+    if (id !== undefined && firstName !== undefined) {
+      updateMe({
+        id,
+        setFirstName: {
+          newFirstName: firstName,
+        },
       })
-      .catch(() => {
-        openDialog('Error', 'Try later');
-      });
+        .then((resp) => {
+          dispatch(setCustomer(resp.body));
+          openDialog('Successfully', 'First name changed');
+        })
+        .catch((err) => {
+          openDialog('Error', err.toString());
+        });
+    }
   };
 
   const handleSaveFNameClick = (): void => {
@@ -86,22 +102,21 @@ function ProfileForm(): ReactElement {
   };
   const handleSaveClickLName = async (): Promise<void> => {
     setIsEditingLName(false);
-    updateMe({
-      id,
-      setLastName: {
-        newLastName: lastName,
-      },
-    })
-      .then((res) => {
-        localStorage.setItem(
-          'EPERFUME_CUSTOMER_DATA',
-          JSON.stringify(res.body),
-        );
-        openDialog('Successfully', 'Last name changed');
+    if (id !== undefined && lastName !== undefined) {
+      updateMe({
+        id,
+        setLastName: {
+          newLastName: lastName,
+        },
       })
-      .catch(() => {
-        openDialog('Error', 'Try later');
-      });
+        .then((resp) => {
+          dispatch(setCustomer(resp.body));
+          openDialog('Successfully', 'Last name changed');
+        })
+        .catch((err) => {
+          openDialog('Error', err.toString());
+        });
+    }
   };
 
   const handleSaveLNameClick = (): void => {
@@ -114,22 +129,21 @@ function ProfileForm(): ReactElement {
   };
   const handleSaveClickBirthdate = async (): Promise<void> => {
     setIsEditingBirthdate(false);
-    updateMe({
-      id,
-      setDateOfBirth: {
-        dateOfBirth: birthdate,
-      },
-    })
-      .then((res) => {
-        localStorage.setItem(
-          'EPERFUME_CUSTOMER_DATA',
-          JSON.stringify(res.body),
-        );
-        openDialog('Successfully', 'Birthdate changed');
+    if (id !== undefined && birthdate !== undefined) {
+      updateMe({
+        id,
+        setDateOfBirth: {
+          dateOfBirth: birthdate,
+        },
       })
-      .catch(() => {
-        openDialog('Error', 'Try later');
-      });
+        .then((resp) => {
+          dispatch(setCustomer(resp.body));
+          openDialog('Successfully', 'Birthdate changed');
+        })
+        .catch((err) => {
+          openDialog('Error', err.toString());
+        });
+    }
   };
   const handleSaveBirthdateClick = (): void => {
     handleSaveClickBirthdate().catch((error) => {
@@ -141,22 +155,24 @@ function ProfileForm(): ReactElement {
   };
   const handleSaveClickEmail = async (): Promise<void> => {
     setIsEditingEmail(false);
-    updateMe({
-      id,
-      changeEmail: {
-        newEmail: email,
-      },
-    })
-      .then((res) => {
-        localStorage.setItem(
-          'EPERFUME_CUSTOMER_DATA',
-          JSON.stringify(res.body),
-        );
-        openDialog('Successfully', 'Email changed');
+    if (id !== undefined && email !== undefined) {
+      updateMe({
+        id,
+        changeEmail: {
+          newEmail: email,
+        },
       })
-      .catch(() => {
-        openDialog('Error', 'Try later');
-      });
+        .then((resp) => {
+          dispatch(setCustomer(resp.body));
+          openDialog('Successfully', 'Email changed');
+        })
+        .catch((err) => {
+          openDialog('Error', err.toString());
+          setEmail(
+            ProfileDataObj?.email !== undefined ? ProfileDataObj?.email : '',
+          );
+        });
+    }
   };
   const handleSaveEmailClick = (): void => {
     handleSaveClickEmail().catch((error) => {
@@ -183,31 +199,36 @@ function ProfileForm(): ReactElement {
     setIsEditingLName(false);
     setIsEditingBirthdate(false);
     setIsEditingEmail(false);
-    updateMe({
-      id,
-      setFirstName: {
-        newFirstName: firstName,
-      },
-      setLastName: {
-        newLastName: lastName,
-      },
-      setDateOfBirth: {
-        dateOfBirth: birthdate,
-      },
-      changeEmail: {
-        newEmail: email,
-      },
-    })
-      .then((res) => {
-        localStorage.setItem(
-          'EPERFUME_CUSTOMER_DATA',
-          JSON.stringify(res.body),
-        );
-        openDialog('Successfully', 'Data changed');
+    if (
+      id !== undefined &&
+      lastName !== undefined &&
+      firstName !== undefined &&
+      email !== undefined &&
+      birthdate !== undefined
+    ) {
+      updateMe({
+        id,
+        setFirstName: {
+          newFirstName: firstName,
+        },
+        setLastName: {
+          newLastName: lastName,
+        },
+        setDateOfBirth: {
+          dateOfBirth: birthdate,
+        },
+        changeEmail: {
+          newEmail: email,
+        },
       })
-      .catch(() => {
-        openDialog('Error', 'Try later');
-      });
+        .then((resp) => {
+          dispatch(setCustomer(resp.body));
+          openDialog('Successfully', 'Data changed');
+        })
+        .catch((err) => {
+          openDialog('Error', err.toString());
+        });
+    }
   };
   const handleTabChange = (
     event: React.ChangeEvent<unknown>,
