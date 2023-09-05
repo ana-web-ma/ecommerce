@@ -239,20 +239,40 @@ function Addresses(): ReactElement {
         let title = 'Address';
         let defaultTitle = '';
         if (
-          address.id === ProfileDataObj.defaultBillingAddressId ||
+          address.id === ProfileDataObj.defaultBillingAddressId &&
           address.id === ProfileDataObj.defaultShippingAddressId
         ) {
-          defaultTitle = 'Default';
+          defaultTitle = 'Default Sipping and Default Billing';
+        } else if (address.id === ProfileDataObj.defaultBillingAddressId) {
+          defaultTitle = 'Default Billing';
+        } else if (address.id === ProfileDataObj.defaultShippingAddressId) {
+          defaultTitle = 'Default Sipping';
         }
         if (
           address.id !== undefined &&
           ProfileDataObj.shippingAddressIds !== undefined &&
           ProfileDataObj.billingAddressIds !== undefined
         ) {
-          if (ProfileDataObj.shippingAddressIds.includes(address.id)) {
-            title = 'Shipping address';
-          } else if (ProfileDataObj.billingAddressIds.includes(address.id)) {
-            title = 'Billing address';
+          if (defaultTitle === '') {
+            console.log(title);
+            if (
+              ProfileDataObj.shippingAddressIds.includes(address.id) &&
+              ProfileDataObj.billingAddressIds.includes(address.id)
+            ) {
+              title = 'Shipping and Billing address';
+            } else if (ProfileDataObj.shippingAddressIds.includes(address.id)) {
+              title = 'Shipping address';
+            } else if (ProfileDataObj.billingAddressIds.includes(address.id)) {
+              title = 'Billing address';
+            }
+          } else if (defaultTitle === 'Default Billing') {
+            if (ProfileDataObj.shippingAddressIds.includes(address.id)) {
+              title = 'and Shipping address';
+            }
+          } else if (defaultTitle === 'Default Sipping') {
+            if (ProfileDataObj.billingAddressIds.includes(address.id)) {
+              title = 'and Billing address';
+            }
           }
         }
         return (

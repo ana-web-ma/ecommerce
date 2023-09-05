@@ -80,7 +80,9 @@ function RegisterForm(): ReactElement {
     setDialogContent(content);
     setDialogOpen(true);
   };
-  const handleSubmitForm: SubmitHandler<FieldValues> = (data): void => {
+  const handleSubmitForm: SubmitHandler<FieldValues> = async (
+    data,
+  ): Promise<void> => {
     const addressArray = isCheckedCopyCheckBox
       ? [
           {
@@ -527,7 +529,14 @@ function RegisterForm(): ReactElement {
                 />
               </Grid>
               <Grid item xs={12} md={6}>
-                <FormControl fullWidth variant="filled">
+                <FormControl
+                  style={{
+                    marginTop: '8px',
+                    display: isCheckedCopyCheckBox ? 'none' : 'inline-flex',
+                  }}
+                  fullWidth
+                  variant="filled"
+                >
                   <InputLabel id="demo-simple-select-label">Country</InputLabel>
                   <Select
                     label="Country"
