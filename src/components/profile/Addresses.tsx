@@ -17,10 +17,10 @@ import type { ReactElement, ChangeEvent } from 'react';
 import type { SelectChangeEvent } from '@mui/material';
 import { Edit, Save, Delete } from '@mui/icons-material';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { updateMe } from '../../api/calls/customers/update/updateMe';
 import { CustomDialog } from '../register/DialogModule';
-import { RegisterSchema } from '../../helpers/yup/Yup';
+import { AddressSchema, RegisterSchema } from '../../helpers/yup/Yup';
 import { useAppDispatch, useCustomer } from '../../helpers/hooks/Hooks';
 import { getMe } from '../../api/calls/getMe';
 import { setCustomer } from '../../store/reducers/CustomerSlice';
@@ -42,11 +42,12 @@ function Addresses(): ReactElement {
   const {
     register,
     handleSubmit,
+    setValue,
     clearErrors,
     formState: { errors },
   } = useForm({
     mode: 'onChange',
-    resolver: yupResolver(RegisterSchema),
+    resolver: yupResolver(AddressSchema),
   });
 
   const dispatch = useAppDispatch();
@@ -57,14 +58,9 @@ function Addresses(): ReactElement {
 
   const [titleAddress, setTitleAddress] = useState<string>('');
   const [street, setStreet] = useState<string>('');
-  const [streetChange, setStreetChange] = useState<string>('');
   const [city, setCity] = useState<string>('');
-  const [cityChange, setCityChange] = useState<string>('');
   const [code, setCode] = useState<string>('');
-  const [codeChange, setCodeChange] = useState<string>('');
   const [country, setCountry] = useState('US');
-  const [countryChange, setCountryChange] = useState('US');
-  const [isDefault, setIsDefault] = useState<boolean>(false);
   const [isDefaultShipping, setIsDefaultShipping] = useState<boolean>(false);
   const [isDefaultBilling, setIsDefaultBilling] = useState<boolean>(false);
   const [isAddressShipping, setIsAddressShipping] = useState<boolean>(false);
@@ -75,22 +71,6 @@ function Addresses(): ReactElement {
   const [openModalAdd, setOpenModalAdd] = useState(false);
   const [deleteId, setDeleteId] = useState('');
   const [saveId, setSaveId] = useState('');
-
-  useEffect((): void => {
-    setStreetChange(street);
-  }, [street]);
-
-  useEffect((): void => {
-    setCityChange(city);
-  }, [city]);
-
-  useEffect((): void => {
-    setCodeChange(code);
-  }, [code]);
-
-  useEffect((): void => {
-    setCountryChange(country);
-  }, [country]);
 
   useEffect(() => {
     if (ProfileDataId !== null) {
@@ -112,90 +92,59 @@ function Addresses(): ReactElement {
     setDialogOpen(true);
   };
 
-  const handleToggleEditSave = async (id: string): Promise<void> => {
+  // Edit Address
+
+  const handleToggleEditSave = async (): Promise<void> => {
     if (ProfileDataId !== null) {
       updateMe({
         id: JSON.parse(ProfileDataId),
         changeAddress: {
-          addressId: id,
+          addressId: saveId,
           address: {
-            country: countryChange,
+            country,
             city,
             streetName: street,
             postalCode: code,
           },
         },
         setDefaultShippingAddress: {
-          addressId: id,
+          addressId: isDefaultShipping ? saveId : undefined,
+        },
+        setDefaultBillingAddress: {
+          addressId: isDefaultBilling ? saveId : undefined,
         },
       })
         .then((res) => {
-          dispatch(setCustomer(res.body));
-          openDialog('Successfully', 'Address changed');
-        })
-        .catch((err) => {
-          openDialog('Error', err.toString());
-        });
-    }
-  };
-
-  const toggleHandleEditSave = (id: string): void => {
-    setOpenModal2(false);
-    handleToggleEditSave(id).catch((error) => {
-      console.error('Error handling save click:', error);
-    });
-  };
-
-  const handleAddAddress = async (): Promise<void> => {
-    setOpenModalAdd(false);
-    if (ProfileDataId !== null) {
-      updateMe({
-        id: JSON.parse(ProfileDataId),
-        addAddress: {
-          address: {
-            country: countryChange,
-            city,
-            streetName: street,
-            postalCode: code,
-          },
-        },
-      })
-        .then((res) => {
-          console.log(res);
-          const idAddress =
-            res.body.addresses !== undefined
-              ? res.body.addresses[res.body.addresses.length - 1].id
-              : '';
-          if (isDefaultShipping || isDefaultBilling) {
+          if (isAddressBilling && isAddressShipping) {
             updateMe({
               id: res.body.id,
-              setDefaultShippingAddress: {
-                addressId: isDefaultShipping ? idAddress : undefined,
+              addShippingAddressId: {
+                addressId: saveId,
               },
-              setDefaultBillingAddress: {
-                addressId: isDefaultBilling ? idAddress : undefined,
+              addBillingAddressId: {
+                addressId: saveId,
               },
             })
-              .then((resp) => {
-                dispatch(setCustomer(resp.body));
-                openDialog('Successfully', 'Address created');
+              .then((response) => {
+                dispatch(setCustomer(response.body));
+                openDialog('Successfully', 'Address changed');
               })
               .catch((err) => {
                 openDialog('Error', err.toString());
               });
-          } else if (isAddressShipping && isAddressBilling) {
+          } else if (isAddressBilling) {
             updateMe({
               id: res.body.id,
-              addShippingAddressId: {
-                addressId: isAddressShipping ? idAddress : undefined,
-              },
               addBillingAddressId: {
-                addressId: isAddressBilling ? idAddress : undefined,
+                addressId: saveId,
+              },
+              setDefaultShippingAddress: {
+                addressId: isDefaultShipping ? saveId : undefined,
               },
             })
-              .then((resp) => {
-                dispatch(setCustomer(resp.body));
-                openDialog('Successfully', 'Address created');
+              .then((response) => {
+                dispatch(setCustomer(response.body));
+                openDialog('Successfully', 'Address changed');
               })
               .catch((err) => {
                 openDialog('Error', err.toString());
@@ -204,11 +153,70 @@ function Addresses(): ReactElement {
             updateMe({
               id: res.body.id,
               addShippingAddressId: {
-                addressId: isAddressShipping ? idAddress : undefined,
+                addressId: saveId,
+              },
+              setDefaultBillingAddress: {
+                addressId: isDefaultBilling ? saveId : undefined,
               },
             })
-              .then((resp) => {
-                dispatch(setCustomer(resp.body));
+              .then((response) => {
+                dispatch(setCustomer(response.body));
+                openDialog('Successfully', 'Address changed');
+              })
+              .catch((err) => {
+                openDialog('Error', err.toString());
+              });
+          } else {
+            dispatch(setCustomer(res.body));
+            openDialog('Successfully', 'Address changed');
+          }
+        })
+        .catch((err) => {
+          openDialog('Error', err.toString());
+        });
+    }
+  };
+
+  const toggleHandleEditSave = (): void => {
+    setOpenModal2(false);
+    handleToggleEditSave().catch((error) => {
+      console.error('Error handling save click:', error);
+    });
+  };
+
+  // ====== Add address ===========
+
+  const handleAddAddress = async (): Promise<void> => {
+    setOpenModalAdd(false);
+    if (ProfileDataId !== null) {
+      updateMe({
+        id: JSON.parse(ProfileDataId),
+        addAddress: {
+          address: {
+            country,
+            city,
+            streetName: street,
+            postalCode: code,
+          },
+        },
+      })
+        .then((res) => {
+          const idAddress =
+            res.body.addresses !== undefined
+              ? res.body.addresses[res.body.addresses.length - 1].id
+              : '';
+          if (isAddressBilling && isAddressShipping) {
+            updateMe({
+              id: res.body.id,
+              addShippingAddressId: {
+                addressId: idAddress,
+              },
+              addBillingAddressId: {
+                addressId: idAddress,
+              },
+            })
+              .then((response) => {
+                dispatch(setCustomer(response.body));
                 openDialog('Successfully', 'Address created');
               })
               .catch((err) => {
@@ -218,11 +226,48 @@ function Addresses(): ReactElement {
             updateMe({
               id: res.body.id,
               addBillingAddressId: {
-                addressId: isAddressBilling ? idAddress : undefined,
+                addressId: idAddress,
+              },
+              setDefaultShippingAddress: {
+                addressId: isDefaultShipping ? idAddress : undefined,
               },
             })
-              .then((resp) => {
-                dispatch(setCustomer(resp.body));
+              .then((response) => {
+                dispatch(setCustomer(response.body));
+                openDialog('Successfully', 'Address created');
+              })
+              .catch((err) => {
+                openDialog('Error', err.toString());
+              });
+          } else if (isAddressShipping) {
+            updateMe({
+              id: res.body.id,
+              addShippingAddressId: {
+                addressId: idAddress,
+              },
+              setDefaultBillingAddress: {
+                addressId: isDefaultBilling ? idAddress : undefined,
+              },
+            })
+              .then((response) => {
+                dispatch(setCustomer(response.body));
+                openDialog('Successfully', 'Address created');
+              })
+              .catch((err) => {
+                openDialog('Error', err.toString());
+              });
+          } else if (isDefaultShipping || isDefaultBilling) {
+            updateMe({
+              id: res.body.id,
+              setDefaultShippingAddress: {
+                addressId: isDefaultShipping ? idAddress : undefined,
+              },
+              setDefaultBillingAddress: {
+                addressId: isDefaultBilling ? idAddress : undefined,
+              },
+            })
+              .then((response) => {
+                dispatch(setCustomer(response.body));
                 openDialog('Successfully', 'Address created');
               })
               .catch((err) => {
@@ -238,6 +283,8 @@ function Addresses(): ReactElement {
         });
     }
   };
+
+  // ====== Delete address ===========
 
   const handleDeleteClick = async (id: string): Promise<void> => {
     if (ProfileDataId !== null) {
@@ -269,8 +316,18 @@ function Addresses(): ReactElement {
         sx={{ margin: '20px 0' }}
         variant={'outlined'}
         onClick={() => {
+          setStreet('');
+          setCity('');
+          setCode('');
+          setCountry('US');
+          setValue('city1', '');
+          setValue('post1', '');
+          setValue('street1', '');
+          setIsAddressBilling(false);
+          setIsAddressShipping(false);
+          setIsDefaultBilling(false);
+          setIsDefaultShipping(false);
           setOpenModalAdd(true);
-          setCountryChange('US');
         }}
       >
         Add new address
@@ -282,11 +339,11 @@ function Addresses(): ReactElement {
           address.id === ProfileDataObj.defaultBillingAddressId &&
           address.id === ProfileDataObj.defaultShippingAddressId
         ) {
-          defaultTitle = 'Default Sipping and Default Billing';
+          defaultTitle = 'Default Shipping and Default Billing';
         } else if (address.id === ProfileDataObj.defaultBillingAddressId) {
           defaultTitle = 'Default Billing';
         } else if (address.id === ProfileDataObj.defaultShippingAddressId) {
-          defaultTitle = 'Default Sipping';
+          defaultTitle = 'Default Shipping';
         }
         if (
           address.id !== undefined &&
@@ -362,15 +419,19 @@ function Addresses(): ReactElement {
               startIcon={<Edit />}
               onClick={() => {
                 setTitleAddress(`${defaultTitle} ${title}`);
-                setStreet(
-                  address.streetName !== undefined ? address.streetName : '',
-                );
-                setCity(address.city !== undefined ? address.city : '');
-                setCode(
-                  address.postalCode !== undefined ? address.postalCode : '',
-                );
+                if (address.streetName !== undefined) {
+                  setStreet(address.streetName);
+                  setValue('street1', address.streetName);
+                }
+                if (address.city !== undefined) {
+                  setCity(address.city);
+                  setValue('city1', address.city);
+                }
+                if (address.postalCode !== undefined) {
+                  setCode(address.postalCode);
+                  setValue('post1', address.postalCode);
+                }
                 setCountry(address.country);
-                setIsDefault(defaultTitle !== '');
                 setSaveId(address.id !== undefined ? address.id : '');
                 setOpenModal2(true);
               }}
@@ -401,6 +462,7 @@ function Addresses(): ReactElement {
         title={dialogTitle}
         content={dialogContent}
       />
+
       <Modal
         open={openModal}
         onClose={() => {
@@ -423,6 +485,7 @@ function Addresses(): ReactElement {
           </Button>
         </Box>
       </Modal>
+
       <Modal
         open={openModal2}
         onClose={() => {
@@ -430,56 +493,52 @@ function Addresses(): ReactElement {
           setStreet('');
           setCity('');
           setCode('');
-          setCountry('');
-          setIsDefault(false);
-          clearErrors('city1');
-          clearErrors('post1');
-          clearErrors('street1');
+          clearErrors();
         }}
       >
         <Box sx={style} textAlign={'center'}>
-          <form>
+          <form onSubmit={onPromise(handleSubmit(toggleHandleEditSave))}>
             <Typography variant="subtitle1">Change your</Typography>
             <Typography variant="h2" fontSize={'30px'}>
               {titleAddress}
             </Typography>
             <TextField
-              value={streetChange}
+              value={street}
               onInput={(e: ChangeEvent<HTMLInputElement>) => {
                 setStreet(e.target.value);
               }}
               fullWidth
               label="Street"
               style={{ margin: '16px 0' }}
-              error={!(errors.street1 == null) && !openModal2}
+              error={!(errors.street1 == null) && openModal2}
               helperText={
                 errors.street1 != null ? errors.street1.message?.toString() : ''
               }
               {...register('street1')}
             />
             <TextField
-              value={cityChange}
+              value={city}
               onInput={(e: ChangeEvent<HTMLInputElement>) => {
                 setCity(e.target.value);
               }}
               fullWidth
               label="City"
               style={{ margin: '16px 0' }}
-              error={!(errors.city1 == null)}
+              error={!(errors.city1 == null) && openModal2}
               helperText={
                 errors.city1 != null ? errors.city1.message?.toString() : ''
               }
               {...register('city1')}
             />
             <TextField
-              value={codeChange}
+              value={code}
               onInput={(e: ChangeEvent<HTMLInputElement>) => {
                 setCode(e.target.value);
               }}
               fullWidth
               label="Code"
               style={{ margin: '16px 0' }}
-              error={!(errors.post1 == null)}
+              error={!(errors.post1 == null) && openModal2}
               helperText={
                 errors.post1 != null ? errors.post1.message?.toString() : ''
               }
@@ -493,21 +552,92 @@ function Addresses(): ReactElement {
               <InputLabel>Country</InputLabel>
               <Select
                 label="Country"
-                value={countryChange}
+                value={country}
                 onChange={(e: SelectChangeEvent) => {
-                  setCountryChange(e.target.value);
+                  setCountry(e.target.value);
                 }}
               >
                 <MenuItem value={'US'}>USA</MenuItem>
                 <MenuItem value={'FR'}>France</MenuItem>
               </Select>
             </FormControl>
-            <Button
-              startIcon={<Save />}
-              onClick={() => {
-                toggleHandleEditSave(saveId);
-              }}
-            >
+            <Grid container>
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="inherit"
+                  sx={{ marginTop: { sm: '13px' }, textAlign: { sm: 'start' } }}
+                >
+                  <Checkbox
+                    size="small"
+                    sx={{
+                      top: '-1px',
+                    }}
+                    checked={isDefaultShipping}
+                    onChange={(event) => {
+                      setIsDefaultShipping(event.target.checked);
+                    }}
+                  />
+                  Set as Default Shipping
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="inherit"
+                  sx={{ marginTop: { sm: '13px' }, textAlign: { sm: 'end' } }}
+                >
+                  <Checkbox
+                    size="small"
+                    sx={{
+                      top: '-1px',
+                    }}
+                    checked={isDefaultBilling}
+                    onChange={(event) => {
+                      setIsDefaultBilling(event.target.checked);
+                    }}
+                  />
+                  Set as Default Billing
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="inherit"
+                  sx={{ marginTop: { sm: '13px' }, textAlign: { sm: 'start' } }}
+                >
+                  <Checkbox
+                    size="small"
+                    sx={{
+                      top: '-1px',
+                    }}
+                    disabled={isDefaultShipping}
+                    checked={isAddressShipping}
+                    onChange={(event) => {
+                      setIsAddressShipping(event.target.checked);
+                    }}
+                  />
+                  Set as Shipping
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="inherit"
+                  sx={{ marginTop: { sm: '13px' }, textAlign: { sm: 'end' } }}
+                >
+                  <Checkbox
+                    size="small"
+                    sx={{
+                      top: '-1px',
+                    }}
+                    disabled={isDefaultBilling}
+                    checked={isAddressBilling}
+                    onChange={(event) => {
+                      setIsAddressBilling(event.target.checked);
+                    }}
+                  />
+                  Set as Billing
+                </Typography>
+              </Grid>
+            </Grid>
+            <Button startIcon={<Save />} type="submit">
               Save
             </Button>
           </form>
@@ -518,16 +648,11 @@ function Addresses(): ReactElement {
         open={openModalAdd}
         onClose={() => {
           setOpenModalAdd(false);
-          setStreet('');
-          setCity('');
-          setCode('');
-          clearErrors('city1');
-          clearErrors('post1');
-          clearErrors('street1');
           setIsAddressBilling(false);
           setIsAddressShipping(false);
           setIsDefaultBilling(false);
           setIsDefaultShipping(false);
+          clearErrors();
         }}
       >
         <Box sx={style} textAlign={'center'}>
@@ -668,21 +793,7 @@ function Addresses(): ReactElement {
                 </Typography>
               </Grid>
             </Grid>
-            <Button
-              startIcon={<Save />}
-              type="submit"
-              onClick={() => {
-                if (
-                  errors.city1 == null &&
-                  errors.post1 == null &&
-                  errors.street1 == null
-                ) {
-                  console.log(city, street, countryChange, code);
-                }
-                // void handleAddAddress();
-                // toggleHandleEditSave(saveId);
-              }}
-            >
+            <Button startIcon={<Save />} type="submit">
               Save
             </Button>
           </form>
