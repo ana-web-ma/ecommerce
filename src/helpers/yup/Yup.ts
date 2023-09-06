@@ -132,3 +132,24 @@ export const ChangeSchema = yup.object().shape({
     )
     .min(8, 'Password must be at least 8 characters'),
 });
+
+export const AddressSchema = yup.object().shape({
+  post1: yup
+    .string()
+    .matches(/^\S*$/, 'Remove whitespace')
+    .required('This is a required field')
+    .matches(/^\d{5}$/, 'Must be a five digit number'),
+  street1: yup
+    .string()
+    .matches(/^(?! )(?!.* $).*$/, 'Remove whitespace')
+    .required('This is a required field')
+    .matches(/.+/, 'Must contain at least one character'),
+  city1: yup
+    .string()
+    .matches(/^(?! )(?!.* $).*$/, 'Remove whitespace')
+    .required('This is a required field')
+    .matches(
+      /^[a-zA-Zа-яА-ЯàâäçéèêëîïôœùûüÿÀÂÄÇÉÈÊËÎÏÔŒÙÛÜŸ]+$/,
+      'Must contain at least one character and no special characters or numbers',
+    ),
+});
