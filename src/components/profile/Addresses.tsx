@@ -20,7 +20,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { updateMe } from '../../api/calls/customers/update/updateMe';
 import { CustomDialog } from '../register/DialogModule';
-import { AddressSchema, RegisterSchema } from '../../helpers/yup/Yup';
+import { AddressSchema } from '../../helpers/yup/Yup';
 import { useAppDispatch, useCustomer } from '../../helpers/hooks/Hooks';
 import { getMe } from '../../api/calls/getMe';
 import { setCustomer } from '../../store/reducers/CustomerSlice';
