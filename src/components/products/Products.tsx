@@ -141,7 +141,6 @@ const Products = (): ReactElement => {
       dispatch(categoryRequest(null));
     } else {
       dispatch(categoryRequest(null));
-      console.log('ku', pageNumber);
       setTitlePage('All products');
     }
   }, [location]);
@@ -160,7 +159,6 @@ const Products = (): ReactElement => {
       searchTextFromState === null
     ) {
       dispatch(search(null));
-      console.log('Поиск не дал результатов'); // ToDo: idk how to do it
     }
   }, [location]);
 
