@@ -323,26 +323,39 @@ const Products = (): ReactElement => {
 
       <Grid container justifyContent="center" spacing={1}>
         {products.map((card, index) => {
+          const variants = [...card.variants];
+          variants.push(card.masterVariant);
+          variants.sort(
+            (a, b) =>
+              Number(b?.prices?.[0]?.value.centAmount) -
+              Number(a?.prices?.[0]?.value.centAmount),
+          );
+          const directionVariant = !sortDirection
+            ? variants[0]
+            : variants[variants.length - 1];
+          const currentVariant = sortType
+            ? directionVariant
+            : card.masterVariant;
           const cardData = {
             id: card.id,
             attribute:
-              card.masterVariant.attributes !== undefined &&
-              card.masterVariant.attributes.length !== 0
-                ? card.masterVariant.attributes[0].value.key
+              currentVariant.attributes !== undefined &&
+              currentVariant.attributes.length !== 0
+                ? currentVariant.attributes[0].value.key
                 : '',
             image:
-              card.masterVariant.images !== undefined
-                ? card.masterVariant.images[0].url
+              currentVariant.images !== undefined
+                ? currentVariant.images[0].url
                 : '',
             image2:
-              card.masterVariant.images?.[1] !== undefined
-                ? card.masterVariant.images[1].url
+              currentVariant.images?.[1] !== undefined
+                ? currentVariant.images[1].url
                 : null,
             name: card.name['en-US'],
             keyValue: card.key !== undefined ? card.key : '',
             description:
               card.description !== undefined ? card.description['en-US'] : '',
-            price: card.masterVariant.prices,
+            price: currentVariant.prices, // todo Prices!!!!!!!!!!!!!!!!!!!!!
           };
           if (index <= 1) {
             return (

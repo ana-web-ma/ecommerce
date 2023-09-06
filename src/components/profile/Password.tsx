@@ -4,7 +4,7 @@ import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { RegisterSchema } from '../../helpers/yup/Yup';
+import { ChangeSchema } from '../../helpers/yup/Yup';
 import { updatePassword } from '../../api/calls/customers/update/updatePassword';
 import { CustomDialog } from '../register/DialogModule';
 import { authPasswordCustomer } from '../../api/calls/customers/authPasswordCustomer';
@@ -29,7 +29,7 @@ function Password(): ReactElement {
     formState: { errors },
   } = useForm({
     mode: 'onChange',
-    resolver: yupResolver(RegisterSchema),
+    resolver: yupResolver(ChangeSchema),
   });
   const dispatch = useAppDispatch();
 
