@@ -81,7 +81,7 @@ const ProductCard = (props: IProductCard): ReactElement => {
               </Tooltip>
               <IconButton
                 onClick={(): void => {
-                  console.log('Add in bag');
+                  // console.log('Add in bag');
                 }}
               >
                 <ShoppingBagIcon />
