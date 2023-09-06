@@ -27,9 +27,9 @@ import { onPromise } from '../login/Login';
 import theme from '../../theme';
 import { login } from '../../store/reducers/CustomerSlice';
 import { useAppDispatch } from '../../helpers/hooks/Hooks';
-import { createCustomer } from '../../api/calls/customer/createCustomer';
-import { firstUpdateAddress } from '../../api/calls/customer/update/firstUpdateAddress';
-import { authPasswordCustomer } from '../../api/calls/customer/authPasswordCustomer';
+import { createCustomer } from '../../api/calls/customers/createCustomer';
+import { firstUpdateAddress } from '../../api/calls/customers/update/firstUpdateAddress';
+import { authPasswordCustomer } from '../../api/calls/customers/authPasswordCustomer';
 import { tokenCache } from '../../api/tokenCache';
 
 function getDateFromString(dataInput: string): string {
@@ -80,7 +80,9 @@ function RegisterForm(): ReactElement {
     setDialogContent(content);
     setDialogOpen(true);
   };
-  const handleSubmitForm: SubmitHandler<FieldValues> = (data): void => {
+  const handleSubmitForm: SubmitHandler<FieldValues> = async (
+    data,
+  ): Promise<void> => {
     const addressArray = isCheckedCopyCheckBox
       ? [
           {
@@ -134,7 +136,7 @@ function RegisterForm(): ReactElement {
               }).then((response) => {
                 dispatch(
                   login({
-                    customerId: JSON.stringify(response.body.customer.id),
+                    customer: response.body.customer,
                     token: tokenCache.get().token,
                   }),
                 );
@@ -528,12 +530,12 @@ function RegisterForm(): ReactElement {
               </Grid>
               <Grid item xs={12} md={6}>
                 <FormControl
-                  fullWidth
-                  variant="filled"
-                  sx={{
+                  style={{
                     marginTop: '8px',
                     display: isCheckedCopyCheckBox ? 'none' : 'inline-flex',
                   }}
+                  fullWidth
+                  variant="filled"
                 >
                   <InputLabel id="demo-simple-select-label">Country</InputLabel>
                   <Select

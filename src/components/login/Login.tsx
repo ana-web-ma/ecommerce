@@ -17,7 +17,7 @@ import { LoginSchema } from '../../helpers/yup/Yup';
 import theme from '../../theme';
 import { useAppDispatch } from '../../helpers/hooks/Hooks';
 import { login } from '../../store/reducers/CustomerSlice';
-import { authPasswordCustomer } from '../../api/calls/customer/authPasswordCustomer';
+import { authPasswordCustomer } from '../../api/calls/customers/authPasswordCustomer';
 import { tokenCache } from '../../api/tokenCache';
 
 export function onPromise<T>(
@@ -56,7 +56,7 @@ function LoginForm(): ReactElement {
       .then(async (response): Promise<void> => {
         dispatch(
           login({
-            customerId: JSON.stringify(response.body.customer.id),
+            customer: response.body.customer,
             token: tokenCache.get().token,
           }),
         );

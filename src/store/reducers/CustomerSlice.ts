@@ -1,23 +1,23 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
-
-interface ICustomer {
-  id: string | null;
-}
+import { type Customer } from '@commercetools/platform-sdk';
+import { tokenCache } from '../../api/tokenCache';
 
 interface ICustomerState {
-  customer: ICustomer;
+  customer: Customer | null;
+  id: string | null;
+  searchText: string | null;
   isLogged: boolean;
 }
 
 const initialState: ICustomerState = {
-  customer: {
-    id: null,
-  },
-  isLogged: !(localStorage.getItem('EPERFUME_CUSTOMER_TOKEN') == null),
+  customer: null,
+  isLogged: localStorage.getItem('EPERFUME_CUSTOMER_ID') !== null,
+  id: null,
+  searchText: null,
 };
 
 interface ILoginData {
-  customerId: string;
+  customer: Customer;
   token: string;
 }
 
@@ -29,16 +29,28 @@ export const customerSlice = createSlice({
       // eslint-disable-next-line no-param-reassign
       state.isLogged = true;
       // eslint-disable-next-line no-param-reassign
-      state.customer.id = action.payload.customerId;
-      localStorage.setItem('EPERFUME_CUSTOMER_TOKEN', action.payload.token);
+      state.customer = action.payload.customer;
+      localStorage.setItem(
+        'EPERFUME_CUSTOMER_ID',
+        JSON.stringify(action.payload.customer.id),
+      );
+    },
+    setCustomer(state: ICustomerState, action: PayloadAction<Customer>) {
+      // eslint-disable-next-line no-param-reassign
+      state.customer = action.payload;
     },
     logout(state: ICustomerState) {
       // eslint-disable-next-line no-param-reassign
       state.isLogged = false;
-      localStorage.removeItem('EPERFUME_CUSTOMER_TOKEN');
+      tokenCache.set({ expirationTime: 0, token: '' });
+      localStorage.removeItem('EPERFUME_CUSTOMER_ID');
+    },
+    search(state: ICustomerState, action: PayloadAction<string>) {
+      // eslint-disable-next-line no-param-reassign
+      state.searchText = action.payload;
     },
   },
 });
 
-export const { login, logout } = customerSlice.actions;
+export const { login, logout, search, setCustomer } = customerSlice.actions;
 export default customerSlice.reducer;

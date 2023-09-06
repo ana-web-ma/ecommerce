@@ -11,7 +11,7 @@ const theme = createTheme({
       main: '#000000',
     },
     secondary: {
-      main: '#00000020',
+      main: '#888888',
     },
     error: {
       main: red.A400,
@@ -55,10 +55,9 @@ const theme = createTheme({
           style: {
             fontFamily: BELLOTA_FONT,
             fontWeight: 700,
-            transition: '0.3s',
+            transition: 'all .3s ease-in-out',
             '&:hover': {
               opacity: 0.5,
-              transition: '0.3s',
             },
           },
         },
@@ -67,6 +66,7 @@ const theme = createTheme({
           style: {
             fontFamily: BELLOTA_FONT,
             fontWeight: 700,
+            transition: 'all .3s ease-in-out',
             '&:hover': {
               backgroundColor: '#00000015',
             },
@@ -82,8 +82,7 @@ const theme = createTheme({
     },
     MuiButtonBase: {
       defaultProps: {
-        // The props to change the default for.
-        disableRipple: true, // No more ripple, on the whole application 💣!
+        disableRipple: true,
       },
     },
     MuiContainer: {
@@ -108,8 +107,18 @@ const theme = createTheme({
     MuiIconButton: {
       styleOverrides: {
         root: {
+          transition: 'all .3s ease-in-out',
+          path: {
+            transition: 'all .3s ease-in-out',
+          },
           '&:hover': {
             backgroundColor: '#00000000',
+            color: '#00000050',
+            path: {
+              stroke: '#00000050',
+            },
+          },
+          '&.Mui-disabled': {
             path: {
               stroke: '#00000050',
             },
@@ -151,10 +160,9 @@ const theme = createTheme({
             padding: '15px',
             backgroundColor: '#F6F6F6',
             borderColor: '#D9D9D9',
-            transition: '0.2s',
+            transition: 'all 0.3s ease-in-out',
             '&:hover': {
               backgroundColor: '#FFFFFF',
-              transition: '0.2s',
             },
           },
         },
@@ -166,14 +174,13 @@ const theme = createTheme({
           props: { variant: 'outlined' },
           style: {
             fontFamily: BELLOTA_FONT,
+            transition: 'all 0.2s ease-in-out',
             '&:hover fieldset': {
               backgroundColor: '#00000002',
-              transition: '0.2s',
             },
             '& fieldset': {
               backgroundColor: '#00000008',
               borderColor: '#00000000',
-              transition: '0.2s',
             },
           },
         },
@@ -194,7 +201,7 @@ const theme = createTheme({
           props: { variant: 'h2' },
           style: {
             fontFamily: PLAYFAIR_FONT,
-            fontSize: '60px',
+            fontSize: '40px',
             textTransform: 'uppercase',
           },
         },
@@ -291,15 +298,16 @@ const theme = createTheme({
     MuiLink: {
       styleOverrides: {
         root: {
-          color: blue.A400,
-          textDecoration: 'none',
+          color: '#00000040',
+          fontWeight: 700,
+          textDecoration: 'underline',
           cursor: 'pointer',
-          transition: '.3s',
+          transition: 'all .3s ease-in-out',
           '&:hover': {
-            opacity: 0.3,
+            color: '#00000060',
           },
           '&:active': {
-            textDecoration: 'underline',
+            color: '#00000090',
           },
         },
       },

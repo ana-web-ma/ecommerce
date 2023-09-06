@@ -11,13 +11,17 @@ import {
   Typography,
 } from '@mui/material';
 import { type ReactElement } from 'react';
-import { createCustomer } from '../../../api/calls/customer/createCustomer';
-import { firstUpdateAddress } from '../../../api/calls/customer/update/firstUpdateAddress';
+import { createCustomer } from '../../../api/calls/customers/createCustomer';
+import { firstUpdateAddress } from '../../../api/calls/customers/update/firstUpdateAddress';
+import { updateMe } from '../../../api/calls/customers/update/updateMe';
+import { authPasswordCustomer } from '../../../api/calls/customers/authPasswordCustomer';
+import { getMe } from '../../../api/calls/getMe';
+import { getProducts } from '../../../api/calls/products/getProducts';
+import { getCategories } from '../../../api/calls/categories/getCategories';
+import { getCategoryById } from '../../../api/calls/categories/getCategoryById';
+import { updatePassword } from '../../../api/calls/customers/update/updatePassword';
 
 function DemoComponent(): ReactElement {
-  const isCheckedCopyCheckBox = true;
-  const isCheckedShipping = true;
-  const isCheckedBilling = true;
   const user = {
     email: 'test9@e.e',
     password: 'password',
@@ -59,11 +63,122 @@ function DemoComponent(): ReactElement {
       })
       .catch(console.log);
   };
+
+  const handleUpdateSubmit = (e: { preventDefault: () => void }): void => {
+    authPasswordCustomer({ email: 'a@a.aa', password: '!1Aaaaaa' })
+      .then((customerResp) => {
+        console.log('customerResp', customerResp);
+        updateMe({
+          id: customerResp.body.customer.id,
+          setFirstName: {
+            newFirstName: 'firstNameNew',
+          },
+        })
+          .then((updateResp) => {
+            console.log('updateResp', updateResp);
+          })
+          .catch(console.log);
+      })
+      .catch(console.log);
+  };
+
+  const handleGetMe = (e: { preventDefault: () => void }): void => {
+    getMe({ id: '703242c5-49a2-4dc0-83f5-08e3cc0e6d4d' })
+      .then((getMeResp) => {
+        console.log('getMeResp', getMeResp);
+      })
+      .catch(console.log);
+  };
+
+  const handleProductsSubmit = (e: { preventDefault: () => void }): void => {
+    // searchProducts({
+    //   text: 'eau des',
+    //   limit: 100,
+    //   pageNumber: 1,
+    //   // sort: {
+    //   //   field: 'id',
+    //   //   order: 'desc',
+    //   // },
+    // })
+    //   .then((resp) => {
+    //     console.log('resp', resp.body.results);
+    //   })
+    //   .catch(console.log);
+    // getProducts({
+    //   limit: 100,
+    //   pageNumber: 1,
+    //   sort: {
+    //     field: 'id',
+    //     order: 'desc',
+    //   },
+    //   filter: {
+    //     // productsByCategoryId: { id: '8c4a5815-b067-4f86-b565-9409d38672d3' },
+    //     // productByKey: { key: '34 Boulevard Saint Germain' },
+    //     // productByPrice: {
+    //     //   from: 0,
+    //     //   to: 10000,
+    //     // },
+    //     productByAttributeKey: { key: 'amber' },
+    //   },
+    // })
+    //   .then((resp) => {
+    //     console.log('resp', resp.body.results);
+    //   })
+    //   .catch(console.log);
+  };
+
+  const handleCategoriesSubmit = (e: { preventDefault: () => void }): void => {
+    // getCategoryById({ id: '26920e5c-0643-440d-aa79-2a82a76c97a4' })
+    //   .then((resp) => {
+    //     console.log('ancestors', resp.body.ancestors);
+    //   })
+    //   .catch(console.log);
+
+    getCategories()
+      .then((resp) => {
+        // console.log('resp', resp.body.results);
+        console.log('resp', resp.body);
+      })
+      .catch(console.log);
+  };
+
+  const handleUpdPasswordSubmit = (): void => {
+    authPasswordCustomer({ email: 'a@a.aa', password: '!1Aaaaab' })
+      .then((customerResp) => {
+        console.log('customerResp', customerResp);
+        updatePassword({
+          id: customerResp.body.customer.id,
+          currentPassword: '!1Aaaaab',
+          newPassword: '!1Aaaaaa',
+        })
+          .then((updateResp) => {
+            console.log('updateResp', updateResp);
+          })
+          .catch(console.log);
+      })
+      .catch(console.log);
+  };
+
   return (
     <>
       <Container>
-        <Button variant="contained" onClick={handleSubmit}>
+        <Button variant="outlined" onClick={handleGetMe}>
+          Get User
+        </Button>
+        <Button variant="contained" onClick={handleUpdateSubmit}>
+          UPDATE USER
+        </Button>
+        <Button variant="outlined" onClick={handleUpdPasswordSubmit}>
+          Chsnge password
+        </Button>
+        <Button variant="outlined" onClick={handleSubmit}>
           ADD USER
+        </Button>
+        <Button variant="contained" onClick={handleProductsSubmit}>
+          get products
+        </Button>
+        <Button variant="contained" onClick={handleCategoriesSubmit}>
+          get categories
         </Button>
         <Grid container>
           <Grid item>
