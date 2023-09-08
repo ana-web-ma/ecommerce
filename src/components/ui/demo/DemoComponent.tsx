@@ -23,6 +23,9 @@ import { updatePassword } from '../../../api/calls/customers/update/updatePasswo
 import { getAnonymousMe } from '../../../api/calls/getAnonymousMe';
 import { tokenCache } from '../../../api/tokenCache';
 import { getAnonymousCarts } from '../../../api/calls/carts/getAnonymousCarts';
+import { getAnonymousActiveCarts } from '../../../api/calls/carts/getAnonymousActiveCart';
+import { postAnonymousCarts } from '../../../api/calls/carts/postAnonymousCarts';
+import { updateAnonymousCarts } from '../../../api/calls/carts/updateAnonymousCarts';
 
 function DemoComponent(): ReactElement {
   const user = {
@@ -167,9 +170,26 @@ function DemoComponent(): ReactElement {
     getAnonymousMe()
       .then((getMeResp) => {
         console.log('getAnonymousMeResp', getMeResp);
-        getAnonymousCarts()
-          .then((getAnonymousCartsResp) => {
-            console.log('getAnonymousMeResp', getAnonymousCartsResp);
+        postAnonymousCarts()
+          .then((postAnonymousCartsResp) => {
+            console.log('postAnonymousCartsResp', postAnonymousCartsResp);
+            updateAnonymousCarts()
+              .then((updateAnonymousCartsResp) => {
+                console.log(
+                  'updateAnonymousCartsResp',
+                  updateAnonymousCartsResp,
+                );
+                getAnonymousCarts()
+                  .then((getAnonymousCartsResp) => {
+                    console.log('getAnonymousCartsResp', getAnonymousCartsResp);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           })
           .catch((err) => {
             console.log(err);
