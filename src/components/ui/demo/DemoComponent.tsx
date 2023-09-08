@@ -20,6 +20,8 @@ import { getProducts } from '../../../api/calls/products/getProducts';
 import { getCategories } from '../../../api/calls/categories/getCategories';
 import { getCategoryById } from '../../../api/calls/categories/getCategoryById';
 import { updatePassword } from '../../../api/calls/customers/update/updatePassword';
+import { getAnonymousMe } from '../../../api/calls/getAnonymousMe';
+import { tokenCache } from '../../../api/tokenCache';
 
 function DemoComponent(): ReactElement {
   const user = {
@@ -159,9 +161,25 @@ function DemoComponent(): ReactElement {
       .catch(console.log);
   };
 
+  const handleGetAnonMe = (): void => {
+    // tokenCache.set({ expirationTime: 0, token: '' });
+    getAnonymousMe()
+      .then((getMeResp) => {
+        console.log('getAnonymousMeResp', getMeResp);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <>
       <Container>
+        <Stack>
+          <Button variant="outlined" onClick={handleGetAnonMe}>
+            Get User
+          </Button>
+        </Stack>
         <Button variant="outlined" onClick={handleGetMe}>
           Get User
         </Button>
