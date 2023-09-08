@@ -16,7 +16,7 @@ import {
   setOpenFilterBar,
   setPriceValue,
   setFilterChecked,
-} from '../../store/reducers/ProductsSlice';
+} from '../../store/reducers/FilterSlice';
 import {
   useAppDispatch,
   useAttributeKey,

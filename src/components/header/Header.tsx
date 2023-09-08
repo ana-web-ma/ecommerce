@@ -29,7 +29,7 @@ import SearchIcon from '../ui/icons/SearchIcon';
 import logo from './img/logo.png';
 import { useAppDispatch, useIsLogged } from '../../helpers/hooks/Hooks';
 import { logout } from '../../store/reducers/CustomerSlice';
-import { search } from '../../store/reducers/ProductsSlice';
+import { search } from '../../store/reducers/FilterSlice';
 import imageHomeDecor from './img/home-decor.jpg';
 import imageFragrances from './img/Fragrances.avif';
 import imageCollections from './img/collections.avif';

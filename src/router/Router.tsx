@@ -10,9 +10,11 @@ import Catalog from '../pages/catalog/Catalog';
 import Profile from '../pages/profile/Profile';
 import Cart from '../pages/cart/Cart';
 import ProductPage from '../pages/product/ProductPage';
+import { getMe } from '../api/calls/getMe';
+
+const customerData = localStorage.getItem('EPERFUME_CUSTOMER_ID');
 
 const isLogged = (): Response | null => {
-  const customerData = localStorage.getItem('EPERFUME_CUSTOMER_ID');
   if (customerData !== null) {
     return redirect('/');
   }
@@ -20,9 +22,19 @@ const isLogged = (): Response | null => {
 };
 
 const isNotLogged = (): Response | null => {
-  const customerData = localStorage.getItem('EPERFUME_CUSTOMER_ID');
   if (customerData === null) {
     return redirect('/');
+  }
+  return null;
+};
+
+const get = (): null => {
+  if (customerData !== null) {
+    getMe({ id: JSON.parse(customerData) })
+      .then((loggedUserData) => {
+        console.log('loggedUserData', loggedUserData);
+      })
+      .catch(console.error);
   }
   return null;
 };
@@ -35,6 +47,7 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <MainPage />,
+        loader: get,
       },
       {
         path: '/login',

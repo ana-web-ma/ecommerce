@@ -37,12 +37,14 @@ import {
 } from '../../helpers/hooks/Hooks';
 import {
   allProducts,
-  search,
   categoryRequest,
+} from '../../store/reducers/ProductsSlice';
+import {
+  search,
   sortDirectionChecked,
   sortTypeChecked,
   setOpenFilterBar,
-} from '../../store/reducers/ProductsSlice';
+} from '../../store/reducers/FilterSlice';
 import FilterIcon from '../ui/icons/FilterIcon';
 import FilterBar from './FilterBar';
 
