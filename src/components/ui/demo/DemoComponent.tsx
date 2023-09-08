@@ -22,6 +22,7 @@ import { getCategoryById } from '../../../api/calls/categories/getCategoryById';
 import { updatePassword } from '../../../api/calls/customers/update/updatePassword';
 import { getAnonymousMe } from '../../../api/calls/getAnonymousMe';
 import { tokenCache } from '../../../api/tokenCache';
+import { getAnonymousCarts } from '../../../api/calls/carts/getAnonymousCarts';
 
 function DemoComponent(): ReactElement {
   const user = {
@@ -166,6 +167,13 @@ function DemoComponent(): ReactElement {
     getAnonymousMe()
       .then((getMeResp) => {
         console.log('getAnonymousMeResp', getMeResp);
+        getAnonymousCarts()
+          .then((getAnonymousCartsResp) => {
+            console.log('getAnonymousMeResp', getAnonymousCartsResp);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       })
       .catch((err) => {
         console.log(err);

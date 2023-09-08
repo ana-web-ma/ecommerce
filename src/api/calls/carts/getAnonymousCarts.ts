@@ -3,18 +3,16 @@ import {
   type ClientResponse,
   type CustomerSignInResult,
   type CartPagedQueryResponse,
-  type Cart,
 } from '@commercetools/platform-sdk';
-import { apiRootCreateByToken } from '../clients/ExistingTokenFlowClient';
-import { apiAnonymousFlowRoot } from '../clients/AnonymousSessionFlowClient';
+import { apiAnonymousFlowRoot } from '../../clients/AnonymousSessionFlowClient';
+// import { apiRootCreateByToken } from '../clients/ExistingTokenFlowClient';
+// import { apiAnonymousFlowRoot } from '../clients/AnonymousSessionFlowClient';
 
-export const getAnonymousMe = async (): Promise<ClientResponse<Cart>> => {
+export const getAnonymousCarts = async (): Promise<
+  ClientResponse<CartPagedQueryResponse>
+> => {
   // return apiAnonymousFlowRoot().me().carts().get().execute();
-  return apiAnonymousFlowRoot()
-    .me()
-    .carts()
-    .post({ body: { currency: 'EUR' } })
-    .execute();
+  return apiAnonymousFlowRoot().me().carts().get().execute();
   // .post({ body: { email: 'a@a.aa', password: '!1Aaaaaa' } })
 };
 
