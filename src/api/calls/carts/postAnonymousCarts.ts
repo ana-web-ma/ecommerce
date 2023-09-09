@@ -13,7 +13,7 @@ export const postAnonymousCarts = async (): Promise<ClientResponse<Cart>> => {
   return apiAnonymousFlowRoot()
     .me()
     .carts()
-    .post({ body: { currency: 'EUR' } })
+    .post({ body: { currency: 'EUR', country: 'US' } })
     .execute();
   // .post({ body: { email: 'a@a.aa', password: '!1Aaaaaa' } })
 };

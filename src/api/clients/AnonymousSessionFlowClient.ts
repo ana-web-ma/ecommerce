@@ -29,7 +29,7 @@ export const apiAnonymousFlowRoot = (): ByProjectKeyRequestBuilder => {
       clientSecret: 'DI8-_Z1NONz1oPTvIyCUX1ZxFZrv7M_p', // anonymousId: process.env.CTP_ANONYMOUS_ID, // a unique id
     },
     scopes,
-    // tokenCache,
+    tokenCache,
 
     fetch,
   };

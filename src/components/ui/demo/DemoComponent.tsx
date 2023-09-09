@@ -167,25 +167,14 @@ function DemoComponent(): ReactElement {
 
   const handleGetAnonMe = (): void => {
     // tokenCache.set({ expirationTime: 0, token: '' });
-    getAnonymousMe()
+    getAnonymousCarts()
       .then((getMeResp) => {
-        console.log('getAnonymousMeResp', getMeResp);
-        postAnonymousCarts()
-          .then((postAnonymousCartsResp) => {
-            console.log('postAnonymousCartsResp', postAnonymousCartsResp);
-            updateAnonymousCarts()
-              .then((updateAnonymousCartsResp) => {
-                console.log(
-                  'updateAnonymousCartsResp',
-                  updateAnonymousCartsResp,
-                );
-                getAnonymousCarts()
-                  .then((getAnonymousCartsResp) => {
-                    console.log('getAnonymousCartsResp', getAnonymousCartsResp);
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
+        updateAnonymousCarts()
+          .then((updateAnonymousCartsResp) => {
+            console.log('updateAnonymousCartsResp', updateAnonymousCartsResp);
+            getAnonymousCarts()
+              .then((getAnonymousCartsResp) => {
+                console.log('getAnonymousCartsResp', getAnonymousCartsResp);
               })
               .catch((err) => {
                 console.log(err);
@@ -194,6 +183,14 @@ function DemoComponent(): ReactElement {
           .catch((err) => {
             console.log(err);
           });
+        console.log('getAnonymousMeResp', getMeResp);
+        // postAnonymousCarts()
+        //   .then((postAnonymousCartsResp) => {
+        //     console.log('postAnonymousCartsResp', postAnonymousCartsResp);
+        //   })
+        //   .catch((err) => {
+        //     console.log(err);
+        //   });
       })
       .catch((err) => {
         console.log(err);
