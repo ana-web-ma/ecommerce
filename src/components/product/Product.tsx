@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Collapse,
   Grid,
   IconButton,
@@ -24,7 +25,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Image from '../ui/Image';
 import PriceComponent from '../ui/Price';
 import { getProductByKey } from '../../api/calls/products/getProductByKey';
-import { ButtonTogglePutProduct } from '../ui/ButtonToggleOrder';
+import { ButtonAddToBag } from '../ui/ButtonAddToBag';
+import { ButtonDeleteFromBag } from '../ui/ButtonDeleteFromBag';
 
 const Product = (): ReactElement => {
   const navigation = useNavigate();
@@ -235,7 +237,7 @@ const Product = (): ReactElement => {
             {prices != null ? <PriceComponent price={prices[0]} /> : null}
 
             {keyProduct !== undefined ? (
-              <ButtonTogglePutProduct keyItem={keyProduct} />
+              <ButtonAddToBag keyItem={keyProduct} />
             ) : null}
           </Stack>
           <Typography variant="body2">Select a size:</Typography>
@@ -286,6 +288,9 @@ const Product = (): ReactElement => {
               </Grid>
             ))}
           </Grid>
+          {keyProduct !== undefined ? (
+            <ButtonDeleteFromBag keyItem={keyProduct} />
+          ) : null}
         </Grid>
       </Grid>
     </>

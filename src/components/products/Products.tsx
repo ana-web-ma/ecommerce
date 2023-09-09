@@ -40,6 +40,7 @@ import {
   allProducts,
   setIsLoadingTrue,
   categoryRequest,
+  setPageNumber,
 } from '../../store/reducers/ProductsSlice';
 import {
   search,
@@ -77,7 +78,8 @@ const Products = (): ReactElement => {
   const params = useParams();
   const location = useLocation();
   const dispatch = useAppDispatch();
-  const [pageNumber, setPageNumber] = useState(1);
+  const pageNumber = returnNumberFromPath(location.pathname);
+
   const [arrayForBread, setArrayForBread] = useState<IBreadCrump[]>([]);
   const [titlePage, setTitlePage] = useState('All products');
 
@@ -110,7 +112,6 @@ const Products = (): ReactElement => {
     };
 
   useEffect(() => {
-    setPageNumber(returnNumberFromPath(location.pathname));
     dispatch(setIsLoadingTrue);
     const categoryFromUrl = parentPath(Object.values(params)).substring(1);
     if (categoryFromUrl !== 'search' && categoryFromUrl !== '') {
@@ -154,7 +155,6 @@ const Products = (): ReactElement => {
   }, [filterChecked]);
 
   useEffect((): void => {
-    setPageNumber(returnNumberFromPath(location.pathname));
     setArrayForBread([]);
     if (!Object.values(params).includes('search')) {
       dispatch(search(null)); // если уходим со страницы search, обнуляем поле в store, где храним значение с инпута

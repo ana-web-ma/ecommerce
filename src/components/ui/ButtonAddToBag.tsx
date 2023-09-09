@@ -7,9 +7,7 @@ import {
 } from '../../helpers/hooks/Hooks';
 import { addToCart } from '../../store/reducers/ShoppingSlice';
 
-export function ButtonTogglePutProduct(props: {
-  keyItem: string;
-}): ReactElement {
+export function ButtonAddToBag(props: { keyItem: string }): ReactElement {
   const arrayProductsFromCart = useArrayProductsKeysFromCart();
   const dispatch = useAppDispatch();
   const [flagIncludInBag, setFlagIncludInBag] = useState(false);

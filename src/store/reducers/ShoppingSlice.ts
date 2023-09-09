@@ -7,7 +7,7 @@ export interface IShoppingState {
 
 const initialState: IShoppingState = {
   numberOfPurchases: 0,
-  arrayKeysProducts: ['Extra large 34 Boulevard Saint Germain'],
+  arrayKeysProducts: [],
 };
 
 export const shoppingSlice = createSlice({

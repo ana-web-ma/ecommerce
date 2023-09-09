@@ -1,19 +1,10 @@
 import React, { useState, type ReactElement } from 'react';
-import {
-  Fade,
-  IconButton,
-  Paper,
-  Stack,
-  Tooltip,
-  Typography,
-  styled,
-} from '@mui/material';
-import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import { Fade, Paper, Stack, Tooltip, Typography, styled } from '@mui/material';
 import { NavLink } from 'react-router-dom';
-import { type Price, type Attribute } from '@commercetools/platform-sdk';
+import { type Price } from '@commercetools/platform-sdk';
 import HighlightAltIcon from '@mui/icons-material/HighlightAlt';
 import PriceComponent from '../ui/Price';
-import { ButtonTogglePutProduct } from '../ui/ButtonToggleOrder';
+import { ButtonAddToBag } from '../ui/ButtonAddToBag';
 
 interface IProduct {
   id: string;
@@ -81,7 +72,7 @@ const ProductCard = (props: IProductCard): ReactElement => {
                   <Typography variant="body2">Description</Typography>
                 </Stack>
               </Tooltip>
-              <ButtonTogglePutProduct keyItem={props.product.keyProduct} />
+              <ButtonAddToBag keyItem={props.product.keyProduct} />
             </Stack>
             <div
               onMouseEnter={() => {
