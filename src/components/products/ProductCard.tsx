@@ -13,9 +13,11 @@ import { NavLink } from 'react-router-dom';
 import { type Price, type Attribute } from '@commercetools/platform-sdk';
 import HighlightAltIcon from '@mui/icons-material/HighlightAlt';
 import PriceComponent from '../ui/Price';
+import { ButtonTogglePutProduct } from '../ui/ButtonToggleOrder';
 
 interface IProduct {
   id: string;
+  keyProduct: string;
   attribute: string;
   category?: string;
   keyValue: string;
@@ -79,13 +81,7 @@ const ProductCard = (props: IProductCard): ReactElement => {
                   <Typography variant="body2">Description</Typography>
                 </Stack>
               </Tooltip>
-              <IconButton
-                onClick={(): void => {
-                  // console.log('Add in bag');
-                }}
-              >
-                <ShoppingBagIcon />
-              </IconButton>
+              <ButtonTogglePutProduct keyItem={props.product.keyProduct} />
             </Stack>
             <div
               onMouseEnter={() => {

@@ -6,6 +6,7 @@ import {
   Link,
   Modal,
   Paper,
+  Stack,
   Typography,
 } from '@mui/material';
 import React, { useEffect, type ReactElement } from 'react';
@@ -23,6 +24,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Image from '../ui/Image';
 import PriceComponent from '../ui/Price';
 import { getProductByKey } from '../../api/calls/products/getProductByKey';
+import { ButtonTogglePutProduct } from '../ui/ButtonToggleOrder';
 
 const Product = (): ReactElement => {
   const navigation = useNavigate();
@@ -91,6 +93,11 @@ const Product = (): ReactElement => {
   const prices =
     productData?.masterData.current.variants[activeVariant].prices !== undefined
       ? productData?.masterData.current.variants[activeVariant].prices
+      : undefined;
+
+  const keyProduct =
+    productData?.masterData.current.variants[activeVariant].key !== undefined
+      ? productData?.masterData.current.variants[activeVariant].key
       : undefined;
 
   const paperStyle = {
@@ -219,7 +226,18 @@ const Product = (): ReactElement => {
           <Link onClick={handleExpandClick} mb={4} display="block">
             ...Read more
           </Link>
-          {prices != null ? <PriceComponent price={prices[0]} /> : null}
+          <Stack
+            direction={'row'}
+            alignItems={'center'}
+            justifyContent={'space-between'}
+            width={{ xs: '90%', sm: '70%' }}
+          >
+            {prices != null ? <PriceComponent price={prices[0]} /> : null}
+
+            {keyProduct !== undefined ? (
+              <ButtonTogglePutProduct keyItem={keyProduct} />
+            ) : null}
+          </Stack>
           <Typography variant="body2">Select a size:</Typography>
           <Grid mt={1} columnSpacing={1} container>
             {productData?.masterData.current.variants.map((e, i) => (

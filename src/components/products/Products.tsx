@@ -17,7 +17,7 @@ import EuroIcon from '@mui/icons-material/Euro';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AdjustIcon from '@mui/icons-material/Adjust';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import { getProducts } from '../../api/calls/products/getProducts';
 import { getCategoryById } from '../../api/calls/categories/getCategoryById';
@@ -29,6 +29,7 @@ import {
   useAttributeKey,
   useCategoryChecked,
   useFilterChecked,
+  useIsLoading,
   useOpenFilterBar,
   usePriceValue,
   useSearchText,
@@ -37,6 +38,7 @@ import {
 } from '../../helpers/hooks/Hooks';
 import {
   allProducts,
+  setIsLoadingTrue,
   categoryRequest,
 } from '../../store/reducers/ProductsSlice';
 import {
@@ -74,7 +76,6 @@ interface IBreadCrump {
 const Products = (): ReactElement => {
   const params = useParams();
   const location = useLocation();
-  const navigation = useNavigate();
   const dispatch = useAppDispatch();
   const [pageNumber, setPageNumber] = useState(1);
   const [arrayForBread, setArrayForBread] = useState<IBreadCrump[]>([]);
@@ -110,6 +111,7 @@ const Products = (): ReactElement => {
 
   useEffect(() => {
     setPageNumber(returnNumberFromPath(location.pathname));
+    dispatch(setIsLoadingTrue);
     const categoryFromUrl = parentPath(Object.values(params)).substring(1);
     if (categoryFromUrl !== 'search' && categoryFromUrl !== '') {
       getCategoryByKey({ key: parentPath(Object.values(params)).substring(1) })
@@ -322,54 +324,76 @@ const Products = (): ReactElement => {
       </Stack>
 
       <Grid container justifyContent="center" spacing={1}>
-        {products.map((card, index) => {
-          const variants = [...card.variants];
-          variants.push(card.masterVariant);
-          variants.sort(
-            (a, b) =>
-              Number(b?.prices?.[0]?.value.centAmount) -
-              Number(a?.prices?.[0]?.value.centAmount),
-          );
-          const directionVariant = !sortDirection
-            ? variants[0]
-            : variants[variants.length - 1];
-          const currentVariant = sortType
-            ? directionVariant
-            : card.masterVariant;
-          const cardData = {
-            id: card.id,
-            attribute:
-              currentVariant.attributes !== undefined &&
-              currentVariant.attributes.length !== 0
-                ? currentVariant.attributes[0].value.key
-                : '',
-            image:
-              currentVariant.images !== undefined
-                ? currentVariant.images[0].url
-                : '',
-            image2:
-              currentVariant.images?.[1] !== undefined
-                ? currentVariant.images[1].url
-                : null,
-            name: card.name['en-US'],
-            keyValue: card.key !== undefined ? card.key : '',
-            description:
-              card.description !== undefined ? card.description['en-US'] : '',
-            price: currentVariant.prices, // todo Prices!!!!!!!!!!!!!!!!!!!!!
-          };
-          if (index <= 1) {
+        {useIsLoading() ? (
+          <Typography>Loading...</Typography>
+        ) : (
+          products.map((card, index) => {
+            const variants = [...card.variants];
+            variants.push(card.masterVariant);
+            variants.sort(
+              (a, b) =>
+                Number(b?.prices?.[0]?.value.centAmount) -
+                Number(a?.prices?.[0]?.value.centAmount),
+            );
+            const directionVariant = !sortDirection
+              ? variants[0]
+              : variants[variants.length - 1];
+            const currentVariant = sortType
+              ? directionVariant
+              : card.masterVariant;
+            const cardData = {
+              id: card.id,
+              keyProduct:
+                card.masterVariant.key !== undefined
+                  ? card.masterVariant.key
+                  : '',
+              attribute:
+                currentVariant.attributes !== undefined &&
+                currentVariant.attributes.length !== 0
+                  ? currentVariant.attributes[0].value.key
+                  : '',
+              image:
+                currentVariant.images !== undefined
+                  ? currentVariant.images[0].url
+                  : '',
+              image2:
+                currentVariant.images?.[1] !== undefined
+                  ? currentVariant.images[1].url
+                  : null,
+              name: card.name['en-US'],
+              keyValue: card.key !== undefined ? card.key : '',
+              description:
+                card.description !== undefined ? card.description['en-US'] : '',
+              price: currentVariant.prices, // todo Prices!!!!!!!!!!!!!!!!!!!!!
+            };
+            if (index <= 1) {
+              return (
+                <Grid
+                  key={`catalog-${index}`}
+                  item
+                  xs={10}
+                  sm={12}
+                  md={9}
+                  lg={6}
+                >
+                  <ProductCard product={cardData} small={false} />
+                </Grid>
+              );
+            }
             return (
-              <Grid key={`catalog-${index}`} item xs={10} sm={12} md={9} lg={6}>
-                <ProductCard product={cardData} small={false} />
+              <Grid
+                key={`catalog-${index}`}
+                item
+                xs={10}
+                sm={6}
+                md={4.5}
+                lg={3}
+              >
+                <ProductCard product={cardData} small={true} />
               </Grid>
             );
-          }
-          return (
-            <Grid key={`catalog-${index}`} item xs={10} sm={6} md={4.5} lg={3}>
-              <ProductCard product={cardData} small={true} />
-            </Grid>
-          );
-        })}
+          })
+        )}
       </Grid>
 
       <Pagination
@@ -378,6 +402,7 @@ const Products = (): ReactElement => {
         shape="rounded"
         onChange={(_, number) => {
           setPageNumber(number);
+          dispatch(setIsLoadingTrue);
         }}
         renderItem={(item) => (
           <PaginationItem

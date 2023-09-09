@@ -2,23 +2,33 @@ import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 export interface IShoppingState {
   numberOfPurchases: number;
-  arrayIdProducts: string[];
+  arrayKeysProducts: string[];
 }
 
 const initialState: IShoppingState = {
   numberOfPurchases: 0,
-  arrayIdProducts: [],
+  arrayKeysProducts: ['Extra large 34 Boulevard Saint Germain'],
 };
 
 export const shoppingSlice = createSlice({
   name: 'ShoppingBag',
   initialState,
   reducers: {
+    addToCart(state: IShoppingState, action: PayloadAction<string>) {
+      state.arrayKeysProducts.push(action.payload);
+    },
+    removeFromCart(state: IShoppingState, action: PayloadAction<string>) {
+      const index = state.arrayKeysProducts.indexOf(action.payload);
+      if (index > -1) {
+        state.arrayKeysProducts.splice(index, 1);
+      }
+    },
     setNumberOfPurchases(state: IShoppingState, action: PayloadAction<number>) {
       state.numberOfPurchases = action.payload;
     },
   },
 });
 
-export const { setNumberOfPurchases } = shoppingSlice.actions;
+export const { setNumberOfPurchases, addToCart, removeFromCart } =
+  shoppingSlice.actions;
 export default shoppingSlice.reducer;

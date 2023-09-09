@@ -11,6 +11,7 @@ export interface IProductsState {
   totalCount: number;
   pageQty: number;
   category: Category | null;
+  isLoading: boolean;
 }
 
 const initialState: IProductsState = {
@@ -19,6 +20,7 @@ const initialState: IProductsState = {
   totalCount: 0,
   pageQty: 1,
   category: null,
+  isLoading: true,
 };
 
 export const productsSlice = createSlice({
@@ -30,6 +32,7 @@ export const productsSlice = createSlice({
       action: PayloadAction<ProductProjectionPagedSearchResponse>,
     ) {
       state.products = action.payload.results;
+      state.isLoading = false;
       if (action.payload.total !== undefined) {
         state.totalCount = action.payload.total;
         state.pageQty = Math.ceil(action.payload.total / 6);
@@ -44,6 +47,9 @@ export const productsSlice = createSlice({
     setPageNumber(state: IProductsState, action: PayloadAction<number>) {
       state.pageNumber = action.payload;
     },
+    setIsLoadingTrue(state: IProductsState) {
+      state.isLoading = true;
+    },
     categoryRequest(
       state: IProductsState,
       action: PayloadAction<Category | null>,
@@ -53,6 +59,11 @@ export const productsSlice = createSlice({
   },
 });
 
-export const { allProducts, setProducts, setPageNumber, categoryRequest } =
-  productsSlice.actions;
+export const {
+  allProducts,
+  setProducts,
+  setPageNumber,
+  categoryRequest,
+  setIsLoadingTrue,
+} = productsSlice.actions;
 export default productsSlice.reducer;

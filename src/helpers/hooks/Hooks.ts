@@ -35,6 +35,11 @@ export const useGetPageNumber = (): number => {
   return pageNumber;
 };
 
+export const useIsLoading = (): boolean => {
+  const loading = useAppSelector((state) => state.productsReducer.isLoading);
+  return loading;
+};
+
 // Filter
 export const useSearchText = (): string | null => {
   const { searchText } = useAppSelector((state) => state.filterReducer);
@@ -94,7 +99,14 @@ export const useFilterChecked = (): boolean => {
 // Shopping bag
 export const useNumberOfPurchases = (): number => {
   const numberOfPurchases = useAppSelector(
-    (state) => state.shoppingReducer.numberOfPurchases,
+    (state) => state.shoppingReducer.arrayKeysProducts.length,
   );
   return numberOfPurchases;
+};
+
+export const useArrayProductsKeysFromCart = (): string[] => {
+  const arrayFromCart = useAppSelector(
+    (state) => state.shoppingReducer.arrayKeysProducts,
+  );
+  return arrayFromCart;
 };
