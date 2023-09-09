@@ -110,27 +110,27 @@ function DemoComponent(): ReactElement {
     //     console.log('resp', resp.body.results);
     //   })
     //   .catch(console.log);
-    // getProducts({
-    //   limit: 100,
-    //   pageNumber: 1,
-    //   sort: {
-    //     field: 'id',
-    //     order: 'desc',
-    //   },
-    //   filter: {
-    //     // productsByCategoryId: { id: '8c4a5815-b067-4f86-b565-9409d38672d3' },
-    //     // productByKey: { key: '34 Boulevard Saint Germain' },
-    //     // productByPrice: {
-    //     //   from: 0,
-    //     //   to: 10000,
-    //     // },
-    //     productByAttributeKey: { key: 'amber' },
-    //   },
-    // })
-    //   .then((resp) => {
-    //     console.log('resp', resp.body.results);
-    //   })
-    //   .catch(console.log);
+    getProducts({
+      limit: 100,
+      pageNumber: 1,
+      sort: {
+        field: 'id',
+        order: 'desc',
+      },
+      filter: {
+        // productsByCategoryId: { id: '8c4a5815-b067-4f86-b565-9409d38672d3' },
+        // productByKey: { key: '34 Boulevard Saint Germain' },
+        // productByPrice: {
+        //   from: 0,
+        //   to: 10000,
+        // },
+        // productByAttributeKey: { key: 'amber' },
+      },
+    })
+      .then((resp) => {
+        console.log('resp', resp.body.results);
+      })
+      .catch(console.log);
   };
 
   const handleCategoriesSubmit = (e: { preventDefault: () => void }): void => {
@@ -168,13 +168,17 @@ function DemoComponent(): ReactElement {
   const handleGetAnonMe = (): void => {
     // tokenCache.set({ expirationTime: 0, token: '' });
     getAnonymousCarts()
-      .then((getMeResp) => {
+      .then((getAnonymousCartsResp) => {
+        console.log('getAnonymousCartsResp', getAnonymousCartsResp);
         updateAnonymousCarts()
           .then((updateAnonymousCartsResp) => {
             console.log('updateAnonymousCartsResp', updateAnonymousCartsResp);
-            getAnonymousCarts()
-              .then((getAnonymousCartsResp) => {
-                console.log('getAnonymousCartsResp', getAnonymousCartsResp);
+            getAnonymousActiveCarts()
+              .then((getAnonymousActiveCartsResp) => {
+                console.log(
+                  'getAnonymousActiveCartsResp',
+                  getAnonymousActiveCartsResp,
+                );
               })
               .catch((err) => {
                 console.log(err);
@@ -183,7 +187,6 @@ function DemoComponent(): ReactElement {
           .catch((err) => {
             console.log(err);
           });
-        console.log('getAnonymousMeResp', getMeResp);
         // postAnonymousCarts()
         //   .then((postAnonymousCartsResp) => {
         //     console.log('postAnonymousCartsResp', postAnonymousCartsResp);

@@ -16,7 +16,10 @@ export const updateAnonymousCarts = async (): Promise<ClientResponse<Cart>> => {
     .post({
       body: {
         currency: 'EUR',
-        lineItems: [{ productId: '0bb3fd68-5ef0-484a-8f27-b4be13644e51' }],
+        lineItems: [
+          { productId: '0bb3fd68-5ef0-484a-8f27-b4be13644e51', variantId: 2 },
+          // { productId: '0bb3fd68-5ef0-484a-8f27-b4be13644e51', variantId: 1 },
+        ],
       },
     })
     .execute();
