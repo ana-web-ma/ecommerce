@@ -170,7 +170,7 @@ function DemoComponent(): ReactElement {
       .then((getAnonymousActiveCartsResp) => {
         console.log(
           'getAnonymousActiveCartsResp',
-          getAnonymousActiveCartsResp.body.id,
+          getAnonymousActiveCartsResp.body.lineItems,
         );
         updateAnonymousCart({
           activeCartId: getAnonymousActiveCartsResp.body.id,
@@ -180,7 +180,20 @@ function DemoComponent(): ReactElement {
           quantity: 3,
         })
           .then((updateAnonymousCartsResp) => {
-            console.log('updateAnonymousCartsResp', updateAnonymousCartsResp);
+            console.log(
+              'updateAnonymousCartsResp',
+              updateAnonymousCartsResp.body.lineItems,
+            );
+            getAnonymousActiveCarts()
+              .then((getAnonymousActiveCartsResp2) => {
+                console.log(
+                  'getAnonymousActiveCartsResp2',
+                  getAnonymousActiveCartsResp2.body.lineItems,
+                );
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           })
           .catch((err) => {
             console.log(err);
@@ -196,7 +209,7 @@ function DemoComponent(): ReactElement {
       <Container>
         <Stack>
           <Button variant="outlined" onClick={handleGetAnonMe}>
-            Get User
+            Add items
           </Button>
         </Stack>
         <Button variant="outlined" onClick={handleGetMe}>
