@@ -4,6 +4,7 @@ import {
   type CustomerSignInResult,
   type CartPagedQueryResponse,
   type Cart,
+  type MyCartUpdateAction,
 } from '@commercetools/platform-sdk';
 import { apiRootCreateByToken } from '../../clients/ExistingTokenFlowClient';
 import { apiAnonymousFlowRoot } from '../../clients/AnonymousSessionFlowClient';
@@ -11,11 +12,45 @@ import { apiAnonymousFlowRoot } from '../../clients/AnonymousSessionFlowClient';
 export const updateCartById = async (props: {
   activeCartId: string;
   activeCartVersion: number;
-  productId: string;
-  variantId: number;
-  quantity: number;
+  addLineItem?: {
+    productId: string;
+    variantId: number;
+    quantity: number;
+  };
+  removeLineItem?: {
+    lineItemId: string;
+    quantity?: number;
+  };
+  changeLineItemQuantity?: {
+    lineItemId: string;
+    quantity: number;
+  };
 }): Promise<ClientResponse<Cart>> => {
-  // return apiAnonymousFlowRoot().me().carts().get().execute();
+  const actions: MyCartUpdateAction[] = [];
+
+  if (props.addLineItem != null) {
+    actions.push({
+      action: 'addLineItem',
+      variantId: props.addLineItem.variantId,
+      quantity: props.addLineItem.quantity,
+      productId: props.addLineItem.productId,
+    });
+  }
+  if (props.removeLineItem != null) {
+    actions.push({
+      action: 'removeLineItem',
+      lineItemId: props.removeLineItem.lineItemId,
+      quantity: props.removeLineItem.quantity,
+    });
+  }
+  if (props.changeLineItemQuantity != null) {
+    actions.push({
+      action: 'changeLineItemQuantity',
+      lineItemId: props.changeLineItemQuantity.lineItemId,
+      quantity: props.changeLineItemQuantity.quantity,
+    });
+  }
+  console.log('actions', actions);
   return apiRootCreateByToken()
     .me()
     .carts()
@@ -23,14 +58,7 @@ export const updateCartById = async (props: {
     .post({
       body: {
         version: props.activeCartVersion,
-        actions: [
-          {
-            action: 'addLineItem',
-            productId: props.productId,
-            variantId: props.variantId,
-            quantity: props.quantity,
-          },
-        ],
+        actions,
       },
     })
     .execute();

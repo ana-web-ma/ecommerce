@@ -190,9 +190,19 @@ function DemoComponent(): ReactElement {
     updateCartById({
       activeCartId: cartCache.id,
       activeCartVersion: cartCache.version,
-      productId: '661745ff-8fa7-49c9-b324-c72665febf6c',
-      variantId: 2,
-      quantity: -3,
+      addLineItem: {
+        productId: '0bb3fd68-5ef0-484a-8f27-b4be13644e51',
+        variantId: 2,
+        quantity: 4,
+      },
+      // removeLineItem: {
+      //   lineItemId: '1bea1fe8-e15e-4da4-b6ae-18c6314931a3',
+      //   quantity: 1,
+      // },
+      // changeLineItemQuantity: {
+      //   lineItemId: 'f8701d93-c42e-4c01-b49b-75c5d03c2b01',
+      //   quantity: 23,
+      // },
     })
       .then((updateCartByIdResp) => {
         console.log('updateCartByIdResp', updateCartByIdResp.body.lineItems);
