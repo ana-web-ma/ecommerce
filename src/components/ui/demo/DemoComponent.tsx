@@ -25,7 +25,7 @@ import { tokenCache } from '../../../api/tokenCache';
 import { getAnonymousCarts } from '../../../api/calls/carts/getAnonymousCarts';
 import { getAnonymousActiveCarts } from '../../../api/calls/carts/getAnonymousActiveCart';
 import { postAnonymousCarts } from '../../../api/calls/carts/postAnonymousCarts';
-import { updateAnonymousCarts } from '../../../api/calls/carts/updateAnonymousCarts';
+import { updateAnonymousCart } from '../../../api/calls/carts/updateAnonymousCart';
 
 function DemoComponent(): ReactElement {
   const user = {
@@ -166,34 +166,25 @@ function DemoComponent(): ReactElement {
   };
 
   const handleGetAnonMe = (): void => {
-    // tokenCache.set({ expirationTime: 0, token: '' });
-    getAnonymousCarts()
-      .then((getAnonymousCartsResp) => {
-        console.log('getAnonymousCartsResp', getAnonymousCartsResp);
-        updateAnonymousCarts()
+    getAnonymousActiveCarts()
+      .then((getAnonymousActiveCartsResp) => {
+        console.log(
+          'getAnonymousActiveCartsResp',
+          getAnonymousActiveCartsResp.body.id,
+        );
+        updateAnonymousCart({
+          activeCartId: getAnonymousActiveCartsResp.body.id,
+          activeCartVersion: getAnonymousActiveCartsResp.body.version,
+          productId: '0bb3fd68-5ef0-484a-8f27-b4be13644e51',
+          variantId: 1,
+          quantity: 3,
+        })
           .then((updateAnonymousCartsResp) => {
             console.log('updateAnonymousCartsResp', updateAnonymousCartsResp);
-            getAnonymousActiveCarts()
-              .then((getAnonymousActiveCartsResp) => {
-                console.log(
-                  'getAnonymousActiveCartsResp',
-                  getAnonymousActiveCartsResp,
-                );
-              })
-              .catch((err) => {
-                console.log(err);
-              });
           })
           .catch((err) => {
             console.log(err);
           });
-        // postAnonymousCarts()
-        //   .then((postAnonymousCartsResp) => {
-        //     console.log('postAnonymousCartsResp', postAnonymousCartsResp);
-        //   })
-        //   .catch((err) => {
-        //     console.log(err);
-        //   });
       })
       .catch((err) => {
         console.log(err);
