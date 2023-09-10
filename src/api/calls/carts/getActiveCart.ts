@@ -8,11 +8,9 @@ import {
 import { apiRootCreateByToken } from '../../clients/ExistingTokenFlowClient';
 import { apiAnonymousFlowRoot } from '../../clients/AnonymousSessionFlowClient';
 
-export const getAnonymousActiveCarts = async (): Promise<
-  ClientResponse<Cart>
-> => {
+export const getActiveCart = async (): Promise<ClientResponse<Cart>> => {
   // return apiAnonymousFlowRoot().me().carts().get().execute();
-  return apiAnonymousFlowRoot().me().activeCart().get().execute();
+  return apiRootCreateByToken().me().activeCart().get().execute();
   // .post({ body: { email: 'a@a.aa', password: '!1Aaaaaa' } })
 };
 

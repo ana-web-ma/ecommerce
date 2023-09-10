@@ -8,7 +8,7 @@ import {
 import { apiRootCreateByToken } from '../../clients/ExistingTokenFlowClient';
 import { apiAnonymousFlowRoot } from '../../clients/AnonymousSessionFlowClient';
 
-export const updateAnonymousCart = async (props: {
+export const updateCartById = async (props: {
   activeCartId: string;
   activeCartVersion: number;
   productId: string;
@@ -16,7 +16,7 @@ export const updateAnonymousCart = async (props: {
   quantity: number;
 }): Promise<ClientResponse<Cart>> => {
   // return apiAnonymousFlowRoot().me().carts().get().execute();
-  return apiAnonymousFlowRoot()
+  return apiRootCreateByToken()
     .me()
     .carts()
     .withId({ ID: props.activeCartId })
@@ -32,16 +32,8 @@ export const updateAnonymousCart = async (props: {
           },
         ],
       },
-      // body: {
-      //   currency: 'EUR',
-      //   lineItems: [
-      //     { productId: '0bb3fd68-5ef0-484a-8f27-b4be13644e51', variantId: 2 },
-      //     // { productId: '0bb3fd68-5ef0-484a-8f27-b4be13644e51', variantId: 1 },
-      //   ],
-      // },
     })
     .execute();
-  // .post({ body: { email: 'a@a.aa', password: '!1Aaaaaa' } })
 };
 
 // How to use

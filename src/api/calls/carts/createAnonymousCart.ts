@@ -8,7 +8,7 @@ import {
 import { apiRootCreateByToken } from '../../clients/ExistingTokenFlowClient';
 import { apiAnonymousFlowRoot } from '../../clients/AnonymousSessionFlowClient';
 
-export const postAnonymousCarts = async (): Promise<ClientResponse<Cart>> => {
+export const createAnonymousCart = async (): Promise<ClientResponse<Cart>> => {
   // return apiAnonymousFlowRoot().me().carts().get().execute();
   return apiAnonymousFlowRoot()
     .me()

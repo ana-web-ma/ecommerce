@@ -23,9 +23,12 @@ import { updatePassword } from '../../../api/calls/customers/update/updatePasswo
 import { getAnonymousMe } from '../../../api/calls/getAnonymousMe';
 import { tokenCache } from '../../../api/tokenCache';
 import { getAnonymousCarts } from '../../../api/calls/carts/getAnonymousCarts';
-import { getAnonymousActiveCarts } from '../../../api/calls/carts/getAnonymousActiveCart';
-import { postAnonymousCarts } from '../../../api/calls/carts/postAnonymousCarts';
-import { updateAnonymousCart } from '../../../api/calls/carts/updateAnonymousCart';
+import { getActiveCart } from '../../../api/calls/carts/getActiveCart';
+import { updateCartById } from '../../../api/calls/carts/updateCartById';
+import { apiAnonymousFlowRoot } from '../../../api/clients/AnonymousSessionFlowClient';
+import { createAnonymousCart } from '../../../api/calls/carts/createAnonymousCart';
+import { authExistingTokenCustomer } from '../../../api/calls/customers/authExistingTokenCustomer';
+import { cartCache } from '../../../api/cartCache';
 
 function DemoComponent(): ReactElement {
   const user = {
@@ -39,7 +42,7 @@ function DemoComponent(): ReactElement {
         country: 'US',
         city: 'co',
         streetName: 'so',
-        postalCode: '11111',
+        createAlCode: '11111',
         key: 'firstShippingAddress',
       },
       {
@@ -166,50 +169,82 @@ function DemoComponent(): ReactElement {
   };
 
   const handleGetAnonMe = (): void => {
-    getAnonymousActiveCarts()
-      .then((getAnonymousActiveCartsResp) => {
-        console.log(
-          'getAnonymousActiveCartsResp',
-          getAnonymousActiveCartsResp.body.lineItems,
-        );
-        updateAnonymousCart({
-          activeCartId: getAnonymousActiveCartsResp.body.id,
-          activeCartVersion: getAnonymousActiveCartsResp.body.version,
-          productId: '0bb3fd68-5ef0-484a-8f27-b4be13644e51',
-          variantId: 1,
-          quantity: 3,
-        })
-          .then((updateAnonymousCartsResp) => {
-            console.log(
-              'updateAnonymousCartsResp',
-              updateAnonymousCartsResp.body.lineItems,
-            );
-            getAnonymousActiveCarts()
-              .then((getAnonymousActiveCartsResp2) => {
-                console.log(
-                  'getAnonymousActiveCartsResp2',
-                  getAnonymousActiveCartsResp2.body.lineItems,
-                );
-              })
-              .catch((err) => {
-                console.log(err);
-              });
+    // console.log('tokenCache', tokenCache.get());
+    createAnonymousCart()
+      .then((createCartResp) => {
+        console.log('createCartResp', createCartResp);
+        getActiveCart()
+          .then((getActiveCartResp) => {
+            console.log('getActiveCartResp', getActiveCartResp.body.lineItems);
+            cartCache.id = getActiveCartResp.body.id;
+            cartCache.version = getActiveCartResp.body.version;
           })
           .catch((err) => {
             console.log(err);
           });
+      })
+      .catch(console.error);
+  };
+
+  const handleUpdateCart = (): void => {
+    updateCartById({
+      activeCartId: cartCache.id,
+      activeCartVersion: cartCache.version,
+      productId: '661745ff-8fa7-49c9-b324-c72665febf6c',
+      variantId: 2,
+      quantity: -3,
+    })
+      .then((updateCartByIdResp) => {
+        console.log('updateCartByIdResp', updateCartByIdResp.body.lineItems);
+        console.log('updateCartByIdResp', updateCartByIdResp.body.version);
+        cartCache.version = updateCartByIdResp.body.version;
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
+  const loginWithAnonCart = (): void => {
+    authExistingTokenCustomer({
+      email: 'a@a.aa',
+      password: '!1Aaaaaa',
+    })
+      .then((authExistingTokenCustomerResp) => {
+        console.log(
+          'authExistingTokenCustomerResp',
+          authExistingTokenCustomerResp,
+        );
+        tokenCache.set({ expirationTime: 0, token: '' });
+        console.log('tokenCache', tokenCache.get());
+        authPasswordCustomer({
+          email: 'a@a.aa',
+          password: '!1Aaaaaa',
+        })
+          .then((authPasswordCustomerResp) => {
+            console.log('authPasswordCustomerResp', authPasswordCustomerResp);
+            getActiveCart()
+              .then((getFinalActiveCartResp) => {
+                console.log('getFinalActiveCartResp', getFinalActiveCartResp);
+              })
+              .catch(console.error);
+          })
+          .catch(console.error);
+      })
+      .catch(console.error);
+  };
+
   return (
     <>
       <Container>
-        <Stack>
+        <Stack direction="row">
           <Button variant="outlined" onClick={handleGetAnonMe}>
-            Add items
+            Create anonym cart
+          </Button>
+          <Button variant="outlined" onClick={handleUpdateCart}>
+            Add Items in cart
+          </Button>
+          <Button variant="outlined" onClick={loginWithAnonCart}>
+            Login with anon cart
           </Button>
         </Stack>
         <Button variant="outlined" onClick={handleGetMe}>
