@@ -1,13 +1,9 @@
 import {
-  type Customer,
   type ClientResponse,
-  type CustomerSignInResult,
-  type CartPagedQueryResponse,
   type Cart,
   type MyCartUpdateAction,
 } from '@commercetools/platform-sdk';
 import { apiRootCreateByToken } from '../../clients/ExistingTokenFlowClient';
-import { apiAnonymousFlowRoot } from '../../clients/AnonymousSessionFlowClient';
 
 export const updateCartById = async (props: {
   activeCartId: string;
@@ -50,7 +46,6 @@ export const updateCartById = async (props: {
       quantity: props.changeLineItemQuantity.quantity,
     });
   }
-  console.log('actions', actions);
   return apiRootCreateByToken()
     .me()
     .carts()
@@ -66,21 +61,26 @@ export const updateCartById = async (props: {
 
 // How to use
 
-//   getMe({ id: props.id })
-//     .then((loggedUserData) => {
-//       console.log('loggedUserData', loggedUserData);
-//     })
-//     .catch(console.error);
-
-// Use with password auth
-
-// authPasswordCustomer(user)
-// .then((userData) => {
-//   console.log('userData', userData);
-//   getMe({ id: userData.id })
-//     .then((loggedUserData) => {
-//       console.log('loggedUserData', loggedUserData);
-//     })
-//     .catch(console.error);
+// updateCartById({
+//   activeCartId: cartCache.id,
+//   activeCartVersion: cartCache.version,
+//   addLineItem: {
+//     productId: '0bb3fd68-5ef0-484a-8f27-b4be13644e51',
+//     variantId: 2,
+//     quantity: 4,
+//   },
+//   // removeLineItem: {
+//   //   lineItemId: '1bea1fe8-e15e-4da4-b6ae-18c6314931a3',
+//   //   quantity: 1,
+//   // },
+//   // changeLineItemQuantity: {
+//   //   lineItemId: 'f8701d93-c42e-4c01-b49b-75c5d03c2b01',
+//   //   quantity: 23,
+//   // },
 // })
-// .catch(console.error);
+//   .then((updateCartByIdResp) => {
+//     cartCache.version = updateCartByIdResp.body.version;
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });

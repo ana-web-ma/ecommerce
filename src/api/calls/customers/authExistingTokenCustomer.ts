@@ -2,7 +2,6 @@ import {
   type ClientResponse,
   type CustomerSignInResult,
 } from '@commercetools/platform-sdk';
-import { apiPasswordFlowRoot } from '../../clients/PasswordFlowClient';
 import { apiRootCreateByToken } from '../../clients/ExistingTokenFlowClient';
 
 // Returns user data and save the token
@@ -25,11 +24,19 @@ export const authExistingTokenCustomer = async (props: {
 
 // How to use:
 
-// authPasswordCustomer({
-//   email: 'example-email.example.com',
-//   password: 'password',
+// authExistingTokenCustomer({
+//   email: 'a@a.aa',
+//   password: '!1Aaaaaa',
 // })
-//   .then((data) => {
-//     console.log('data', data);
+//   .then((authExistingTokenCustomerResp) => {
+//     tokenCache.set({ expirationTime: 0, token: '' });
+//     authPasswordCustomer({
+//       email: 'a@a.aa',
+//       password: '!1Aaaaaa',
+//     })
+//       .then((authPasswordCustomerResp) => {
+//         console.log('authPasswordCustomerResp', authPasswordCustomerResp);
+//       })
+//       .catch(console.error);
 //   })
 //   .catch(console.error);

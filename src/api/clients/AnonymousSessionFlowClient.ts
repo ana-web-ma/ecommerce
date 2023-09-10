@@ -1,13 +1,9 @@
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import {
-  // ClientBuilder,
   type HttpMiddlewareOptions,
-  // type AnonymousAuthMiddlewareOptions,
   ClientBuilder,
-  Client,
   type AnonymousAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
-import { type ApiRoot } from '@commercetools/platform-sdk';
 import { type ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 import { tokenCache } from '../tokenCache';
 
