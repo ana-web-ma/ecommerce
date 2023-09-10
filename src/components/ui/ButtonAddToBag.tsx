@@ -1,6 +1,6 @@
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import { useState, type ReactElement, useEffect } from 'react';
-import { Tooltip, IconButton } from '@mui/material';
+import { Tooltip, IconButton, CircularProgress, Stack } from '@mui/material';
 import {
   useAppDispatch,
   useArrayProductsKeysFromCart,
@@ -20,22 +20,25 @@ export function ButtonAddToBag(props: { keyItem: string }): ReactElement {
   });
 
   return (
-    <Tooltip
-      title={
-        flagIncludInBag ? 'Product is already in your bag' : 'Add to the Bag'
-      }
-    >
-      <span>
-        <IconButton
-          onClick={(e): void => {
-            e.preventDefault();
-            dispatch(addToCart(props.keyItem));
-          }}
-          disabled={flagIncludInBag}
-        >
-          <ShoppingBagIcon />
-        </IconButton>
-      </span>
-    </Tooltip>
+    <Stack direction={'row'} alignItems={'center'}>
+      {/* <CircularProgress size={'20px'} /> */}
+      <Tooltip
+        title={
+          flagIncludInBag ? 'Product is already in your bag' : 'Add to the Bag'
+        }
+      >
+        <span>
+          <IconButton
+            onClick={(e): void => {
+              e.preventDefault();
+              dispatch(addToCart(props.keyItem));
+            }}
+            disabled={flagIncludInBag}
+          >
+            <ShoppingBagIcon />
+          </IconButton>
+        </span>
+      </Tooltip>
+    </Stack>
   );
 }

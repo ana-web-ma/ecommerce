@@ -110,3 +110,10 @@ export const useArrayProductsKeysFromCart = (): string[] => {
   );
   return arrayFromCart;
 };
+
+export const useIdAnonimusCart = (): { id: string | null; version: number } => {
+  const IdAnonimusCart = useAppSelector(
+    (state) => state.shoppingReducer.cashAnonimusCart,
+  );
+  return IdAnonimusCart;
+};
