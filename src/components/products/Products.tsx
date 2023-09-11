@@ -22,7 +22,6 @@ import ProductCard from './ProductCard';
 import { getProducts } from '../../api/calls/products/getProducts';
 import { getCategoryById } from '../../api/calls/categories/getCategoryById';
 import NavigationCatalog from './NavigationCatalog';
-import { getCategoryByKey } from '../../api/calls/categories/getCategoryByKey';
 import {
   useAllProducts,
   useAppDispatch,
@@ -50,6 +49,7 @@ import {
 } from '../../store/reducers/FilterSlice';
 import FilterIcon from '../ui/icons/FilterIcon';
 import FilterBar from './FilterBar';
+import { getCategoryByKey } from '../../api/calls/categories/getCategoryByKey';
 
 const returnNumberFromPath = (value: string | undefined): number => {
   // если в url path есть '=', то вернет значение с номером страницы, иначе 1.
@@ -206,6 +206,7 @@ const Products = (): ReactElement => {
     categoryFilter,
     pageNumber,
   ]);
+  console.log(products);
 
   return (
     <>

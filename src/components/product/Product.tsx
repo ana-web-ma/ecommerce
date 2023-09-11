@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Collapse,
   Grid,
   IconButton,
@@ -91,6 +90,7 @@ const Product = (): ReactElement => {
   const handleExpandClick = (): void => {
     setExpanded(!expanded);
   };
+  console.log(productData);
 
   const prices =
     productData?.masterData.current.variants[activeVariant].prices !== undefined
@@ -100,6 +100,11 @@ const Product = (): ReactElement => {
   const keyProduct =
     productData?.masterData.current.variants[activeVariant].key !== undefined
       ? productData?.masterData.current.variants[activeVariant].key
+      : undefined;
+
+  const idVariant =
+    productData?.masterData.current.variants[activeVariant].id !== undefined
+      ? productData?.masterData.current.variants[activeVariant].id
       : undefined;
 
   const paperStyle = {
@@ -236,8 +241,14 @@ const Product = (): ReactElement => {
           >
             {prices != null ? <PriceComponent price={prices[0]} /> : null}
 
-            {keyProduct !== undefined ? (
-              <ButtonAddToBag keyItem={keyProduct} />
+            {keyProduct !== undefined &&
+            productData?.id !== undefined &&
+            idVariant !== undefined ? (
+              <ButtonAddToBag
+                keyItem={keyProduct}
+                productId={productData?.id}
+                variantId={idVariant}
+              />
             ) : null}
           </Stack>
           <Typography variant="body2">Select a size:</Typography>

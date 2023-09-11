@@ -72,7 +72,14 @@ const ProductCard = (props: IProductCard): ReactElement => {
                   <Typography variant="body2">Description</Typography>
                 </Stack>
               </Tooltip>
-              <ButtonAddToBag keyItem={props.product.keyProduct} />
+              {/* <ButtonAddToBag keyItem={props.product.keyProduct} /> */}
+              {
+                <ButtonAddToBag
+                  keyItem={props.product.keyProduct}
+                  productId={props.product.id}
+                  variantId={1}
+                />
+              }
             </Stack>
             <div
               onMouseEnter={() => {

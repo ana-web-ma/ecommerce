@@ -3,19 +3,21 @@ import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 export interface IShoppingState {
   numberOfPurchases: number;
   arrayKeysProducts: string[];
-  cashAnonimusCart: {
+  cashCart: {
     id: string | null;
     version: number;
   };
+  sendRequest: boolean;
 }
 
 const initialState: IShoppingState = {
   numberOfPurchases: 0,
   arrayKeysProducts: [],
-  cashAnonimusCart: {
+  cashCart: {
     id: null,
     version: 0,
   },
+  sendRequest: false,
 };
 
 export const shoppingSlice = createSlice({
@@ -23,7 +25,9 @@ export const shoppingSlice = createSlice({
   initialState,
   reducers: {
     addToCart(state: IShoppingState, action: PayloadAction<string>) {
-      state.arrayKeysProducts.push(action.payload);
+      if (!state.arrayKeysProducts.includes(action.payload)) {
+        state.arrayKeysProducts.push(action.payload);
+      }
     },
     removeFromCart(state: IShoppingState, action: PayloadAction<string>) {
       const index = state.arrayKeysProducts.indexOf(action.payload);
@@ -31,23 +35,35 @@ export const shoppingSlice = createSlice({
         state.arrayKeysProducts.splice(index, 1);
       }
     },
-    setNumberOfPurchases(state: IShoppingState, action: PayloadAction<number>) {
-      state.numberOfPurchases = action.payload;
+    resetNumberOfPurchases(state: IShoppingState) {
+      state.numberOfPurchases = 0;
     },
-    setAnonimusCart(
+    addNumberOfPurchases(state: IShoppingState, action: PayloadAction<number>) {
+      state.numberOfPurchases += action.payload;
+    },
+    setCart(
       state: IShoppingState,
       action: PayloadAction<{ id: string; version: number }>,
     ) {
-      state.cashAnonimusCart.id = action.payload.id;
-      state.cashAnonimusCart.version = action.payload.version;
+      state.cashCart.id = action.payload.id;
+      state.cashCart.version = action.payload.version;
+    },
+    setCartVersion(state: IShoppingState, action: PayloadAction<number>) {
+      state.cashCart.version = action.payload;
+    },
+    setSendRequest(state: IShoppingState, action: PayloadAction<boolean>) {
+      state.sendRequest = action.payload;
     },
   },
 });
 
 export const {
-  setNumberOfPurchases,
+  resetNumberOfPurchases,
+  addNumberOfPurchases,
   addToCart,
   removeFromCart,
-  setAnonimusCart,
+  setCart,
+  setCartVersion,
+  setSendRequest,
 } = shoppingSlice.actions;
 export default shoppingSlice.reducer;

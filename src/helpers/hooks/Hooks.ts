@@ -17,6 +17,11 @@ export const useIsLogged = (): boolean => {
   return isLogged;
 };
 
+export const useIsToken = (): boolean => {
+  const { isToken } = useAppSelector((state) => state.customerReducer);
+  return isToken;
+};
+
 export const useCustomer = (): Customer | null => {
   const { customer } = useAppSelector((state) => state.customerReducer);
   return customer;
@@ -111,9 +116,21 @@ export const useArrayProductsKeysFromCart = (): string[] => {
   return arrayFromCart;
 };
 
-export const useIdAnonimusCart = (): { id: string | null; version: number } => {
-  const IdAnonimusCart = useAppSelector(
-    (state) => state.shoppingReducer.cashAnonimusCart,
+export const useIdCart = (): string | null => {
+  const IdCart = useAppSelector((state) => state.shoppingReducer.cashCart.id);
+  return IdCart;
+};
+
+export const useVersionCart = (): number => {
+  const VersionCart = useAppSelector(
+    (state) => state.shoppingReducer.cashCart.version,
   );
-  return IdAnonimusCart;
+  return VersionCart;
+};
+
+export const useSendRequest = (): boolean => {
+  const sendRequest = useAppSelector(
+    (state) => state.shoppingReducer.sendRequest,
+  );
+  return sendRequest;
 };
