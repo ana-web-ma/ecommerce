@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import type { ReactElement } from 'react';
 import { useState } from 'react';
+import School from './rs_school_js.svg';
 import Igor from './photos/igor.jpg';
 import './styles.css';
 
@@ -81,15 +82,28 @@ function Info(): ReactElement {
           <Typography variant="body1">{teamMembers[tabValue].tasks}</Typography>
         </Box>
         <Divider variant="middle" />
-        <Box mt={2}>
+        <Box
+          mt={2}
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: '100%',
+          }}
+        >
           <a
             href={teamMembers[tabValue].profileUrl}
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Button type="submit" variant="contained">
+            <Button type="submit" variant="outlined">
               GitHub
             </Button>
+          </a>
+          <a href="https://rs.school">
+            <svg width="100" height="36" xmlns="http://www.w3.org/2000/svg">
+              <image href={School} width="100" height="36" />
+            </svg>
           </a>
         </Box>
       </Stack>
