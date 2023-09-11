@@ -23,7 +23,6 @@ function Info(): ReactElement {
     setTabValue(newValue);
   };
 
-  // Создайте массив объектов с информацией о каждом участнике проекта
   const teamMembers = [
     {
       name: 'Anastasia',
