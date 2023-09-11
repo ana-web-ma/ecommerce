@@ -20,6 +20,12 @@ import { getProducts } from '../../../api/calls/products/getProducts';
 import { getCategories } from '../../../api/calls/categories/getCategories';
 import { getCategoryById } from '../../../api/calls/categories/getCategoryById';
 import { updatePassword } from '../../../api/calls/customers/update/updatePassword';
+import { tokenCache } from '../../../api/tokenCache';
+import { getActiveCart } from '../../../api/calls/carts/getActiveCart';
+import { updateCartById } from '../../../api/calls/carts/updateCartById';
+import { createAnonymousCart } from '../../../api/calls/carts/createAnonymousCart';
+import { authExistingTokenCustomer } from '../../../api/calls/customers/authExistingTokenCustomer';
+import { cartCache } from '../../../api/cartCache';
 
 function DemoComponent(): ReactElement {
   const user = {
@@ -33,7 +39,7 @@ function DemoComponent(): ReactElement {
         country: 'US',
         city: 'co',
         streetName: 'so',
-        postalCode: '11111',
+        createAlCode: '11111',
         key: 'firstShippingAddress',
       },
       {
@@ -104,27 +110,27 @@ function DemoComponent(): ReactElement {
     //     console.log('resp', resp.body.results);
     //   })
     //   .catch(console.log);
-    // getProducts({
-    //   limit: 100,
-    //   pageNumber: 1,
-    //   sort: {
-    //     field: 'id',
-    //     order: 'desc',
-    //   },
-    //   filter: {
-    //     // productsByCategoryId: { id: '8c4a5815-b067-4f86-b565-9409d38672d3' },
-    //     // productByKey: { key: '34 Boulevard Saint Germain' },
-    //     // productByPrice: {
-    //     //   from: 0,
-    //     //   to: 10000,
-    //     // },
-    //     productByAttributeKey: { key: 'amber' },
-    //   },
-    // })
-    //   .then((resp) => {
-    //     console.log('resp', resp.body.results);
-    //   })
-    //   .catch(console.log);
+    getProducts({
+      limit: 100,
+      pageNumber: 1,
+      sort: {
+        field: 'id',
+        order: 'desc',
+      },
+      filter: {
+        // productsByCategoryId: { id: '8c4a5815-b067-4f86-b565-9409d38672d3' },
+        // productByKey: { key: '34 Boulevard Saint Germain' },
+        // productByPrice: {
+        //   from: 0,
+        //   to: 10000,
+        // },
+        // productByAttributeKey: { key: 'amber' },
+      },
+    })
+      .then((resp) => {
+        console.log('resp', resp.body.results);
+      })
+      .catch(console.log);
   };
 
   const handleCategoriesSubmit = (e: { preventDefault: () => void }): void => {
@@ -159,9 +165,95 @@ function DemoComponent(): ReactElement {
       .catch(console.log);
   };
 
+  const handleGetAnonMe = (): void => {
+    // console.log('tokenCache', tokenCache.get());
+    createAnonymousCart()
+      .then((createCartResp) => {
+        console.log('createCartResp', createCartResp);
+        getActiveCart()
+          .then((getActiveCartResp) => {
+            console.log('getActiveCartResp', getActiveCartResp.body.lineItems);
+            cartCache.id = getActiveCartResp.body.id;
+            cartCache.version = getActiveCartResp.body.version;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch(console.error);
+  };
+
+  const handleUpdateCart = (): void => {
+    updateCartById({
+      activeCartId: cartCache.id,
+      activeCartVersion: cartCache.version,
+      addLineItem: {
+        productId: '0bb3fd68-5ef0-484a-8f27-b4be13644e51',
+        variantId: 2,
+        quantity: 4,
+      },
+      // removeLineItem: {
+      //   lineItemId: '1bea1fe8-e15e-4da4-b6ae-18c6314931a3',
+      //   quantity: 1,
+      // },
+      // changeLineItemQuantity: {
+      //   lineItemId: 'f8701d93-c42e-4c01-b49b-75c5d03c2b01',
+      //   quantity: 23,
+      // },
+    })
+      .then((updateCartByIdResp) => {
+        console.log('updateCartByIdResp', updateCartByIdResp.body.lineItems);
+        console.log('updateCartByIdResp', updateCartByIdResp.body.version);
+        cartCache.version = updateCartByIdResp.body.version;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const loginWithAnonCart = (): void => {
+    authExistingTokenCustomer({
+      email: 'a@a.aa',
+      password: '!1Aaaaaa',
+    })
+      .then((authExistingTokenCustomerResp) => {
+        console.log(
+          'authExistingTokenCustomerResp',
+          authExistingTokenCustomerResp,
+        );
+        tokenCache.set({ expirationTime: 0, token: '' });
+        console.log('tokenCache', tokenCache.get());
+        authPasswordCustomer({
+          email: 'a@a.aa',
+          password: '!1Aaaaaa',
+        })
+          .then((authPasswordCustomerResp) => {
+            console.log('authPasswordCustomerResp', authPasswordCustomerResp);
+            getActiveCart()
+              .then((getFinalActiveCartResp) => {
+                console.log('getFinalActiveCartResp', getFinalActiveCartResp);
+              })
+              .catch(console.error);
+          })
+          .catch(console.error);
+      })
+      .catch(console.error);
+  };
+
   return (
     <>
       <Container>
+        <Stack direction="row">
+          <Button variant="outlined" onClick={handleGetAnonMe}>
+            Create anonym cart
+          </Button>
+          <Button variant="outlined" onClick={handleUpdateCart}>
+            Add Items in cart
+          </Button>
+          <Button variant="outlined" onClick={loginWithAnonCart}>
+            Login with anon cart
+          </Button>
+        </Stack>
         <Button variant="outlined" onClick={handleGetMe}>
           Get User
         </Button>
