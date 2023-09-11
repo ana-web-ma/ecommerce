@@ -22,7 +22,7 @@ import ProductCard from './ProductCard';
 import { getProducts } from '../../api/calls/products/getProducts';
 import { getCategoryById } from '../../api/calls/categories/getCategoryById';
 import NavigationCatalog from './NavigationCatalog';
-import { getCategoryByKey } from '../../api/calls/categories/getCategoriesByKey';
+import { getCategoryByKey } from '../../api/calls/categories/getCategoryByKey';
 import {
   useAllProducts,
   useAppDispatch,
