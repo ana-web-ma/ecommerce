@@ -7,11 +7,19 @@ export default function CartTableHead(): ReactElement {
       <TableHead>
         <TableRow>
           <TableCell>
-            CartTableHead
+            Name
             <TableSortLabel></TableSortLabel>
           </TableCell>
-          <TableCell>CartTableHead</TableCell>
-          <TableCell>CartTableHead</TableCell>
+          <TableCell>Image</TableCell>
+          <TableCell>
+            Quantity<TableSortLabel></TableSortLabel>
+          </TableCell>
+          <TableCell>
+            Price<TableSortLabel></TableSortLabel>
+          </TableCell>
+          <TableCell>
+            Total price<TableSortLabel></TableSortLabel>
+          </TableCell>
         </TableRow>
       </TableHead>
     </>

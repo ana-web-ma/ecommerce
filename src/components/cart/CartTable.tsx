@@ -5,24 +5,28 @@ import {
   TablePagination,
 } from '@mui/material';
 import React, { type ReactElement } from 'react';
+import { type LineItem, type Cart } from '@commercetools/platform-sdk';
 import CartLineItem from './CartLineItem';
 import CartTableHead from './CartTableHead';
 import CartTableToolbar from './CartTableToolbar';
 
-export default function CartTable(): ReactElement {
+export default function CartTable(props: {
+  lineItems: LineItem[] | undefined;
+}): ReactElement {
+  // console.log(props.lineItems);
   return (
     <>
       <TableContainer>
         <Table>
           <CartTableHead />
           <TableBody>
-            <CartLineItem />
-            <CartLineItem />
-            <CartLineItem />
+            {props.lineItems?.map((item) => (
+              <CartLineItem key={item.id} lineItem={item} />
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
+      {/* <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
         count={3}
@@ -34,7 +38,7 @@ export default function CartTable(): ReactElement {
         onRowsPerPageChange={() => {
           console.log('onRowsPerPageChange');
         }}
-      />
+      /> */}
     </>
   );
 }
