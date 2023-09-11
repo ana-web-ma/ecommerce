@@ -1,6 +1,5 @@
 import {
   type Customer,
-  type MyCustomerUpdateAction,
   type ClientResponse,
 } from '@commercetools/platform-sdk';
 import { apiRootCreateByToken } from '../../../clients/ExistingTokenFlowClient';
