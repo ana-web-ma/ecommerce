@@ -23,6 +23,7 @@ export default function CartLineItem(props: {
   setCartData: Dispatch<SetStateAction<Cart | null>>;
 }): ReactElement {
   const [quantity, setQuantity] = React.useState(props.lineItem.quantity);
+  const [firstRender, setFirstRender] = React.useState(true);
 
   const VariantImage = (): ReactElement => {
     return props.lineItem.variant.images != null ? (
@@ -37,21 +38,25 @@ export default function CartLineItem(props: {
   };
 
   useEffect(() => {
-    updateCartById({
-      activeCartId: cartCache.id,
-      activeCartVersion: cartCache.version,
-      changeLineItemQuantity: {
-        lineItemId: props.lineItem.id,
-        quantity,
-      },
-    })
-      .then((resp) => {
-        cartCache.version = resp.body.version;
-        props.setCartData(resp.body);
+    if (firstRender) {
+      setFirstRender(false);
+    } else {
+      updateCartById({
+        activeCartId: cartCache.id,
+        activeCartVersion: cartCache.version,
+        changeLineItemQuantity: {
+          lineItemId: props.lineItem.id,
+          quantity,
+        },
       })
-      .catch((err) => {
-        console.log(err);
-      });
+        .then((resp) => {
+          cartCache.version = resp.body.version;
+          props.setCartData(resp.body);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, [quantity]);
 
   const quantityChangeHandler = (
@@ -76,6 +81,7 @@ export default function CartLineItem(props: {
         console.log(err);
       });
   };
+
   return (
     <>
       <TableRow>

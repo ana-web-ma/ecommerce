@@ -1,9 +1,8 @@
-import React, { type ReactElement } from 'react';
-import { Box, Button, Link, Typography } from '@mui/material';
+import React, { useEffect, type ReactElement } from 'react';
+import { Box, Link, Typography } from '@mui/material';
 import { type Cart } from '@commercetools/platform-sdk';
 import { useNavigate } from 'react-router-dom';
 import CartTable from './CartTable';
-import CartFooter from './CartFooter';
 import CartTableToolbar from './CartTableToolbar';
 import { getActiveCart } from '../../api/calls/carts/getActiveCart';
 import { cartCache } from '../../api/cartCache';
@@ -16,7 +15,6 @@ export default function CartComponent(): ReactElement {
   const updateCart = (): void => {
     getActiveCart()
       .then((getActiveCartResp) => {
-        console.log('getActiveCartResp', getActiveCartResp.body.lineItems);
         cartCache.id = getActiveCartResp.body.id;
         cartCache.version = getActiveCartResp.body.version;
         setCartData(getActiveCartResp.body);
@@ -26,19 +24,19 @@ export default function CartComponent(): ReactElement {
       });
   };
 
-  return cartData !== null ? (
+  useEffect(() => {
+    updateCart();
+  }, []);
+
+  return cartData !== null && cartData?.lineItems.length > 0 ? (
     <>
       <Box>
-        <Button
-          onClick={() => {
-            updateCart();
-          }}
-        >
-          Update Cart
-        </Button>
-        <CartTableToolbar />
+        <CartTableToolbar
+          totalPrice={cartData?.totalPrice}
+          setCartData={setCartData}
+          lineItems={cartData?.lineItems}
+        />
         <CartTable lineItems={cartData?.lineItems} setCartData={setCartData} />
-        <CartFooter totalPrice={cartData?.totalPrice} />
       </Box>
     </>
   ) : (
