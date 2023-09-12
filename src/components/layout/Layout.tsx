@@ -19,13 +19,13 @@ const Layout = (): ReactElement => {
       <Header />
       <Container
         sx={{
-          padding: '0',
+          padding: 0,
           height: '100%',
           width: '100%',
           display: 'flex',
           flexGrow: '1',
           flexDirection: 'column',
-          justifyContent: 'center',
+          justifyContent: 'start',
         }}
       >
         <Outlet />
