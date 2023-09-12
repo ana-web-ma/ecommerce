@@ -3,7 +3,15 @@ import {
   type Cart,
   type CentPrecisionMoney,
 } from '@commercetools/platform-sdk';
-import { Button, Stack, Typography } from '@mui/material';
+import {
+  DialogContentText,
+  Button,
+  Dialog,
+  DialogContent,
+  Stack,
+  Typography,
+  DialogActions,
+} from '@mui/material';
 import React, {
   type Dispatch,
   type SetStateAction,
@@ -17,6 +25,16 @@ export default function CartTableToolbar(props: {
   setCartData: Dispatch<SetStateAction<Cart | null>>;
   lineItems: LineItem[];
 }): ReactElement {
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = (): void => {
+    setOpen(true);
+  };
+
+  const handleClose = (): void => {
+    setOpen(false);
+  };
+
   const clearCartHandler = (): void => {
     const ids = props.lineItems.map((item) => item.id);
     updateCartById({
@@ -33,6 +51,7 @@ export default function CartTableToolbar(props: {
       .catch((err) => {
         console.log(err);
       });
+    handleClose();
   };
   return props.totalPrice !== undefined ? (
     <>
@@ -40,11 +59,30 @@ export default function CartTableToolbar(props: {
         <Button
           variant="text"
           onClick={() => {
-            clearCartHandler();
+            handleClickOpen();
           }}
         >
           <Typography variant="subtitle2">Clear cart</Typography>
         </Button>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogContent>
+            <Typography variant="subtitle2">Empty shopping cart?</Typography>
+            <DialogContentText id="alert-dialog-description">
+              This action cannot be undone.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={clearCartHandler} autoFocus>
+              Clear cart
+            </Button>
+          </DialogActions>
+        </Dialog>
         <Stack
           direction="row"
           columnGap={2}
