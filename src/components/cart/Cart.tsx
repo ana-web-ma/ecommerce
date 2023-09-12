@@ -35,7 +35,7 @@ export default function CartComponent(): ReactElement {
         </Button>
         <CartTableToolbar />
         <CartTable lineItems={cartData?.lineItems} setCartData={setCartData} />
-        <CartFooter />
+        <CartFooter totalPrice={cartData?.totalPrice} />
       </Box>
     </>
   );
