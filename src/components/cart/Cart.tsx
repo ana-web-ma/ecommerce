@@ -1,6 +1,7 @@
-import React, { useEffect, type ReactElement } from 'react';
-import { Box, Button } from '@mui/material';
+import React, { type ReactElement } from 'react';
+import { Box, Button, Link, Typography } from '@mui/material';
 import { type Cart } from '@commercetools/platform-sdk';
+import { useNavigate } from 'react-router-dom';
 import CartTable from './CartTable';
 import CartFooter from './CartFooter';
 import CartTableToolbar from './CartTableToolbar';
@@ -9,6 +10,8 @@ import { cartCache } from '../../api/cartCache';
 
 export default function CartComponent(): ReactElement {
   const [cartData, setCartData] = React.useState<Cart | null>(null);
+
+  const navigate = useNavigate();
 
   const updateCart = (): void => {
     getActiveCart()
@@ -23,7 +26,7 @@ export default function CartComponent(): ReactElement {
       });
   };
 
-  return (
+  return cartData !== null ? (
     <>
       <Box>
         <Button
@@ -38,5 +41,16 @@ export default function CartComponent(): ReactElement {
         <CartFooter totalPrice={cartData?.totalPrice} />
       </Box>
     </>
+  ) : (
+    <Box textAlign="center">
+      <Typography>Your cart is empty</Typography>
+      <Link
+        onClick={(): void => {
+          navigate('/catalog');
+        }}
+      >
+        Back to shopping
+      </Link>
+    </Box>
   );
 }
