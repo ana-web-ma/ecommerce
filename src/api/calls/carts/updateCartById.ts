@@ -13,13 +13,16 @@ export const updateCartById = async (props: {
     variantId: number;
     quantity: number;
   };
+  changeLineItemQuantity?: {
+    lineItemId: string;
+    quantity: number;
+  };
   removeLineItem?: {
     lineItemId: string;
     quantity?: number;
   };
-  changeLineItemQuantity?: {
-    lineItemId: string;
-    quantity: number;
+  clearLineItems?: {
+    lineItemIds: string[];
   };
 }): Promise<ClientResponse<Cart>> => {
   const actions: MyCartUpdateAction[] = [];
@@ -44,6 +47,14 @@ export const updateCartById = async (props: {
       action: 'changeLineItemQuantity',
       lineItemId: props.changeLineItemQuantity.lineItemId,
       quantity: props.changeLineItemQuantity.quantity,
+    });
+  }
+  if (props.clearLineItems != null) {
+    props.clearLineItems.lineItemIds.forEach((id) => {
+      actions.push({
+        action: 'removeLineItem',
+        lineItemId: id,
+      });
     });
   }
   return apiRootCreateByToken()
