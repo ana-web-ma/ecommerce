@@ -151,7 +151,7 @@ const Products = (): ReactElement => {
   }, [location]);
 
   useEffect((): void => {
-    setPageNumber(1);
+    dispatch(setPageNumber(1));
   }, [filterChecked]);
 
   useEffect((): void => {
@@ -206,7 +206,6 @@ const Products = (): ReactElement => {
     categoryFilter,
     pageNumber,
   ]);
-  console.log(products);
 
   return (
     <>
@@ -329,44 +328,6 @@ const Products = (): ReactElement => {
           <Typography>Loading...</Typography>
         ) : (
           products.map((card, index) => {
-            const variants = [...card.variants];
-            variants.push(card.masterVariant);
-            variants.sort(
-              (a, b) =>
-                Number(b?.prices?.[0]?.value.centAmount) -
-                Number(a?.prices?.[0]?.value.centAmount),
-            );
-            const directionVariant = !sortDirection
-              ? variants[0]
-              : variants[variants.length - 1];
-            const currentVariant = sortType
-              ? directionVariant
-              : card.masterVariant;
-            const cardData = {
-              id: card.id,
-              keyProduct:
-                card.masterVariant.key !== undefined
-                  ? card.masterVariant.key
-                  : '',
-              attribute:
-                currentVariant.attributes !== undefined &&
-                currentVariant.attributes.length !== 0
-                  ? currentVariant.attributes[0].value.key
-                  : '',
-              image:
-                currentVariant.images !== undefined
-                  ? currentVariant.images[0].url
-                  : '',
-              image2:
-                currentVariant.images?.[1] !== undefined
-                  ? currentVariant.images[1].url
-                  : null,
-              name: card.name['en-US'],
-              keyValue: card.key !== undefined ? card.key : '',
-              description:
-                card.description !== undefined ? card.description['en-US'] : '',
-              price: currentVariant.prices, // todo Prices!!!!!!!!!!!!!!!!!!!!!
-            };
             if (index <= 1) {
               return (
                 <Grid
@@ -377,7 +338,7 @@ const Products = (): ReactElement => {
                   md={9}
                   lg={6}
                 >
-                  <ProductCard product={cardData} small={false} />
+                  <ProductCard product={card} small={false} />
                 </Grid>
               );
             }
@@ -390,7 +351,7 @@ const Products = (): ReactElement => {
                 md={4.5}
                 lg={3}
               >
-                <ProductCard product={cardData} small={true} />
+                <ProductCard product={card} small={true} />
               </Grid>
             );
           })
@@ -402,7 +363,7 @@ const Products = (): ReactElement => {
         page={pageNumber}
         shape="rounded"
         onChange={(_, number) => {
-          setPageNumber(number);
+          dispatch(setPageNumber(number));
           dispatch(setIsLoadingTrue);
         }}
         renderItem={(item) => (

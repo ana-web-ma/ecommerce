@@ -2,8 +2,10 @@ import React, { type ReactElement } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Container } from '@mui/material';
 import Header from '../header/Header';
+import getCartForStore from '../products/getCart';
 
 const Layout = (): ReactElement => {
+  getCartForStore();
   return (
     <Container
       maxWidth="xl"

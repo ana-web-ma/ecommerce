@@ -27,7 +27,7 @@ import { getProductByKey } from '../../api/calls/products/getProductByKey';
 import { ButtonAddToBag } from '../ui/ButtonAddToBag';
 import { ButtonDeleteFromBag } from '../ui/ButtonDeleteFromBag';
 
-const Product = (): ReactElement => {
+const Product = (props: { active?: number }): ReactElement => {
   const navigation = useNavigate();
   const [expanded, setExpanded] = React.useState(false);
   const [activeVariant, setActiveVariant] = React.useState<number>(0);
@@ -79,7 +79,11 @@ const Product = (): ReactElement => {
     }
   }, [params]);
 
-  useEffect(() => {}, [activeVariant]);
+  useEffect(() => {
+    if (props.active !== undefined) {
+      setActiveVariant(props.active);
+    }
+  }, [activeVariant]);
 
   const handleOpenModal = (): void => {
     setOpenModal(true);
@@ -90,7 +94,6 @@ const Product = (): ReactElement => {
   const handleExpandClick = (): void => {
     setExpanded(!expanded);
   };
-  console.log(productData);
 
   const prices =
     productData?.masterData.current.variants[activeVariant].prices !== undefined
@@ -300,7 +303,11 @@ const Product = (): ReactElement => {
             ))}
           </Grid>
           {keyProduct !== undefined ? (
-            <ButtonDeleteFromBag keyItem={keyProduct} />
+            <ButtonDeleteFromBag
+              keyItem={keyProduct}
+              productId={productData?.id !== undefined ? productData?.id : ''}
+              variantId={idVariant !== undefined ? idVariant : 1}
+            />
           ) : null}
         </Grid>
       </Grid>

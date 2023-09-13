@@ -1,16 +1,22 @@
-import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import { useState, type ReactElement, useEffect } from 'react';
-import { Tooltip, IconButton, Button } from '@mui/material';
+import { Button } from '@mui/material';
 import {
   useAppDispatch,
   useArrayProductsKeysFromCart,
 } from '../../helpers/hooks/Hooks';
-import { addToCart, removeFromCart } from '../../store/reducers/ShoppingSlice';
+import {
+  addNumberOfPurchases,
+  removeFromCart,
+} from '../../store/reducers/ShoppingSlice';
 import RemoveShoppingBag from './icons/RemoveShoppingBag';
+import { getActiveCart } from '../../api/calls/carts/getActiveCart';
+import { updateCartById } from '../../api/calls/carts/updateCartById';
 
 export function ButtonDeleteFromBag(props: {
   keyItem: string;
-}): ReactElement | null {
+  productId: string;
+  variantId: number;
+}): ReactElement {
   const arrayProductsFromCart = useArrayProductsKeysFromCart();
   const dispatch = useAppDispatch();
   const [flagIncludInBag, setFlagIncludInBag] = useState(false);
@@ -21,6 +27,47 @@ export function ButtonDeleteFromBag(props: {
       setFlagIncludInBag(false);
     }
   });
+
+  const deleteLineItem = async (
+    id: string,
+    version: number,
+    lineItemId: string,
+    quantity: number,
+  ): Promise<void> => {
+    updateCartById({
+      activeCartId: id,
+      activeCartVersion: version,
+      removeLineItem: {
+        lineItemId,
+        quantity,
+      },
+    })
+      .then(() => {
+        dispatch(addNumberOfPurchases(-quantity));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const ActiveCart = (): void => {
+    getActiveCart()
+      .then(async (getActiveCartResp) => {
+        getActiveCartResp.body.lineItems.forEach((item) => {
+          if (item.variant.key === props.keyItem) {
+            void deleteLineItem(
+              getActiveCartResp.body.id,
+              getActiveCartResp.body.version,
+              item.id,
+              item.quantity,
+            );
+          }
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <Button
@@ -34,9 +81,12 @@ export function ButtonDeleteFromBag(props: {
       }}
       startIcon={<RemoveShoppingBag />}
       variant="outlined"
-      onClick={(): void => {
-        console.log('remove');
+      onClick={(e): void => {
+        e.preventDefault();
+        console.log(props.keyItem);
         dispatch(removeFromCart(props.keyItem));
+        ActiveCart();
+        setFlagIncludInBag(false);
       }}
     >
       Delete from the Bag
