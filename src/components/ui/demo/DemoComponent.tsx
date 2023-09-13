@@ -188,23 +188,58 @@ function DemoComponent(): ReactElement {
       activeCartId: cartCache.id,
       activeCartVersion: cartCache.version,
       addLineItem: {
-        productId: '0bb3fd68-5ef0-484a-8f27-b4be13644e51',
-        variantId: 2,
-        quantity: 4,
+        productId: '761a0ca7-5a62-418c-9d13-91abc5a8fa47',
+        variantId: 1,
+        quantity: 1,
       },
-      // removeLineItem: {
-      //   lineItemId: '1bea1fe8-e15e-4da4-b6ae-18c6314931a3',
-      //   quantity: 1,
-      // },
-      // changeLineItemQuantity: {
-      //   lineItemId: 'f8701d93-c42e-4c01-b49b-75c5d03c2b01',
-      //   quantity: 23,
-      // },
     })
       .then((updateCartByIdResp) => {
-        console.log('updateCartByIdResp', updateCartByIdResp.body.lineItems);
-        console.log('updateCartByIdResp', updateCartByIdResp.body.version);
         cartCache.version = updateCartByIdResp.body.version;
+        updateCartById({
+          activeCartId: cartCache.id,
+          activeCartVersion: cartCache.version,
+          addLineItem: {
+            productId: '0bb3fd68-5ef0-484a-8f27-b4be13644e51',
+            variantId: 2,
+            quantity: 4,
+          },
+        })
+          .then((up2) => {
+            cartCache.version = up2.body.version;
+            updateCartById({
+              activeCartId: cartCache.id,
+              activeCartVersion: cartCache.version,
+              addLineItem: {
+                productId: '8006c901-1b11-4d6c-9827-c7f197de8a92',
+                variantId: 1,
+                quantity: 2,
+              },
+            })
+              .then((up3) => {
+                cartCache.version = up3.body.version;
+                updateCartById({
+                  activeCartId: cartCache.id,
+                  activeCartVersion: cartCache.version,
+                  addLineItem: {
+                    productId: '5f78bde2-441a-4af8-9a28-1193f9b1541b',
+                    variantId: 1,
+                    quantity: 5,
+                  },
+                })
+                  .then((up4) => {
+                    cartCache.version = up4.body.version;
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       })
       .catch((err) => {
         console.log(err);
