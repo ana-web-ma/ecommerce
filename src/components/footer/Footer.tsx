@@ -8,7 +8,7 @@ const FooterContainer = styled('div')({
   color: '#fff',
   padding: '20px',
   textAlign: 'center',
-  width: 'calc(100% + 48px)',
+  width: '100vw',
   marginBottom: '-24px',
   marginTop: '40px',
 });
