@@ -33,9 +33,13 @@ export const shoppingSlice = createSlice({
       }
     },
     removeFromCart(state: IShoppingState, action: PayloadAction<string>) {
-      const index = state.arrayKeysProducts.indexOf(action.payload);
-      if (index > -1) {
-        state.arrayKeysProducts.splice(index, 1);
+      if (action.payload !== 'remove') {
+        const index = state.arrayKeysProducts.indexOf(action.payload);
+        if (index > -1) {
+          state.arrayKeysProducts.splice(index, 1);
+        }
+      } else {
+        state.arrayKeysProducts = [];
       }
     },
     resetNumberOfPurchases(state: IShoppingState) {

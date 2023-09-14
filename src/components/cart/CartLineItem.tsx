@@ -1,9 +1,4 @@
-import React, {
-  type Dispatch,
-  type SetStateAction,
-  type ReactElement,
-  useEffect,
-} from 'react';
+import React, { type ReactElement, useEffect } from 'react';
 import {
   IconButton,
   Stack,
@@ -11,19 +6,35 @@ import {
   TableRow,
   TextField,
 } from '@mui/material';
-import { type Cart, type LineItem } from '@commercetools/platform-sdk';
+import { type LineItem } from '@commercetools/platform-sdk';
+import { NavLink } from 'react-router-dom';
 import Image from '../ui/Image';
 import PriceComponent from '../ui/Price';
 import { updateCartById } from '../../api/calls/carts/updateCartById';
-import { cartCache } from '../../api/cartCache';
 import CrossIcon from '../ui/icons/CrossIcon';
+import {
+  useAppDispatch,
+  useIdCart,
+  useVersionCart,
+} from '../../helpers/hooks/Hooks';
+import {
+  setCartVersion,
+  setCart,
+  addNumberOfPurchases,
+  resetNumberOfPurchases,
+  removeFromCart,
+  addToCart,
+} from '../../store/reducers/ShoppingSlice';
 
 export default function CartLineItem(props: {
   lineItem: LineItem;
-  setCartData: Dispatch<SetStateAction<Cart | null>>;
 }): ReactElement {
   const [quantity, setQuantity] = React.useState(props.lineItem.quantity);
   const [firstRender, setFirstRender] = React.useState(true);
+
+  const dispatch = useAppDispatch();
+  const idActiveCart = useIdCart();
+  const versionActiveCart = useVersionCart();
 
   const VariantImage = (): ReactElement => {
     return props.lineItem.variant.images != null ? (
@@ -42,16 +53,24 @@ export default function CartLineItem(props: {
       setFirstRender(false);
     } else {
       updateCartById({
-        activeCartId: cartCache.id,
-        activeCartVersion: cartCache.version,
+        activeCartId: idActiveCart,
+        activeCartVersion: versionActiveCart,
         changeLineItemQuantity: {
           lineItemId: props.lineItem.id,
           quantity,
         },
       })
         .then((resp) => {
-          cartCache.version = resp.body.version;
-          props.setCartData(resp.body);
+          dispatch(setCartVersion(resp.body.version));
+          dispatch(setCart(resp.body));
+          dispatch(resetNumberOfPurchases());
+          dispatch(removeFromCart('remove'));
+          resp.body.lineItems.forEach((item) => {
+            dispatch(addNumberOfPurchases(item.quantity));
+            dispatch(
+              addToCart(item.variant.key !== undefined ? item.variant.key : ''),
+            );
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -67,15 +86,26 @@ export default function CartLineItem(props: {
 
   const deleteItemHandler = (): void => {
     updateCartById({
-      activeCartId: cartCache.id,
-      activeCartVersion: cartCache.version,
+      activeCartId: idActiveCart,
+      activeCartVersion: versionActiveCart,
       removeLineItem: {
         lineItemId: props.lineItem.id,
       },
     })
       .then((resp) => {
-        cartCache.version = resp.body.version;
-        props.setCartData(resp.body);
+        dispatch(setCartVersion(resp.body.version));
+        dispatch(setCart(resp.body));
+        dispatch(resetNumberOfPurchases());
+        dispatch(
+          removeFromCart(
+            props.lineItem.variant.key !== undefined
+              ? props.lineItem.variant.key
+              : '',
+          ),
+        );
+        resp.body.lineItems.forEach((item) => {
+          dispatch(addNumberOfPurchases(item.quantity));
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -85,7 +115,18 @@ export default function CartLineItem(props: {
   return (
     <>
       <TableRow>
-        <TableCell>{props.lineItem.variant.key}</TableCell>
+        <TableCell>
+          <NavLink
+            style={{ textDecoration: 'none', color: 'inherit' }}
+            to={`/product/${
+              props.lineItem.productKey !== undefined
+                ? props.lineItem.productKey
+                : ''
+            }`}
+          >
+            {props.lineItem.variant.key}
+          </NavLink>
+        </TableCell>
         <TableCell>
           <VariantImage />
         </TableCell>
@@ -107,7 +148,11 @@ export default function CartLineItem(props: {
           <PriceComponent price={props.lineItem.price} />
         </TableCell>
         <TableCell>
-          <Stack direction="row" justifyContent="space-between">
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
             <PriceComponent
               price={props.lineItem.price}
               quantity={props.lineItem.quantity}
