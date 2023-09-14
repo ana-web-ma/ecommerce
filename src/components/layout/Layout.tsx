@@ -1,11 +1,45 @@
-import React, { type ReactElement } from 'react';
+import React, { useEffect, type ReactElement } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Container } from '@mui/material';
 import Header from '../header/Header';
-import getCartForStore from '../products/getCart';
+import {
+  useAppDispatch,
+  useIsToken,
+  useNumberOfPurchases,
+} from '../../helpers/hooks/Hooks';
+import { getActiveCart } from '../../api/calls/carts/getActiveCart';
+import {
+  addNumberOfPurchases,
+  addToCart,
+  resetNumberOfPurchases,
+  setCart,
+  setCartIdAndVersion,
+} from '../../store/reducers/ShoppingSlice';
 
 const Layout = (): ReactElement => {
-  getCartForStore();
+  const dispatch = useAppDispatch();
+
+  if (useIsToken() && useNumberOfPurchases() === 0) {
+    getActiveCart()
+      .then(async (getActiveCartResp) => {
+        dispatch(setCart(getActiveCartResp.body));
+        dispatch(
+          setCartIdAndVersion({
+            id: getActiveCartResp.body.id,
+            version: getActiveCartResp.body.version,
+          }),
+        );
+        dispatch(resetNumberOfPurchases());
+        getActiveCartResp.body.lineItems.forEach((item) => {
+          dispatch(addNumberOfPurchases(item.quantity));
+          if (item.variant.key !== undefined)
+            dispatch(addToCart(item.variant.key));
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
   return (
     <Container
       maxWidth="xl"

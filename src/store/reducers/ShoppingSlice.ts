@@ -1,8 +1,10 @@
+import { type Cart } from '@commercetools/platform-sdk';
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 export interface IShoppingState {
   numberOfPurchases: number;
   arrayKeysProducts: string[];
+  cart: Cart | null;
   cashCart: {
     id: string | null;
     version: number;
@@ -13,6 +15,7 @@ export interface IShoppingState {
 const initialState: IShoppingState = {
   numberOfPurchases: 0,
   arrayKeysProducts: [],
+  cart: null,
   cashCart: {
     id: null,
     version: 0,
@@ -41,7 +44,10 @@ export const shoppingSlice = createSlice({
     addNumberOfPurchases(state: IShoppingState, action: PayloadAction<number>) {
       state.numberOfPurchases += action.payload;
     },
-    setCart(
+    setCart(state: IShoppingState, action: PayloadAction<Cart>) {
+      state.cart = action.payload;
+    },
+    setCartIdAndVersion(
       state: IShoppingState,
       action: PayloadAction<{ id: string; version: number }>,
     ) {
@@ -63,6 +69,7 @@ export const {
   addToCart,
   removeFromCart,
   setCart,
+  setCartIdAndVersion,
   setCartVersion,
   setSendRequest,
 } = shoppingSlice.actions;

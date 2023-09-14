@@ -26,6 +26,7 @@ import PriceComponent from '../ui/Price';
 import { getProductByKey } from '../../api/calls/products/getProductByKey';
 import { ButtonAddToBag } from '../ui/ButtonAddToBag';
 import { ButtonDeleteFromBag } from '../ui/ButtonDeleteFromBag';
+import { useArrayProductsKeysFromCart } from '../../helpers/hooks/Hooks';
 
 const Product = (props: { active?: number }): ReactElement => {
   const navigation = useNavigate();

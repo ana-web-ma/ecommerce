@@ -3,7 +3,7 @@ import {
   useDispatch,
   useSelector,
 } from 'react-redux';
-import { type Customer } from '@commercetools/platform-sdk';
+import { type Cart, type Customer } from '@commercetools/platform-sdk';
 import { type RootState, type AppDispatch } from '../../store/Store';
 import { type IProductsState } from '../../store/reducers/ProductsSlice';
 
@@ -104,7 +104,7 @@ export const useFilterChecked = (): boolean => {
 // Shopping bag
 export const useNumberOfPurchases = (): number => {
   const numberOfPurchases = useAppSelector(
-    (state) => state.shoppingReducer.arrayKeysProducts.length,
+    (state) => state.shoppingReducer.numberOfPurchases,
   );
   return numberOfPurchases;
 };
@@ -116,9 +116,14 @@ export const useArrayProductsKeysFromCart = (): string[] => {
   return arrayFromCart;
 };
 
-export const useIdCart = (): string | null => {
+export const useCart = (): Cart | null => {
+  const CartData = useAppSelector((state) => state.shoppingReducer.cart);
+  return CartData;
+};
+
+export const useIdCart = (): string => {
   const IdCart = useAppSelector((state) => state.shoppingReducer.cashCart.id);
-  return IdCart;
+  return IdCart !== null ? IdCart : '';
 };
 
 export const useVersionCart = (): number => {

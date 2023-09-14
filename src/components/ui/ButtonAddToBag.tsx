@@ -4,16 +4,19 @@ import { Tooltip, IconButton, CircularProgress, Stack } from '@mui/material';
 import {
   useAppDispatch,
   useArrayProductsKeysFromCart,
+  useIdCart,
   useIsToken,
+  useVersionCart,
 } from '../../helpers/hooks/Hooks';
 import {
+  addNumberOfPurchases,
   addToCart,
   setCart,
+  setCartIdAndVersion,
   setCartVersion,
   setSendRequest,
 } from '../../store/reducers/ShoppingSlice';
 import { createAnonymousCart } from '../../api/calls/carts/createAnonymousCart';
-import { getActiveCart } from '../../api/calls/carts/getActiveCart';
 import { updateCartById } from '../../api/calls/carts/updateCartById';
 
 export function ButtonAddToBag(props: {
@@ -26,6 +29,8 @@ export function ButtonAddToBag(props: {
   const [flagIncludInBag, setFlagIncludInBag] = useState(false);
   const [flagRequest, setFlagRequest] = useState(false);
   const isToken = useIsToken();
+  const idCart = useIdCart();
+  const versionCart = useVersionCart();
 
   useEffect(() => {
     if (arrayProductsFromCart.includes(props.keyItem)) {
@@ -35,10 +40,13 @@ export function ButtonAddToBag(props: {
     }
   });
 
-  const updateCart = async (id: string, version: number): Promise<void> => {
+  const addLineItemToCart = async (
+    id?: string,
+    version?: number,
+  ): Promise<void> => {
     updateCartById({
-      activeCartId: id,
-      activeCartVersion: version,
+      activeCartId: id !== undefined ? id : idCart,
+      activeCartVersion: version !== undefined ? version : versionCart,
       addLineItem: {
         productId: props.productId,
         variantId: props.variantId,
@@ -46,6 +54,7 @@ export function ButtonAddToBag(props: {
       },
     })
       .then((updateCartByIdResp) => {
+        dispatch(setCart(updateCartByIdResp.body));
         dispatch(setCartVersion(updateCartByIdResp.body.version));
         setFlagRequest(false);
       })
@@ -54,29 +63,20 @@ export function ButtonAddToBag(props: {
       });
   };
 
-  const ActiveCart = async (): Promise<void> => {
-    getActiveCart()
-      .then(async (getActiveCartResp) => {
-        dispatch(
-          setCart({
-            id: getActiveCartResp.body.id,
-            version: getActiveCartResp.body.version,
-          }),
-        );
-        await updateCart(
-          getActiveCartResp.body.id,
-          getActiveCartResp.body.version,
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   const createAnonymous = async (): Promise<void> => {
     createAnonymousCart()
-      .then(async (): Promise<void> => {
-        await ActiveCart();
+      .then(async (respAnonymousCart): Promise<void> => {
+        dispatch(setCart(respAnonymousCart.body));
+        dispatch(
+          setCartIdAndVersion({
+            id: respAnonymousCart.body.id,
+            version: respAnonymousCart.body.version,
+          }),
+        );
+        await addLineItemToCart(
+          respAnonymousCart.body.id,
+          respAnonymousCart.body.version,
+        );
       })
       .catch(console.error);
   };
@@ -94,11 +94,16 @@ export function ButtonAddToBag(props: {
               e.preventDefault();
               setFlagRequest(true);
               dispatch(addToCart(props.keyItem));
+              dispatch(addNumberOfPurchases(1));
               dispatch(setSendRequest(true));
               if (isToken) {
-                void ActiveCart();
+                addLineItemToCart().catch((err) => {
+                  console.log(err);
+                });
               } else {
-                void createAnonymous();
+                createAnonymous().catch((err) => {
+                  console.log(err);
+                });
               }
             }}
             disabled={flagIncludInBag}
