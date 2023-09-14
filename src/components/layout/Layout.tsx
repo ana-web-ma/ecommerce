@@ -2,6 +2,7 @@ import React, { type ReactElement } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Container } from '@mui/material';
 import Header from '../header/Header';
+import Footer from '../footer/Footer';
 
 const Layout = (): ReactElement => {
   return (
@@ -30,6 +31,7 @@ const Layout = (): ReactElement => {
       >
         <Outlet />
       </Container>
+      <Footer />
     </Container>
   );
 };

@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { type ReactElement } from 'react';
 import { Box, Stack, Typography, Button } from '@mui/material';
+import { CustomDialog } from '../register/DialogModule';
 import MainImg from './images/main.png';
 
 function Welcome(): ReactElement {
   const [promoCode1] = useState('SUM23');
   const [promoCode2] = useState('WED23');
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
+  const openDialog = (title: string, content: React.ReactNode): void => {
+    setDialogTitle(title);
+    setDialogContent(content);
+    setDialogOpen(true);
+  };
 
   const copyToClipboard = async (code: string): Promise<void> => {
     try {
@@ -29,7 +38,10 @@ function Welcome(): ReactElement {
           onClick={() => {
             copyToClipboard(promoCode1)
               .then(() => {
-                alert(`Promo code "${promoCode1}" copied to clipboard!`);
+                openDialog(
+                  'Successfully',
+                  `Promo code "${promoCode1}" copied to clipboard!`,
+                );
               })
               .catch((error) => {
                 console.error('Error copying to clipboard:', error);
@@ -44,7 +56,10 @@ function Welcome(): ReactElement {
           onClick={() => {
             copyToClipboard(promoCode2)
               .then(() => {
-                alert(`Promo code "${promoCode2}" copied to clipboard!`);
+                openDialog(
+                  'Successfully',
+                  `Promo code "${promoCode2}" copied to clipboard!`,
+                );
               })
               .catch((error) => {
                 console.error('Error copying to clipboard:', error);
@@ -55,6 +70,14 @@ function Welcome(): ReactElement {
           wedding collection: {promoCode2}
         </Button>
       </Box>
+      <CustomDialog
+        open={dialogOpen}
+        onClose={() => {
+          setDialogOpen(false);
+        }}
+        title={dialogTitle}
+        content={dialogContent}
+      />
     </Stack>
   );
 }
