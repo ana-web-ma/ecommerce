@@ -1,5 +1,6 @@
-import React, { useState, type ReactElement } from 'react';
+import React, { useState, type ReactElement, useEffect } from 'react';
 import {
+  Badge,
   Box,
   Button,
   Checkbox,
@@ -27,9 +28,13 @@ import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SearchIcon from '../ui/icons/SearchIcon';
 import logo from './img/logo.png';
-import { useAppDispatch, useIsLogged } from '../../helpers/hooks/Hooks';
+import {
+  useAppDispatch,
+  useIsLogged,
+  useNumberOfPurchases,
+} from '../../helpers/hooks/Hooks';
 import { logout } from '../../store/reducers/CustomerSlice';
-import { search } from '../../store/reducers/ProductsSlice';
+import { search } from '../../store/reducers/FilterSlice';
 import imageHomeDecor from './img/home-decor.jpg';
 import imageFragrances from './img/Fragrances.avif';
 import imageCollections from './img/collections.avif';
@@ -149,6 +154,7 @@ const Header = (): ReactElement => {
       </Stack>
     </Stack>
   );
+  const number = useNumberOfPurchases();
 
   return (
     <>
@@ -293,19 +299,37 @@ const Header = (): ReactElement => {
               sx={{ display: link.isLogged ? 'block' : 'none' }}
               icon={
                 <span>
-                  <IconButton
-                    component={Link}
-                    onClick={(): void => {
-                      setShowSpeedDial(false);
-                      if (link.path !== null) {
-                        navigate(link.path);
-                      } else {
-                        setOpenSearchModal(true);
-                      }
-                    }}
-                  >
-                    {link.icon}
-                  </IconButton>
+                  {link.path === '/cart' ? (
+                    <Badge badgeContent={number} sx={{ color: '#A70000' }}>
+                      <IconButton
+                        component={Link}
+                        onClick={(): void => {
+                          setShowSpeedDial(false);
+                          if (link.path !== null) {
+                            navigate(link.path);
+                          } else {
+                            setOpenSearchModal(true);
+                          }
+                        }}
+                      >
+                        <ShoppingBagIcon color="action" />
+                      </IconButton>
+                    </Badge>
+                  ) : (
+                    <IconButton
+                      component={Link}
+                      onClick={(): void => {
+                        setShowSpeedDial(false);
+                        if (link.path !== null) {
+                          navigate(link.path);
+                        } else {
+                          setOpenSearchModal(true);
+                        }
+                      }}
+                    >
+                      {link.icon}
+                    </IconButton>
+                  )}
                 </span>
               }
             />
@@ -330,7 +354,9 @@ const Header = (): ReactElement => {
 
         <Box sx={{ display: { md: 'none', xs: 'block' }, width: '50px' }}></Box>
 
-        <Box
+        <Stack
+          direction={'row'}
+          alignItems={'center'}
           zIndex="200"
           sx={{ display: { md: 'flex', xs: 'none' } }}
           onMouseEnter={() => {
@@ -347,18 +373,37 @@ const Header = (): ReactElement => {
               disableTouchListener
               disableFocusListener
             >
-              <IconButton
-                component={Link}
-                onClick={(): void => {
-                  if (link.path !== null) {
+              {link.path === '/cart' ? (
+                <IconButton
+                  component={Link}
+                  onClick={(): void => {
                     navigate(link.path);
-                  } else {
-                    setOpenSearchModal(true);
-                  }
-                }}
-              >
-                {link.icon}
-              </IconButton>
+                  }}
+                >
+                  <Badge
+                    badgeContent={number}
+                    sx={{
+                      paddingBottom: '12px',
+                      color: '#A70000',
+                    }}
+                  >
+                    <ShoppingBagIcon color="action" />
+                  </Badge>
+                </IconButton>
+              ) : (
+                <IconButton
+                  component={Link}
+                  onClick={(): void => {
+                    if (link.path !== null) {
+                      navigate(link.path);
+                    } else {
+                      setOpenSearchModal(true);
+                    }
+                  }}
+                >
+                  {link.icon}
+                </IconButton>
+              )}
             </Tooltip>
           ))}
 
@@ -378,7 +423,7 @@ const Header = (): ReactElement => {
           ) : (
             ''
           )}
-        </Box>
+        </Stack>
       </Stack>
       <Box component="nav">
         <Drawer

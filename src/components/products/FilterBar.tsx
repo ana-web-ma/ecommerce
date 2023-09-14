@@ -10,18 +10,20 @@ import {
   Typography,
 } from '@mui/material';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   categoryChecked,
   attributeKey,
   setOpenFilterBar,
   setPriceValue,
   setFilterChecked,
-} from '../../store/reducers/ProductsSlice';
+} from '../../store/reducers/FilterSlice';
 import {
   useAppDispatch,
   useAttributeKey,
   usePriceValue,
 } from '../../helpers/hooks/Hooks';
+import { setPageNumber } from '../../store/reducers/ProductsSlice';
 
 function valuetext(value: number): string {
   return `${value}`;
@@ -29,6 +31,7 @@ function valuetext(value: number): string {
 
 export default function FilterBar(): React.ReactElement {
   const dispatch = useAppDispatch();
+  const navigation = useNavigate();
   const priceValue = usePriceValue();
   const attributeValue = useAttributeKey();
   const [summerCollectionChecked, setSummerCollectionChecked] =
@@ -55,6 +58,7 @@ export default function FilterBar(): React.ReactElement {
   };
 
   const saveFilterProps = (): void => {
+    dispatch(setPageNumber(1));
     dispatch(attributeKey(attributeValue));
     dispatch(setPriceValue(priceValue));
     const TempArray: string[] = [];
@@ -67,6 +71,7 @@ export default function FilterBar(): React.ReactElement {
     dispatch(categoryChecked(TempArray));
     dispatch(setOpenFilterBar(false));
     dispatch(setFilterChecked(true));
+    navigation('/catalog');
   };
 
   const resetFilterProps = (): void => {

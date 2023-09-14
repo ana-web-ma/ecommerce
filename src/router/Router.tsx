@@ -11,8 +11,9 @@ import Profile from '../pages/profile/Profile';
 import CartPage from '../pages/cart/CartPage';
 import ProductPage from '../pages/product/ProductPage';
 
+const customerData = localStorage.getItem('EPERFUME_CUSTOMER_ID');
+
 const isLogged = (): Response | null => {
-  const customerData = localStorage.getItem('EPERFUME_CUSTOMER_ID');
   if (customerData !== null) {
     return redirect('/');
   }
@@ -20,7 +21,6 @@ const isLogged = (): Response | null => {
 };
 
 const isNotLogged = (): Response | null => {
-  const customerData = localStorage.getItem('EPERFUME_CUSTOMER_ID');
   if (customerData === null) {
     return redirect('/');
   }

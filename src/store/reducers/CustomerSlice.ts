@@ -7,11 +7,16 @@ interface ICustomerState {
   id: string | null;
   searchText: string | null;
   isLogged: boolean;
+  isToken: boolean;
 }
+
+const initialToken = localStorage.getItem('EPERFUME_CUSTOMER_TOKEN');
 
 const initialState: ICustomerState = {
   customer: null,
   isLogged: localStorage.getItem('EPERFUME_CUSTOMER_ID') !== null,
+  isToken:
+    initialToken !== null ? JSON.parse(initialToken).token !== '' : false,
   id: null,
   searchText: null,
 };
@@ -26,9 +31,7 @@ export const customerSlice = createSlice({
   initialState,
   reducers: {
     login(state: ICustomerState, action: PayloadAction<ILoginData>) {
-      // eslint-disable-next-line no-param-reassign
       state.isLogged = true;
-      // eslint-disable-next-line no-param-reassign
       state.customer = action.payload.customer;
       localStorage.setItem(
         'EPERFUME_CUSTOMER_ID',
@@ -36,17 +39,14 @@ export const customerSlice = createSlice({
       );
     },
     setCustomer(state: ICustomerState, action: PayloadAction<Customer>) {
-      // eslint-disable-next-line no-param-reassign
       state.customer = action.payload;
     },
     logout(state: ICustomerState) {
-      // eslint-disable-next-line no-param-reassign
       state.isLogged = false;
       tokenCache.set({ expirationTime: 0, token: '' });
       localStorage.removeItem('EPERFUME_CUSTOMER_ID');
     },
     search(state: ICustomerState, action: PayloadAction<string>) {
-      // eslint-disable-next-line no-param-reassign
       state.searchText = action.payload;
     },
   },
