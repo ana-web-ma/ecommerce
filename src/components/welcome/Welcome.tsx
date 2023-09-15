@@ -25,14 +25,45 @@ function Welcome(): ReactElement {
   };
 
   return (
-    <Stack sx={{ marginTop: '10px', padding: 0, justifyContent: 'start' }}>
-      <img
-        src={MainImg}
-        alt=""
-        style={{ width: '100%', height: 'auto', justifyContent: 'start' }}
-      />
+    <Stack
+      sx={{
+        marginTop: '10px',
+        padding: 0,
+        justifyContent: 'start',
+        display: 'flex',
+        alignItems: 'center',
+        position: 'relative',
+        textAlign: 'center',
+        color: 'white',
+      }}
+    >
+      <div
+        style={{
+          position: 'relative',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <img src={MainImg} alt="" style={{ width: '100vw', height: 'auto' }} />
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            fontSize: '7vw',
+            width: '60vw',
+            fontFamily: 'Bellota Text',
+          }}
+        >
+          {' '}
+          34 BOULEVARD SAINT GERMAIN
+        </div>
+      </div>
       <Box textAlign="center" marginTop="20px">
-        <Typography variant="h6">PROMO CODES</Typography>
+        <Typography variant="h6" sx={{ color: 'black' }}>
+          PROMO CODES
+        </Typography>
         <Button
           variant="outlined"
           onClick={() => {
