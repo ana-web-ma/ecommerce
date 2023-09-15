@@ -11,6 +11,7 @@ import type { ReactElement } from 'react';
 import { useState } from 'react';
 import School from './rs_school_js.svg';
 import Igor from './photos/igor.jpg';
+import Anastasia from './photos/anastasia.jpeg';
 import './styles.css';
 
 function Info(): ReactElement {
@@ -26,7 +27,7 @@ function Info(): ReactElement {
   const teamMembers = [
     {
       name: 'Anastasia',
-      photoUrl: 'photos/vegy.jpg',
+      photoUrl: Anastasia,
       bio: 'Краткая биография Насти...',
       tasks: 'Задачи, выполняемые Настей...',
       profileUrl: 'ссылка на профиль Насти',
