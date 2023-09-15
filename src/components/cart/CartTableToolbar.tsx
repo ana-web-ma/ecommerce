@@ -1,6 +1,5 @@
 import {
   type LineItem,
-  type Cart,
   type CentPrecisionMoney,
 } from '@commercetools/platform-sdk';
 import {
@@ -12,19 +11,27 @@ import {
   Typography,
   DialogActions,
 } from '@mui/material';
-import React, {
-  type Dispatch,
-  type SetStateAction,
-  type ReactElement,
-} from 'react';
+import React, { type ReactElement } from 'react';
 import { updateCartById } from '../../api/calls/carts/updateCartById';
-import { cartCache } from '../../api/cartCache';
+import {
+  useAppDispatch,
+  useIdCart,
+  useVersionCart,
+} from '../../helpers/hooks/Hooks';
+import {
+  setCartVersion,
+  setCart,
+  resetNumberOfPurchases,
+  removeFromCart,
+} from '../../store/reducers/ShoppingSlice';
 
 export default function CartTableToolbar(props: {
   totalPrice: CentPrecisionMoney | undefined;
-  setCartData: Dispatch<SetStateAction<Cart | null>>;
   lineItems: LineItem[];
 }): ReactElement {
+  const dispatch = useAppDispatch();
+  const idActiveCart = useIdCart();
+  const versionActiveCart = useVersionCart();
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = (): void => {
@@ -38,15 +45,17 @@ export default function CartTableToolbar(props: {
   const clearCartHandler = (): void => {
     const ids = props.lineItems.map((item) => item.id);
     updateCartById({
-      activeCartId: cartCache.id,
-      activeCartVersion: cartCache.version,
+      activeCartId: idActiveCart,
+      activeCartVersion: versionActiveCart,
       clearLineItems: {
         lineItemIds: ids,
       },
     })
       .then((resp) => {
-        cartCache.version = resp.body.version;
-        props.setCartData(resp.body);
+        dispatch(setCartVersion(resp.body.version));
+        dispatch(setCart(resp.body));
+        dispatch(resetNumberOfPurchases());
+        dispatch(removeFromCart('remove'));
       })
       .catch((err) => {
         console.log(err);

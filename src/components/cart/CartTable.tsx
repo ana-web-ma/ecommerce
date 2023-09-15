@@ -1,16 +1,11 @@
 import { Table, TableBody, TableContainer } from '@mui/material';
-import React, {
-  type Dispatch,
-  type SetStateAction,
-  type ReactElement,
-} from 'react';
-import { type LineItem, type Cart } from '@commercetools/platform-sdk';
+import React, { type ReactElement } from 'react';
+import { type LineItem } from '@commercetools/platform-sdk';
 import CartLineItem from './CartLineItem';
 import CartTableHead from './CartTableHead';
 
 export default function CartTable(props: {
   lineItems: LineItem[] | undefined;
-  setCartData: Dispatch<SetStateAction<Cart | null>>;
 }): ReactElement {
   return (
     <>
@@ -19,11 +14,7 @@ export default function CartTable(props: {
           <CartTableHead />
           <TableBody>
             {props.lineItems?.map((item) => (
-              <CartLineItem
-                key={item.id}
-                lineItem={item}
-                setCartData={props.setCartData}
-              />
+              <CartLineItem key={item.id} lineItem={item} />
             ))}
           </TableBody>
         </Table>

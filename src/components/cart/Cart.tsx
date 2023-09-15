@@ -1,23 +1,31 @@
 import React, { useEffect, type ReactElement } from 'react';
 import { Box, Link, Typography } from '@mui/material';
-import { type Cart } from '@commercetools/platform-sdk';
 import { useNavigate } from 'react-router-dom';
 import CartTable from './CartTable';
 import CartTableToolbar from './CartTableToolbar';
 import { getActiveCart } from '../../api/calls/carts/getActiveCart';
-import { cartCache } from '../../api/cartCache';
+import { useAppDispatch, useCart } from '../../helpers/hooks/Hooks';
+import {
+  setCart,
+  setCartIdAndVersion,
+} from '../../store/reducers/ShoppingSlice';
 
 export default function CartComponent(): ReactElement {
-  const [cartData, setCartData] = React.useState<Cart | null>(null);
+  const cartData = useCart();
+  const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
 
   const updateCart = (): void => {
     getActiveCart()
       .then((getActiveCartResp) => {
-        cartCache.id = getActiveCartResp.body.id;
-        cartCache.version = getActiveCartResp.body.version;
-        setCartData(getActiveCartResp.body);
+        dispatch(
+          setCartIdAndVersion({
+            id: getActiveCartResp.body.id,
+            version: getActiveCartResp.body.version,
+          }),
+        );
+        dispatch(setCart(getActiveCartResp.body));
       })
       .catch((err) => {
         console.log(err);
@@ -33,10 +41,9 @@ export default function CartComponent(): ReactElement {
       <Box>
         <CartTableToolbar
           totalPrice={cartData?.totalPrice}
-          setCartData={setCartData}
           lineItems={cartData?.lineItems}
         />
-        <CartTable lineItems={cartData?.lineItems} setCartData={setCartData} />
+        <CartTable lineItems={cartData?.lineItems} />
       </Box>
     </>
   ) : (
