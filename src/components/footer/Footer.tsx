@@ -2,7 +2,6 @@ import type { ReactElement } from 'react';
 import { useState } from 'react';
 import { Box, Button, TextField, Typography, styled } from '@mui/material';
 import { CustomDialog } from '../register/DialogModule';
-import MailImg from './icons/mail.png';
 
 const FooterContainer = styled('div')({
   backgroundColor: 'black',
@@ -157,7 +156,7 @@ const Footer = (): ReactElement => {
         </a>
       </Contacts>
       <FeedbackForm onSubmit={handleSubmitNews}>
-        <Typography variant="h6">SUBSCRIBE TO OUR NEWSLETTER</Typography>
+        <Typography variant="h6">OUR NEWSLETTER</Typography>
         <TextField
           type="email"
           label="Your Email"
@@ -175,7 +174,7 @@ const Footer = (): ReactElement => {
           color="primary"
           sx={whiteButtonStyles}
         >
-          Send
+          SUBSCRIBE
         </Button>
       </FeedbackForm>
       <CustomDialog
