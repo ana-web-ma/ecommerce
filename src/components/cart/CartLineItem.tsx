@@ -7,10 +7,13 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { type LineItem } from '@commercetools/platform-sdk';
+import {
+  type DiscountedLineItemPriceForQuantity,
+  type LineItem,
+} from '@commercetools/platform-sdk';
 import { NavLink } from 'react-router-dom';
 import Image from '../ui/Image';
-import PriceComponent from '../ui/Price';
+import PriceComponent from '../ui/Price/Price';
 import { updateCartById } from '../../api/calls/carts/updateCartById';
 import CrossIcon from '../ui/icons/CrossIcon';
 import {
@@ -113,9 +116,6 @@ export default function CartLineItem(props: {
       });
   };
 
-  const PromoCodePrice = <Typography>PromoCodePrice</Typography>;
-  const DefaultPrice = <Typography>DefaultPrice</Typography>;
-
   return (
     <>
       <TableRow>
@@ -149,7 +149,10 @@ export default function CartLineItem(props: {
           />
         </TableCell>
         <TableCell>
-          <PriceComponent price={props.lineItem.price} />
+          <PriceComponent
+            price={props.lineItem.price}
+            discountedPrice={props.lineItem.discountedPricePerQuantity}
+          />
         </TableCell>
         <TableCell>
           <Stack
@@ -157,13 +160,11 @@ export default function CartLineItem(props: {
             justifyContent="space-between"
             alignItems="center"
           >
-            {props.lineItem.discountedPricePerQuantity.length > 0
-              ? PromoCodePrice
-              : DefaultPrice}
-            {/* <PriceComponent
+            <PriceComponent
               price={props.lineItem.price}
               quantity={props.lineItem.quantity}
-            /> */}
+              discountedPrice={props.lineItem.discountedPricePerQuantity}
+            />
             <IconButton
               onClick={() => {
                 deleteItemHandler();

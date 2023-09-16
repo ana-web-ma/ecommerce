@@ -30,7 +30,7 @@ export default function CartComponent(): ReactElement {
           dispatch(setCart(getActiveCartResp.body));
         })
         .catch((err) => {
-          console.log('log', err);
+          console.log(err);
         });
     }
   };

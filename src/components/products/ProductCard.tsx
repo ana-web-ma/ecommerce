@@ -11,7 +11,7 @@ import {
 import { NavLink } from 'react-router-dom';
 import { type ProductProjection } from '@commercetools/platform-sdk';
 import HighlightAltIcon from '@mui/icons-material/HighlightAlt';
-import PriceComponent from '../ui/Price';
+import PriceComponent from '../ui/Price/Price';
 import { ButtonAddToBag } from '../ui/ButtonAddToBag';
 import { useSortDirection, useSortType } from '../../helpers/hooks/Hooks';
 

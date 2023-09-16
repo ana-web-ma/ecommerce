@@ -22,7 +22,7 @@ import { type Product as ProductType } from '@commercetools/platform-sdk';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useNavigate, useParams } from 'react-router-dom';
 import Image from '../ui/Image';
-import PriceComponent from '../ui/Price';
+import PriceComponent from '../ui/Price/Price';
 import { getProductByKey } from '../../api/calls/products/getProductByKey';
 import { ButtonAddToBag } from '../ui/ButtonAddToBag';
 import { ButtonDeleteFromBag } from '../ui/ButtonDeleteFromBag';
