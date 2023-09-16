@@ -32,6 +32,7 @@ export const customerSlice = createSlice({
   reducers: {
     login(state: ICustomerState, action: PayloadAction<ILoginData>) {
       state.isLogged = true;
+      state.isToken = true;
       state.customer = action.payload.customer;
       localStorage.setItem(
         'EPERFUME_CUSTOMER_ID',
@@ -43,14 +44,20 @@ export const customerSlice = createSlice({
     },
     logout(state: ICustomerState) {
       state.isLogged = false;
+      state.isToken = false;
       tokenCache.set({ expirationTime: 0, token: '' });
       localStorage.removeItem('EPERFUME_CUSTOMER_ID');
+      localStorage.removeItem('EPERFUME_CUSTOMER_TOKEN');
     },
     search(state: ICustomerState, action: PayloadAction<string>) {
       state.searchText = action.payload;
     },
+    setIsToken(state: ICustomerState, action: PayloadAction<boolean>) {
+      state.isToken = action.payload;
+    },
   },
 });
 
-export const { login, logout, search, setCustomer } = customerSlice.actions;
+export const { login, logout, search, setCustomer, setIsToken } =
+  customerSlice.actions;
 export default customerSlice.reducer;

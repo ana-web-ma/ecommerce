@@ -39,6 +39,11 @@ import imageHomeDecor from './img/home-decor.jpg';
 import imageFragrances from './img/Fragrances.avif';
 import imageCollections from './img/collections.avif';
 import HeaderLink from './HeaderLink';
+import {
+  removeFromCart,
+  resetNumberOfPurchases,
+  setCart,
+} from '../../store/reducers/ShoppingSlice';
 
 const BoxForHoverElement = styled('div')({
   width: '100%',
@@ -108,7 +113,7 @@ const Header = (): ReactElement => {
       isLogged: useIsLogged(),
       icon: <PermIdentityIcon />,
       tooltip: 'My Profile',
-      path: '/my-profile',
+      path: !useIsLogged() ? '/' : '/my-profile',
     },
     {
       isLogged: true,
@@ -120,13 +125,13 @@ const Header = (): ReactElement => {
       isLogged: !useIsLogged(),
       icon: <LoginIcon />,
       tooltip: 'Log In',
-      path: '/login',
+      path: useIsLogged() ? '/' : '/login',
     },
     {
       isLogged: !useIsLogged(),
       icon: <AddIcon />,
       tooltip: 'Create a new account',
-      path: '/register',
+      path: useIsLogged() ? '/' : '/register',
     },
   ];
 
@@ -343,6 +348,9 @@ const Header = (): ReactElement => {
                 onClick={() => {
                   setShowSpeedDial(false);
                   dispatch(logout());
+                  dispatch(resetNumberOfPurchases());
+                  dispatch(removeFromCart('remove'));
+                  dispatch(setCart(null));
                   navigate('/login');
                 }}
               >
@@ -414,6 +422,9 @@ const Header = (): ReactElement => {
                 onClick={() => {
                   dispatch(logout());
                   navigate('/login');
+                  dispatch(resetNumberOfPurchases());
+                  dispatch(removeFromCart('remove'));
+                  dispatch(setCart(null));
                 }}
                 sx={{ mt: '-7px' }}
               >

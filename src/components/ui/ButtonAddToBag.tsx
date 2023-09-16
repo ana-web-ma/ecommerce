@@ -18,6 +18,7 @@ import {
 } from '../../store/reducers/ShoppingSlice';
 import { createAnonymousCart } from '../../api/calls/carts/createAnonymousCart';
 import { updateCartById } from '../../api/calls/carts/updateCartById';
+import { setIsToken } from '../../store/reducers/CustomerSlice';
 
 export function ButtonAddToBag(props: {
   keyItem: string;
@@ -67,6 +68,7 @@ export function ButtonAddToBag(props: {
     createAnonymousCart()
       .then(async (respAnonymousCart): Promise<void> => {
         dispatch(setCart(respAnonymousCart.body));
+        dispatch(setIsToken(true));
         dispatch(
           setCartIdAndVersion({
             id: respAnonymousCart.body.id,
