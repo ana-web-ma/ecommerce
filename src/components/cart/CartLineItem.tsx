@@ -5,6 +5,7 @@ import {
   TableCell,
   TableRow,
   TextField,
+  Typography,
 } from '@mui/material';
 import { type LineItem } from '@commercetools/platform-sdk';
 import { NavLink } from 'react-router-dom';
@@ -112,6 +113,9 @@ export default function CartLineItem(props: {
       });
   };
 
+  const PromoCodePrice = <Typography>PromoCodePrice</Typography>;
+  const DefaultPrice = <Typography>DefaultPrice</Typography>;
+
   return (
     <>
       <TableRow>
@@ -153,10 +157,13 @@ export default function CartLineItem(props: {
             justifyContent="space-between"
             alignItems="center"
           >
-            <PriceComponent
+            {props.lineItem.discountedPricePerQuantity.length > 0
+              ? PromoCodePrice
+              : DefaultPrice}
+            {/* <PriceComponent
               price={props.lineItem.price}
               quantity={props.lineItem.quantity}
-            />
+            /> */}
             <IconButton
               onClick={() => {
                 deleteItemHandler();

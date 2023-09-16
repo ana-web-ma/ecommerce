@@ -10,6 +10,7 @@ import {
   Stack,
   Typography,
   DialogActions,
+  TextField,
 } from '@mui/material';
 import React, { type ReactElement } from 'react';
 import { updateCartById } from '../../api/calls/carts/updateCartById';
@@ -33,6 +34,7 @@ export default function CartTableToolbar(props: {
   const idActiveCart = useIdCart();
   const versionActiveCart = useVersionCart();
   const [open, setOpen] = React.useState(false);
+  const [promoCodeInputValue, setPromoCodeInputValue] = React.useState('');
 
   const handleClickOpen = (): void => {
     setOpen(true);
@@ -62,6 +64,26 @@ export default function CartTableToolbar(props: {
       });
     handleClose();
   };
+
+  const handleApplyPromoCode = (): void => {
+    console.log('Apply');
+    updateCartById({
+      activeCartId: idActiveCart,
+      activeCartVersion: versionActiveCart,
+      addDiscountCode: {
+        code: promoCodeInputValue,
+      },
+    })
+      .then((resp) => {
+        dispatch(setCartVersion(resp.body.version));
+        dispatch(setCart(resp.body));
+        console.log(resp.body);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return props.totalPrice !== undefined ? (
     <>
       <Stack columnGap={2} direction="row-reverse" pt={1}>
@@ -103,6 +125,27 @@ export default function CartTableToolbar(props: {
           <Typography variant="subtitle2">
             {props.totalPrice.centAmount / 100}€
           </Typography>
+        </Stack>
+        <Stack mr="auto" direction="row" alignItems="center" columnGap={1}>
+          <Typography variant="subtitle2">Promo code:</Typography>
+          <TextField
+            size="small"
+            hiddenLabel
+            variant="outlined"
+            placeholder="Placeholder"
+            value={promoCodeInputValue}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setPromoCodeInputValue(event.target.value);
+            }}
+          ></TextField>
+          <Button
+            variant="text"
+            onClick={() => {
+              handleApplyPromoCode();
+            }}
+          >
+            <Typography variant="subtitle2">Apply</Typography>
+          </Button>
         </Stack>
       </Stack>
     </>
