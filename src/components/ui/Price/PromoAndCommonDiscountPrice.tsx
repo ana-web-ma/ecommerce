@@ -9,7 +9,7 @@ import {
 import NoDiscountPrice from './NoDiscountPrice';
 import CommonDiscountPrice from './DiscountPrice';
 
-export default function PromoCodeDiscountPrice(props: {
+export default function PromoAndCommonDiscountPrice(props: {
   discountedCentAmount: number;
   noDiscountedCentAmount: number;
   quantity: number;

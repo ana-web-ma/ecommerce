@@ -7,7 +7,7 @@ import {
   type DiscountedPrice,
 } from '@commercetools/platform-sdk';
 import NoDiscountPrice from './NoDiscountPrice';
-import CommonDiscountPrice from './CommonDiscountPrice';
+import DiscountPrice from './DiscountPrice';
 
 export default function PriceComponent(props: {
   price: Price;
@@ -16,25 +16,18 @@ export default function PriceComponent(props: {
 }): ReactElement {
   const quantity = props.quantity !== undefined ? props.quantity : 1;
 
-  const DiscountedPrice = (): ReactElement =>
-    props.price.discounted !== undefined &&
+  return props.price.discounted === undefined &&
     props.discountedPrice !== undefined &&
-    props.discountedPrice.length > 0 ? (
-      <CommonDiscountPrice
-        discountedCentAmount={props.price.discounted.value.centAmount}
-        noDiscountedCentAmount={props.price.value.centAmount}
-        quantity={quantity}
-      />
-    ) : (
-      <>No discount</>
-    );
-
-  return props.price.discounted !== undefined ? (
-    <DiscountedPrice />
-  ) : (
+    props.discountedPrice.length === 0 ? (
     <NoDiscountPrice
       centAmount={props.price.value.centAmount}
       quantity={quantity}
+    />
+  ) : (
+    <DiscountPrice
+      price={props.price}
+      discountedPrice={props.discountedPrice}
+      quantity={props.quantity !== undefined ? props.quantity : 1}
     />
   );
 }

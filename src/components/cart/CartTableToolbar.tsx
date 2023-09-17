@@ -66,7 +66,7 @@ export default function CartTableToolbar(props: {
   };
 
   const handleApplyPromoCode = (): void => {
-    console.log('Apply');
+    console.log('Apply', props.lineItems);
     updateCartById({
       activeCartId: idActiveCart,
       activeCartVersion: versionActiveCart,

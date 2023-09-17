@@ -8,15 +8,17 @@ import {
 } from '@commercetools/platform-sdk';
 import NoDiscountPrice from './NoDiscountPrice';
 
-export default function CommonDiscountPrice(props: {
-  discountedCentAmount: number;
-  noDiscountedCentAmount: number;
+export default function DiscountPrice(props: {
+  price: Price;
+  discountedPrice: DiscountedLineItemPriceForQuantity[] | undefined;
   quantity: number;
 }): ReactElement {
+  const oldPrice = (Number(0) / 100) * props.quantity;
+  const newPrice = (Number(10000) / 100) * props.quantity;
   return (
     <Stack flexDirection={'row'} columnGap={1}>
       <Typography variant="subtitle2" sx={{ whiteSpace: 'nowrap' }}>
-        {`${(Number(props.discountedCentAmount) / 100) * props.quantity} €`}
+        {`${newPrice} €`}
       </Typography>
       <Typography
         variant="subtitle2"
@@ -27,7 +29,7 @@ export default function CommonDiscountPrice(props: {
           whiteSpace: 'nowrap',
         }}
       >
-        {`${(Number(props.noDiscountedCentAmount) / 100) * props.quantity} €`}
+        {`${oldPrice} €`}
       </Typography>
     </Stack>
   );
