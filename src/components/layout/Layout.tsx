@@ -1,9 +1,10 @@
-import React, { type ReactElement } from 'react';
+import React, { useEffect, type ReactElement } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Container } from '@mui/material';
 import Header from '../header/Header';
 import {
   useAppDispatch,
+  useIsLogged,
   useIsToken,
   useNumberOfPurchases,
 } from '../../helpers/hooks/Hooks';
@@ -18,8 +19,11 @@ import {
 
 const Layout = (): ReactElement => {
   const dispatch = useAppDispatch();
+  const isToken = useIsToken();
+  const isLogged = useIsLogged();
+  const numberOfPurchases = useNumberOfPurchases();
 
-  if (useIsToken() && useNumberOfPurchases() === 0) {
+  if (isToken && numberOfPurchases === 0) {
     getActiveCart()
       .then(async (getActiveCartResp) => {
         dispatch(setCart(getActiveCartResp.body));
@@ -40,6 +44,7 @@ const Layout = (): ReactElement => {
         console.log(err);
       });
   }
+
   return (
     <Container
       maxWidth="xl"

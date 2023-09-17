@@ -26,11 +26,20 @@ import { RegisterSchema } from '../../helpers/yup/Yup';
 import { onPromise } from '../login/Login';
 import theme from '../../theme';
 import { login } from '../../store/reducers/CustomerSlice';
-import { useAppDispatch } from '../../helpers/hooks/Hooks';
+import { useAppDispatch, useIsToken } from '../../helpers/hooks/Hooks';
 import { createCustomer } from '../../api/calls/customers/createCustomer';
 import { firstUpdateAddress } from '../../api/calls/customers/update/firstUpdateAddress';
 import { authPasswordCustomer } from '../../api/calls/customers/authPasswordCustomer';
 import { tokenCache } from '../../api/tokenCache';
+import { getActiveCart } from '../../api/calls/carts/getActiveCart';
+import {
+  setCart,
+  setCartIdAndVersion,
+  resetNumberOfPurchases,
+  addNumberOfPurchases,
+  addToCart,
+} from '../../store/reducers/ShoppingSlice';
+import { authExistingTokenCustomer } from '../../api/calls/customers/authExistingTokenCustomer';
 
 function getDateFromString(dataInput: string): string {
   const dateParse = new Date(dataInput);
@@ -42,6 +51,7 @@ function getDateFromString(dataInput: string): string {
 function RegisterForm(): ReactElement {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const isToken = useIsToken();
   const {
     register,
     formState: { errors },
@@ -80,6 +90,29 @@ function RegisterForm(): ReactElement {
     setDialogContent(content);
     setDialogOpen(true);
   };
+
+  function refreshActiveCart(): void {
+    getActiveCart()
+      .then(async (getActiveCartResp) => {
+        dispatch(setCart(getActiveCartResp.body));
+        dispatch(
+          setCartIdAndVersion({
+            id: getActiveCartResp.body.id,
+            version: getActiveCartResp.body.version,
+          }),
+        );
+        dispatch(resetNumberOfPurchases());
+        getActiveCartResp.body.lineItems.forEach((item) => {
+          dispatch(addNumberOfPurchases(item.quantity));
+          if (item.variant.key !== undefined)
+            dispatch(addToCart(item.variant.key));
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   const handleSubmitForm: SubmitHandler<FieldValues> = async (
     data,
   ): Promise<void> => {
@@ -130,19 +163,42 @@ function RegisterForm(): ReactElement {
             isCheckedCopyCheckBox,
           })
             .then(async () => {
-              await authPasswordCustomer({
+              const customerData = {
                 email: data.email,
                 password: data.password,
-              }).then((response) => {
-                dispatch(
-                  login({
-                    customer: response.body.customer,
-                    token: tokenCache.get().token,
-                  }),
-                );
-                setRegistrationSuccess(true);
-                openDialog('Successfully', 'User registered');
-              });
+              };
+              if (isToken) {
+                authExistingTokenCustomer(customerData)
+                  .then(() => {
+                    tokenCache.set({ expirationTime: 0, token: '' });
+                    authPasswordCustomer(customerData)
+                      .then((authPasswordCustomerResp) => {
+                        refreshActiveCart();
+                        dispatch(
+                          login({
+                            customer: authPasswordCustomerResp.body.customer,
+                            token: tokenCache.get().token,
+                          }),
+                        );
+                        setRegistrationSuccess(true);
+                        openDialog('Successfully', 'User registered');
+                      })
+                      .catch(console.error);
+                  })
+                  .catch(console.error);
+              } else {
+                authPasswordCustomer(customerData)
+                  .then((authPasswordCustomerResp) => {
+                    dispatch(
+                      login({
+                        customer: authPasswordCustomerResp.body.customer,
+                        token: tokenCache.get().token,
+                      }),
+                    );
+                    navigate('/');
+                  })
+                  .catch(console.error);
+              }
             })
             .catch(console.log);
         } else {

@@ -48,7 +48,7 @@ export const shoppingSlice = createSlice({
     addNumberOfPurchases(state: IShoppingState, action: PayloadAction<number>) {
       state.numberOfPurchases += action.payload;
     },
-    setCart(state: IShoppingState, action: PayloadAction<Cart>) {
+    setCart(state: IShoppingState, action: PayloadAction<Cart | null>) {
       state.cart = action.payload;
     },
     setCartIdAndVersion(
