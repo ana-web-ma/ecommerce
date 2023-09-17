@@ -71,7 +71,7 @@ export default function CartTableToolbar(props: {
       activeCartId: idActiveCart,
       activeCartVersion: versionActiveCart,
       addDiscountCode: {
-        code: promoCodeInputValue,
+        code: promoCodeInputValue.toLowerCase(),
       },
     })
       .then((resp) => {
