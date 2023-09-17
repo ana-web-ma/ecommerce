@@ -2,19 +2,27 @@ import React, { type ReactElement } from 'react';
 import { Stack, Typography } from '@mui/material';
 import {
   type DiscountedLineItemPriceForQuantity,
-  type DiscountedLineItemPrice,
   type Price,
-  type DiscountedPrice,
 } from '@commercetools/platform-sdk';
-import NoDiscountPrice from './NoDiscountPrice';
 
 export default function DiscountPrice(props: {
   price: Price;
   discountedPrice: DiscountedLineItemPriceForQuantity[] | undefined;
-  quantity: number;
+  quantity: number | undefined;
 }): ReactElement {
-  const oldPrice = (Number(0) / 100) * props.quantity;
-  const newPrice = (Number(10000) / 100) * props.quantity;
+  const quantity = props.quantity === undefined ? 1 : props.quantity;
+  const oldPrice = (Number(props.price.value.centAmount) / 100) * quantity;
+  let newPrice =
+    props.price.discounted !== undefined
+      ? (Number(props.price.discounted.value.centAmount) / 100) * quantity
+      : 0;
+
+  if (props.discountedPrice !== undefined && props.discountedPrice.length > 0) {
+    newPrice =
+      (Number(props.discountedPrice[0].discountedPrice.value.centAmount) /
+        100) *
+      quantity;
+  }
   return (
     <Stack flexDirection={'row'} columnGap={1}>
       <Typography variant="subtitle2" sx={{ whiteSpace: 'nowrap' }}>
