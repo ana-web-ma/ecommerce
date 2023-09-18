@@ -29,7 +29,7 @@ function Info(): ReactElement {
     {
       name: 'Anastasia',
       photoUrl: Anastasia,
-      bio: 'Краткая биография Насти...',
+      bio: 'I am Anastasia from Moscow, Russia, where I was born in 1991. I worked in the field of accounting and office work, but since 2018 I became interested in programming. Subsequently, I decided to make writing code my main profession. For the last 6 months I have been dedicating all my time to the RS School frontend course and this is the final project created by our cool little team.',
       tasks:
         "I have been leading our team all this time. First, I filled the Trello board with content to organise the project's tasks. This made it much easier for the developers to share responsibilities within the team. I also created a channel in Discord to communicate with our team. Here I organised a meeting with our students so that we could discuss the next steps, ask questions and solve problems together. So every student took part in discussing issues. Of course there were moments of hard work, but we always helped each other. I think I managed to help the team to organise the work and launch our project on time",
       profileUrl: 'https://github.com/Ana-Ma-Web',
