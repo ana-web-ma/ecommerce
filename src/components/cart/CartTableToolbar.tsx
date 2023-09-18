@@ -77,7 +77,6 @@ export default function CartTableToolbar(props: {
   };
 
   const handleApplyPromoCode = (): void => {
-    console.log('Apply', props.lineItems);
     updateCartById({
       activeCartId: idActiveCart,
       activeCartVersion: versionActiveCart,
@@ -88,7 +87,6 @@ export default function CartTableToolbar(props: {
       .then((resp) => {
         dispatch(setCartVersion(resp.body.version));
         dispatch(setCart(resp.body));
-        console.log(resp.body);
       })
       .catch((err) => {
         console.log(err);

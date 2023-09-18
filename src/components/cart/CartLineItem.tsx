@@ -5,12 +5,8 @@ import {
   TableCell,
   TableRow,
   TextField,
-  Typography,
 } from '@mui/material';
-import {
-  type DiscountedLineItemPriceForQuantity,
-  type LineItem,
-} from '@commercetools/platform-sdk';
+import { type LineItem } from '@commercetools/platform-sdk';
 import { NavLink } from 'react-router-dom';
 import Image from '../ui/Image';
 import PriceComponent from '../ui/Price/Price';
