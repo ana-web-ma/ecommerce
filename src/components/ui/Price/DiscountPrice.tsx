@@ -26,7 +26,7 @@ export default function DiscountPrice(props: {
   return (
     <Stack flexDirection={'row'} columnGap={1}>
       <Typography variant="subtitle2" sx={{ whiteSpace: 'nowrap' }}>
-        {`${newPrice} €`}
+        {`${newPrice.toFixed(2)} €`}
       </Typography>
       <Typography
         variant="subtitle2"
@@ -37,7 +37,7 @@ export default function DiscountPrice(props: {
           whiteSpace: 'nowrap',
         }}
       >
-        {`${oldPrice} €`}
+        {`${oldPrice.toFixed(2)} €`}
       </Typography>
     </Stack>
   );

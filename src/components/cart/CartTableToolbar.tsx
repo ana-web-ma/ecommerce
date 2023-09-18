@@ -44,7 +44,6 @@ export default function CartTableToolbar(props: {
         0,
       ) / 100,
     );
-    console.log('oikjniuj');
   }, [props.totalPrice]);
 
   const handleClickOpen = (): void => {
@@ -137,13 +136,13 @@ export default function CartTableToolbar(props: {
             <>
               <Typography variant="subtitle2">Total:</Typography>
               <Typography variant="subtitle2">
-                {props.totalPrice.centAmount / 100}€
+                {(props.totalPrice.centAmount / 100).toFixed(2)}€
               </Typography>
             </>
           ) : (
             <Stack flexDirection={'row'} columnGap={1}>
               <Typography variant="subtitle2" sx={{ whiteSpace: 'nowrap' }}>
-                {`${props.totalPrice.centAmount / 100} €`}
+                {`${(props.totalPrice.centAmount / 100).toFixed(2)} €`}
               </Typography>
               <Typography
                 variant="subtitle2"
@@ -154,7 +153,7 @@ export default function CartTableToolbar(props: {
                   whiteSpace: 'nowrap',
                 }}
               >
-                {`${fullTotalPrice} €`}
+                {`${fullTotalPrice.toFixed(2)} €`}
               </Typography>
             </Stack>
           )}

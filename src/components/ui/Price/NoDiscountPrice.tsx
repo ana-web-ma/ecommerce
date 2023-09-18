@@ -8,7 +8,7 @@ export default function NoDiscountPrice(props: {
   return (
     <Stack>
       <Typography variant="subtitle2" sx={{ whiteSpace: 'nowrap' }}>
-        {`${(Number(props.centAmount) / 100) * props.quantity} €`}
+        {`${((Number(props.centAmount) / 100) * props.quantity).toFixed(2)} €`}
       </Typography>
     </Stack>
   );
