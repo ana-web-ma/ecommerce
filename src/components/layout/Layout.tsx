@@ -16,10 +16,11 @@ import {
   setCart,
   setCartIdAndVersion,
 } from '../../store/reducers/ShoppingSlice';
+import Footer from '../footer/Footer';
 
 const Layout = (): ReactElement => {
   const dispatch = useAppDispatch();
-  const isToken = useIsToken();
+  const isToken: boolean = useIsToken();
   const isLogged = useIsLogged();
   const numberOfPurchases = useNumberOfPurchases();
 
@@ -71,6 +72,7 @@ const Layout = (): ReactElement => {
       >
         <Outlet />
       </Container>
+      <Footer />
     </Container>
   );
 };
