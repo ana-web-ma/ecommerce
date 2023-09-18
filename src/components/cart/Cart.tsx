@@ -9,6 +9,7 @@ import {
   setCart,
   setCartIdAndVersion,
 } from '../../store/reducers/ShoppingSlice';
+import { tokenCache } from '../../api/tokenCache';
 
 export default function CartComponent(): ReactElement {
   const cartData = useCart();
@@ -17,19 +18,21 @@ export default function CartComponent(): ReactElement {
   const navigate = useNavigate();
 
   const updateCart = (): void => {
-    getActiveCart()
-      .then((getActiveCartResp) => {
-        dispatch(
-          setCartIdAndVersion({
-            id: getActiveCartResp.body.id,
-            version: getActiveCartResp.body.version,
-          }),
-        );
-        dispatch(setCart(getActiveCartResp.body));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (tokenCache.get().token !== '') {
+      getActiveCart()
+        .then((getActiveCartResp) => {
+          dispatch(
+            setCartIdAndVersion({
+              id: getActiveCartResp.body.id,
+              version: getActiveCartResp.body.version,
+            }),
+          );
+          dispatch(setCart(getActiveCartResp.body));
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   useEffect(() => {

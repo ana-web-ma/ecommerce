@@ -9,7 +9,7 @@ import {
 import { type LineItem } from '@commercetools/platform-sdk';
 import { NavLink } from 'react-router-dom';
 import Image from '../ui/Image';
-import PriceComponent from '../ui/Price';
+import PriceComponent from '../ui/Price/Price';
 import { updateCartById } from '../../api/calls/carts/updateCartById';
 import CrossIcon from '../ui/icons/CrossIcon';
 import {
@@ -145,7 +145,10 @@ export default function CartLineItem(props: {
           />
         </TableCell>
         <TableCell>
-          <PriceComponent price={props.lineItem.price} />
+          <PriceComponent
+            price={props.lineItem.price}
+            discountedPrice={props.lineItem.discountedPricePerQuantity}
+          />
         </TableCell>
         <TableCell>
           <Stack
@@ -156,6 +159,7 @@ export default function CartLineItem(props: {
             <PriceComponent
               price={props.lineItem.price}
               quantity={props.lineItem.quantity}
+              discountedPrice={props.lineItem.discountedPricePerQuantity}
             />
             <IconButton
               onClick={() => {

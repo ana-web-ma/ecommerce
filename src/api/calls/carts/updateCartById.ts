@@ -24,6 +24,9 @@ export const updateCartById = async (props: {
   clearLineItems?: {
     lineItemIds: string[];
   };
+  addDiscountCode?: {
+    code: string;
+  };
 }): Promise<ClientResponse<Cart>> => {
   const actions: MyCartUpdateAction[] = [];
 
@@ -55,6 +58,12 @@ export const updateCartById = async (props: {
         action: 'removeLineItem',
         lineItemId: id,
       });
+    });
+  }
+  if (props.addDiscountCode != null) {
+    actions.push({
+      action: 'addDiscountCode',
+      code: props.addDiscountCode.code,
     });
   }
   return apiRootCreateByToken()
