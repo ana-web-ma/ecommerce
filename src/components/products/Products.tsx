@@ -52,7 +52,6 @@ import FilterBar from './FilterBar';
 import { getCategoryByKey } from '../../api/calls/categories/getCategoryByKey';
 
 const returnNumberFromPath = (value: string | undefined): number => {
-  // если в url path есть '=', то вернет значение с номером страницы, иначе 1.
   if (value !== undefined) {
     const split = value.split('=')[1];
     return split !== undefined ? Number(split) : 1;
@@ -61,7 +60,6 @@ const returnNumberFromPath = (value: string | undefined): number => {
 };
 
 const parentPath = (array: (string | undefined)[]): string => {
-  // Принимает значения params, вернет название категории если оно есть в строке url
   if (array === undefined || array.length === 0) return '';
   if (array[0] !== undefined) {
     return array[0].includes('=') ? '' : `/${array[0]}`;
@@ -157,7 +155,7 @@ const Products = (): ReactElement => {
   useEffect((): void => {
     setArrayForBread([]);
     if (!Object.values(params).includes('search')) {
-      dispatch(search(null)); // если уходим со страницы search, обнуляем поле в store, где храним значение с инпута
+      dispatch(search(null));
     } else if (
       Object.values(params).includes('search') &&
       searchTextFromState === null

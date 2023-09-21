@@ -21,22 +21,3 @@ export const authExistingTokenCustomer = async (props: {
     })
     .execute();
 };
-
-// How to use:
-
-// authExistingTokenCustomer({
-//   email: 'a@a.aa',
-//   password: '!1Aaaaaa',
-// })
-//   .then((authExistingTokenCustomerResp) => {
-//     tokenCache.set({ expirationTime: 0, token: '' });
-//     authPasswordCustomer({
-//       email: 'a@a.aa',
-//       password: '!1Aaaaaa',
-//     })
-//       .then((authPasswordCustomerResp) => {
-//         console.log('authPasswordCustomerResp', authPasswordCustomerResp);
-//       })
-//       .catch(console.error);
-//   })
-//   .catch(console.error);

@@ -18,9 +18,3 @@ export const authCustomer = async (props: {
     })
     .execute();
 };
-
-// How to use:
-
-// authCustomer({ email: 'example-email.example.com', password: 'password' })
-//   .then(console.log)
-//   .catch(console.error);

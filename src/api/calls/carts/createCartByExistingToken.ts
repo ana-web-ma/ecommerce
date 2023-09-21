@@ -10,20 +10,3 @@ export const createAnonymousCartByToken = async (): Promise<
     .post({ body: { currency: 'EUR', country: 'US' } })
     .execute();
 };
-
-// How to use
-
-// createAnonymousCart()
-// .then((createCartResp) => {
-//   console.log('createCartResp', createCartResp);
-//   getActiveCart()
-//     .then((getActiveCartResp) => {
-//       console.log('getActiveCartResp', getActiveCartResp.body.lineItems);
-//       cartCache.id = getActiveCartResp.body.id;
-//       cartCache.version = getActiveCartResp.body.version;
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// })
-// .catch(console.error);
