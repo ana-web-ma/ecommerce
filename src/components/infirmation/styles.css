@@ -1,7 +1,6 @@
-
 .round-image {
-  width: 250px; 
+  width: 250px;
   height: 250px;
   border-radius: 50%;
-  object-fit: cover; 
+  object-fit: cover;
 }

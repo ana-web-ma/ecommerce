@@ -42,38 +42,41 @@ const Layout = (): ReactElement => {
         });
       })
       .catch((err) => {
+        localStorage.removeItem('EPERFUME_CUSTOMER_TOKEN');
         console.log(err);
       });
   }
 
   return (
-    <Container
-      maxWidth="xl"
-      sx={{
-        py: 2,
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}
-    >
-      <Header />
+    <>
       <Container
+        maxWidth="xl"
         sx={{
-          padding: '0',
-          height: '100%',
-          width: '100%',
+          py: 2,
+          minHeight: '100vh',
           display: 'flex',
-          flexGrow: '1',
           flexDirection: 'column',
-          justifyContent: 'start',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
-        <Outlet />
+        <Header />
+        <Container
+          sx={{
+            padding: '0',
+            height: '100%',
+            width: '100%',
+            display: 'flex',
+            flexGrow: '1',
+            flexDirection: 'column',
+            justifyContent: 'start',
+          }}
+        >
+          <Outlet />
+        </Container>
       </Container>
       <Footer />
-    </Container>
+    </>
   );
 };
 

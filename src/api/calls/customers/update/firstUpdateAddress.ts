@@ -11,9 +11,8 @@ export interface CustomAddress extends Address {
   readonly defaultType?: 'shipping' | 'billing' | 'both';
 }
 
-//! В адресах обязательно должен быть ключ с типом адреса
+//! Addresses must contain a key with the address type
 //! key: 'firstShippingAddress' | 'firstBillingAddress',
-//* Без этого адреса не смогут быть нормально обработаны
 
 export const firstUpdateAddress = async (props: {
   userId: string;
@@ -63,45 +62,3 @@ export const firstUpdateAddress = async (props: {
     })
     .execute();
 };
-
-// Пример использования:
-
-// const user = {
-//   email: 'test9@e.e',
-//   password: 'password',
-//   firstName: 'f',
-//   lastName: 'l',
-//   dateOfBirth: '2000-01-01',
-//   addresses: [
-//     {
-//       country: 'US',
-//       city: 'co',
-//       streetName: 'so',
-//       postalCode: '11111',
-//!      key: 'firstShippingAddress',
-//     },
-//     {
-//       country: 'FR',
-//       city: 'ct',
-//       streetName: 'st',
-//       postalCode: '22222',
-//!      key: 'firstBillingAddress',
-//     },
-//   ],
-// };
-
-// createCustomer({ isCheckedCopyCheckBox, ...user })
-//   .then((resp) => {
-//      console.log('resp', resp);
-//      firstUpdateAddress({
-//        isCheckedCopyCheckBox,
-//        isCheckedShipping,
-//        isCheckedBilling,
-//        userId: resp.body.customer.id,
-//      })
-//        .then((updateResp) => {
-//          console.log('updateResp', updateResp);
-//        })
-//        .catch(console.log);
-//    })
-//    .catch(console.log);

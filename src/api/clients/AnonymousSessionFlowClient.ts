@@ -22,7 +22,7 @@ export const apiAnonymousFlowRoot = (): ByProjectKeyRequestBuilder => {
     projectKey,
     credentials: {
       clientId: 'AnS0UyYLnB67JnE2Q2FfiyXA',
-      clientSecret: 'DI8-_Z1NONz1oPTvIyCUX1ZxFZrv7M_p', // anonymousId: process.env.CTP_ANONYMOUS_ID, // a unique id
+      clientSecret: 'DI8-_Z1NONz1oPTvIyCUX1ZxFZrv7M_p',
     },
     scopes,
     tokenCache,
@@ -34,7 +34,6 @@ export const apiAnonymousFlowRoot = (): ByProjectKeyRequestBuilder => {
     .withProjectKey(projectKey)
     .withAnonymousSessionFlow(options)
     .withHttpMiddleware(httpMiddlewareOptions)
-    .withLoggerMiddleware()
     .build();
 
   return createApiBuilderFromCtpClient(client).withProjectKey({

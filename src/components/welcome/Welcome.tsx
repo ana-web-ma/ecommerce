@@ -44,7 +44,7 @@ function Welcome(): ReactElement {
           color: 'white',
         }}
       >
-        <img src={MainImg} alt="" style={{ width: '100vw', height: 'auto' }} />
+        <img src={MainImg} alt="" style={{ width: '100%', height: 'auto' }} />
         <div
           style={{
             position: 'absolute',

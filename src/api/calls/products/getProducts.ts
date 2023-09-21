@@ -104,29 +104,3 @@ export const getProducts = async (
     .get({ queryArgs: { ...createQueryArgs(props) } })
     .execute();
 };
-
-// How to use:
-
-// getProducts({
-//   limit: 6,
-//   pageNumber,
-//   sort: {
-//     field: sortType ? 'price' : 'name.en-US',
-//     order: sortDirection ? 'asc' : 'desc',
-//   },
-//   filter: {
-//     productsByCategoryId: {
-//       ids: createCategoryArr(),
-//     },
-//     productsByAttributeKey: { key: selectedAttribute },
-//     productsByPrice: selectedPrice,
-//   },
-//   text: searchTextFromState !== null ? searchTextFromState : undefined,
-// })
-//   .then((resp) => {
-//     console.log('Resp', resp.body.results);
-//     dispatch(allProducts(resp.body));
-//   })
-//   .catch((err) => {
-//     throw new Error(err);
-//   });
