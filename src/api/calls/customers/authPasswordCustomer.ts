@@ -19,18 +19,8 @@ export const authPasswordCustomer = async (props: {
       body: {
         email: props.email,
         password: props.password,
+        activeCartSignInMode: 'MergeWithExistingCustomerCart',
       },
     })
     .execute();
 };
-
-// How to use:
-
-// authPasswordCustomer({
-//   email: 'example-email.example.com',
-//   password: 'password',
-// })
-//   .then((data) => {
-//     console.log('data', data);
-//   })
-//   .catch(console.error);

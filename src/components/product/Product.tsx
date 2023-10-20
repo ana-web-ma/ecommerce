@@ -6,6 +6,7 @@ import {
   Link,
   Modal,
   Paper,
+  Stack,
   Typography,
 } from '@mui/material';
 import React, { useEffect, type ReactElement } from 'react';
@@ -21,10 +22,12 @@ import { type Product as ProductType } from '@commercetools/platform-sdk';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { useNavigate, useParams } from 'react-router-dom';
 import Image from '../ui/Image';
-import PriceComponent from '../ui/Price';
+import PriceComponent from '../ui/Price/Price';
 import { getProductByKey } from '../../api/calls/products/getProductByKey';
+import { ButtonAddToBag } from '../ui/ButtonAddToBag';
+import { ButtonDeleteFromBag } from '../ui/ButtonDeleteFromBag';
 
-const Product = (): ReactElement => {
+const Product = (props: { active?: number }): ReactElement => {
   const navigation = useNavigate();
   const [expanded, setExpanded] = React.useState(false);
   const [activeVariant, setActiveVariant] = React.useState<number>(0);
@@ -76,7 +79,11 @@ const Product = (): ReactElement => {
     }
   }, [params]);
 
-  useEffect(() => {}, [activeVariant]);
+  useEffect(() => {
+    if (props.active !== undefined) {
+      setActiveVariant(props.active);
+    }
+  }, [activeVariant]);
 
   const handleOpenModal = (): void => {
     setOpenModal(true);
@@ -91,6 +98,16 @@ const Product = (): ReactElement => {
   const prices =
     productData?.masterData.current.variants[activeVariant].prices !== undefined
       ? productData?.masterData.current.variants[activeVariant].prices
+      : undefined;
+
+  const keyProduct =
+    productData?.masterData.current.variants[activeVariant].key !== undefined
+      ? productData?.masterData.current.variants[activeVariant].key
+      : undefined;
+
+  const idVariant =
+    productData?.masterData.current.variants[activeVariant].id !== undefined
+      ? productData?.masterData.current.variants[activeVariant].id
       : undefined;
 
   const paperStyle = {
@@ -219,7 +236,24 @@ const Product = (): ReactElement => {
           <Link onClick={handleExpandClick} mb={4} display="block">
             ...Read more
           </Link>
-          {prices != null ? <PriceComponent price={prices[0]} /> : null}
+          <Stack
+            direction={'row'}
+            alignItems={'center'}
+            justifyContent={'space-between'}
+            width={{ xs: '90%', sm: '70%' }}
+          >
+            {prices != null ? <PriceComponent price={prices[0]} /> : null}
+
+            {keyProduct !== undefined &&
+            productData?.id !== undefined &&
+            idVariant !== undefined ? (
+              <ButtonAddToBag
+                keyItem={keyProduct}
+                productId={productData?.id}
+                variantId={idVariant}
+              />
+            ) : null}
+          </Stack>
           <Typography variant="body2">Select a size:</Typography>
           <Grid mt={1} columnSpacing={1} container>
             {productData?.masterData.current.variants.map((e, i) => (
@@ -268,6 +302,13 @@ const Product = (): ReactElement => {
               </Grid>
             ))}
           </Grid>
+          {keyProduct !== undefined ? (
+            <ButtonDeleteFromBag
+              keyItem={keyProduct}
+              productId={productData?.id !== undefined ? productData?.id : ''}
+              variantId={idVariant !== undefined ? idVariant : 1}
+            />
+          ) : null}
         </Grid>
       </Grid>
     </>

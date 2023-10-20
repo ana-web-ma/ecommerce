@@ -139,33 +139,3 @@ export const updateMe = async (props: {
     })
     .execute();
 };
-
-// How to use
-
-// updateMe({
-//   id: '703242c5-49a2-4dc0-83f5-08e3cc0e6d4d',
-//   setFirstName: {
-//     newFirstName: 'NewFirstName',
-//   },
-// })
-//   .then((updateResp) => {
-//     console.log('updateResp', updateResp);
-//   })
-//   .catch(console.log);
-
-// Use after authPasswordCustomer
-// authPasswordCustomer({ email: 'a@a.aa', password: '!1Aaaaaa' })
-// .then((customerResp) => {
-//   console.log('customerResp', customerResp);
-//   updateMe({
-//     id: customerResp.body.customer.id,
-//     setFirstName: {
-//       newFirstName: 'firstNameNew',
-//     },
-//   })
-//     .then((updateResp) => {
-//       console.log('updateResp', updateResp);
-//     })
-//     .catch(console.log);
-// })
-// .catch(console.log);

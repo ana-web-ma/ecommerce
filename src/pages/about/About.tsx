@@ -1,11 +1,12 @@
-import { Box, Typography } from '@mui/material';
-import React, { type ReactElement } from 'react';
+import { Box } from '@mui/material';
+import { type ReactElement } from 'react';
+import Info from '../../components/infirmation/info';
 
 const About = (): ReactElement => {
   return (
     <>
       <Box textAlign={'center'}>
-        <Typography variant="h2">About Us</Typography>
+        <Info />
       </Box>
     </>
   );

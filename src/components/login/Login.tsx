@@ -15,14 +15,21 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { LoginSchema } from '../../helpers/yup/Yup';
 import theme from '../../theme';
-import { useAppDispatch } from '../../helpers/hooks/Hooks';
+import { useAppDispatch, useIsToken } from '../../helpers/hooks/Hooks';
 import { login } from '../../store/reducers/CustomerSlice';
 import { authPasswordCustomer } from '../../api/calls/customers/authPasswordCustomer';
 import { tokenCache } from '../../api/tokenCache';
+import { authExistingTokenCustomer } from '../../api/calls/customers/authExistingTokenCustomer';
+import { getActiveCart } from '../../api/calls/carts/getActiveCart';
+import {
+  setCart,
+  setCartIdAndVersion,
+  resetNumberOfPurchases,
+  addNumberOfPurchases,
+  addToCart,
+} from '../../store/reducers/ShoppingSlice';
 
 export function onPromise<T>(
-  // used to wrap react-hook-forms's submit handler
-  // https://github.com/react-hook-form/react-hook-form/discussions/8020#discussioncomment-3429261
   promise: (event: React.SyntheticEvent) => Promise<T>,
 ) {
   return (event: React.SyntheticEvent) => {
@@ -35,6 +42,7 @@ export function onPromise<T>(
 function LoginForm(): ReactElement {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const isToken = useIsToken();
   const [errorMessage, setErrorMessage] = useState('');
   const {
     register,
@@ -45,6 +53,28 @@ function LoginForm(): ReactElement {
     resolver: yupResolver(LoginSchema),
   });
 
+  function refreshActiveCart(): void {
+    getActiveCart()
+      .then(async (getActiveCartResp) => {
+        dispatch(setCart(getActiveCartResp.body));
+        dispatch(
+          setCartIdAndVersion({
+            id: getActiveCartResp.body.id,
+            version: getActiveCartResp.body.version,
+          }),
+        );
+        dispatch(resetNumberOfPurchases());
+        getActiveCartResp.body.lineItems.forEach((item) => {
+          dispatch(addNumberOfPurchases(item.quantity));
+          if (item.variant.key !== undefined)
+            dispatch(addToCart(item.variant.key));
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   const handleSubmitForm: SubmitHandler<FieldValues> = async (
     data,
   ): Promise<void> => {
@@ -52,19 +82,37 @@ function LoginForm(): ReactElement {
       email: data.email,
       password: data.password,
     };
-    await authPasswordCustomer(customerData)
-      .then(async (response): Promise<void> => {
-        dispatch(
-          login({
-            customer: response.body.customer,
-            token: tokenCache.get().token,
-          }),
-        );
-        navigate('/');
-      })
-      .catch((err) => {
-        setErrorMessage(err.message);
-      });
+    if (isToken) {
+      authExistingTokenCustomer(customerData)
+        .then(() => {
+          tokenCache.set({ expirationTime: 0, token: '' });
+          authPasswordCustomer(customerData)
+            .then((authPasswordCustomerResp) => {
+              refreshActiveCart();
+              dispatch(
+                login({
+                  customer: authPasswordCustomerResp.body.customer,
+                  token: tokenCache.get().token,
+                }),
+              );
+              navigate('/');
+            })
+            .catch(console.error);
+        })
+        .catch(console.error);
+    } else {
+      authPasswordCustomer(customerData)
+        .then((authPasswordCustomerResp) => {
+          dispatch(
+            login({
+              customer: authPasswordCustomerResp.body.customer,
+              token: tokenCache.get().token,
+            }),
+          );
+          navigate('/');
+        })
+        .catch(console.error);
+    }
   };
 
   // Show/Hide Password Functionality 👁️‍🗨️

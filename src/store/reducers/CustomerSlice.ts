@@ -7,11 +7,16 @@ interface ICustomerState {
   id: string | null;
   searchText: string | null;
   isLogged: boolean;
+  isToken: boolean;
 }
+
+const initialToken = localStorage.getItem('EPERFUME_CUSTOMER_TOKEN');
 
 const initialState: ICustomerState = {
   customer: null,
   isLogged: localStorage.getItem('EPERFUME_CUSTOMER_ID') !== null,
+  isToken:
+    initialToken !== null ? JSON.parse(initialToken).token !== '' : false,
   id: null,
   searchText: null,
 };
@@ -26,9 +31,8 @@ export const customerSlice = createSlice({
   initialState,
   reducers: {
     login(state: ICustomerState, action: PayloadAction<ILoginData>) {
-      // eslint-disable-next-line no-param-reassign
       state.isLogged = true;
-      // eslint-disable-next-line no-param-reassign
+      state.isToken = true;
       state.customer = action.payload.customer;
       localStorage.setItem(
         'EPERFUME_CUSTOMER_ID',
@@ -36,21 +40,24 @@ export const customerSlice = createSlice({
       );
     },
     setCustomer(state: ICustomerState, action: PayloadAction<Customer>) {
-      // eslint-disable-next-line no-param-reassign
       state.customer = action.payload;
     },
     logout(state: ICustomerState) {
-      // eslint-disable-next-line no-param-reassign
       state.isLogged = false;
+      state.isToken = false;
       tokenCache.set({ expirationTime: 0, token: '' });
       localStorage.removeItem('EPERFUME_CUSTOMER_ID');
+      localStorage.removeItem('EPERFUME_CUSTOMER_TOKEN');
     },
     search(state: ICustomerState, action: PayloadAction<string>) {
-      // eslint-disable-next-line no-param-reassign
       state.searchText = action.payload;
+    },
+    setIsToken(state: ICustomerState, action: PayloadAction<boolean>) {
+      state.isToken = action.payload;
     },
   },
 });
 
-export const { login, logout, search, setCustomer } = customerSlice.actions;
+export const { login, logout, search, setCustomer, setIsToken } =
+  customerSlice.actions;
 export default customerSlice.reducer;

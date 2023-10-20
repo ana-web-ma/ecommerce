@@ -1,4 +1,4 @@
-import { createBrowserRouter, redirect } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import React from 'react';
 import NotFound from '../pages/not-found/NotFound';
 import Layout from '../components/layout/Layout';
@@ -8,24 +8,8 @@ import RegisterPage from '../pages/register/RegisterPage';
 import About from '../pages/about/About';
 import Catalog from '../pages/catalog/Catalog';
 import Profile from '../pages/profile/Profile';
-import Cart from '../pages/cart/Cart';
+import CartPage from '../pages/cart/CartPage';
 import ProductPage from '../pages/product/ProductPage';
-
-const isLogged = (): Response | null => {
-  const customerData = localStorage.getItem('EPERFUME_CUSTOMER_ID');
-  if (customerData !== null) {
-    return redirect('/');
-  }
-  return null;
-};
-
-const isNotLogged = (): Response | null => {
-  const customerData = localStorage.getItem('EPERFUME_CUSTOMER_ID');
-  if (customerData === null) {
-    return redirect('/');
-  }
-  return null;
-};
 
 const router = createBrowserRouter([
   {
@@ -39,17 +23,14 @@ const router = createBrowserRouter([
       {
         path: '/login',
         element: <LoginPage />,
-        loader: isLogged,
       },
       {
         path: '/register',
         element: <RegisterPage />,
-        loader: isLogged,
       },
       {
         path: '/my-profile',
         element: <Profile />,
-        loader: isNotLogged,
       },
       {
         path: '/about',
@@ -57,7 +38,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/cart',
-        element: <Cart />,
+        element: <CartPage />,
       },
       {
         path: '/catalog',

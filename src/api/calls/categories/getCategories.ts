@@ -9,11 +9,3 @@ export const getCategories = async (): Promise<
 > => {
   return apiRoot.categories().get().execute();
 };
-
-// How to use:
-
-// getCategories()
-// .then((resp) => {
-//   console.log('resp', resp.body.results);
-// })
-// .catch(console.log);

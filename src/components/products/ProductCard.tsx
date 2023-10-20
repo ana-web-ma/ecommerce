@@ -1,33 +1,22 @@
-import React, { useState, type ReactElement } from 'react';
+import React, { useState, type ReactElement, useEffect } from 'react';
 import {
+  Button,
   Fade,
-  IconButton,
   Paper,
   Stack,
   Tooltip,
   Typography,
   styled,
 } from '@mui/material';
-import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import { NavLink } from 'react-router-dom';
-import { type Price, type Attribute } from '@commercetools/platform-sdk';
+import { type ProductProjection } from '@commercetools/platform-sdk';
 import HighlightAltIcon from '@mui/icons-material/HighlightAlt';
-import PriceComponent from '../ui/Price';
-
-interface IProduct {
-  id: string;
-  attribute: string;
-  category?: string;
-  keyValue: string;
-  image?: string;
-  image2?: string | null;
-  name: string | undefined;
-  description: string;
-  price: Price[] | undefined;
-}
+import PriceComponent from '../ui/Price/Price';
+import { ButtonAddToBag } from '../ui/ButtonAddToBag';
+import { useSortDirection, useSortType } from '../../helpers/hooks/Hooks';
 
 interface IProductCard {
-  product: IProduct;
+  product: ProductProjection;
   small: boolean;
 }
 
@@ -41,6 +30,40 @@ const Img = styled('img')({
 
 const ProductCard = (props: IProductCard): ReactElement => {
   const [hoverEffect, setHoverEffect] = useState(false);
+  const [activeVariant, setActiveVariant] = React.useState<number>(0);
+  const sortDirection = useSortDirection();
+  const sortType = useSortType();
+  const variants = [...props.product.variants];
+  variants.push(props.product.masterVariant);
+  variants.sort(
+    (a, b) =>
+      Number(a?.prices?.[0]?.value.centAmount) -
+      Number(b?.prices?.[0]?.value.centAmount),
+  );
+  useEffect(() => {
+    setActiveVariant(0);
+    if (!sortDirection && sortType) {
+      setActiveVariant(variants.length - 1);
+    }
+  }, [props]);
+
+  const { prices } =
+    activeVariant <= variants.length - 1
+      ? variants[activeVariant]
+      : variants[0];
+  const { attributes } =
+    activeVariant <= variants.length - 1
+      ? variants[activeVariant]
+      : variants[0];
+  const { images } =
+    activeVariant <= variants.length - 1
+      ? variants[activeVariant]
+      : variants[0];
+  const { key } =
+    activeVariant <= variants.length - 1
+      ? variants[activeVariant]
+      : variants[0];
+
   return (
     <>
       <Paper
@@ -56,7 +79,9 @@ const ProductCard = (props: IProductCard): ReactElement => {
       >
         <NavLink
           style={{ textDecoration: 'none', color: 'inherit' }}
-          to={`/product/${props.product.keyValue}`}
+          to={`/product/${
+            props.product.key !== undefined ? props.product.key : ''
+          }`}
         >
           <Stack alignItems="center" sx={{ position: 'relative' }}>
             <Stack
@@ -71,21 +96,35 @@ const ProductCard = (props: IProductCard): ReactElement => {
                 pl={1}
                 minHeight={30}
               >
-                {props.product.attribute}
+                {attributes !== undefined && attributes.length > 0
+                  ? attributes[0].value.key
+                  : ''}
               </Typography>
-              <Tooltip title={props.product.description} placement="top">
+              <Tooltip
+                title={
+                  props.product.description !== undefined
+                    ? props.product.description['en-US']
+                    : ''
+                }
+                placement="top"
+              >
                 <Stack direction={'row'} gap={1}>
                   <HighlightAltIcon sx={{ fontSize: '20px' }} />
                   <Typography variant="body2">Description</Typography>
                 </Stack>
               </Tooltip>
-              <IconButton
-                onClick={(): void => {
-                  // console.log('Add in bag');
-                }}
-              >
-                <ShoppingBagIcon />
-              </IconButton>
+              {
+                <ButtonAddToBag
+                  keyItem={key !== undefined ? key : ''}
+                  productId={props.product.id}
+                  variantId={
+                    activeVariant <= variants.length - 1 &&
+                    variants[activeVariant].id !== undefined
+                      ? variants[activeVariant].id
+                      : 1
+                  }
+                />
+              }
             </Stack>
             <div
               onMouseEnter={() => {
@@ -110,8 +149,8 @@ const ProductCard = (props: IProductCard): ReactElement => {
                       ? { xs: '250px', sm: '350px' }
                       : { xs: '220px', sm: '400px', md: '500px', xl: '500px' },
                   }}
-                  alt={props.product.name}
-                  src={props.product.image}
+                  alt={props.product.name['en-US']}
+                  src={images !== undefined ? images[0].url : ''}
                 />
               </Fade>
               <Fade timeout={800} in={hoverEffect}>
@@ -121,12 +160,14 @@ const ProductCard = (props: IProductCard): ReactElement => {
                       ? { xs: '250px', sm: '350px' }
                       : { xs: '220px', sm: '400px', md: '500px', xl: '500px' },
                   }}
-                  alt={props.product.name}
+                  alt={props.product.name['en-US']}
                   src={
-                    props.product.image2 !== undefined &&
-                    props.product.image2 !== null
-                      ? props.product.image2
-                      : props.product.image
+                    // eslint-disable-next-line no-nested-ternary
+                    images?.[1] != null
+                      ? images[1].url
+                      : images !== undefined
+                      ? images[0].url
+                      : ''
                   }
                 />
               </Fade>
@@ -134,16 +175,44 @@ const ProductCard = (props: IProductCard): ReactElement => {
             <Stack
               direction="row"
               width="100%"
+              height={40}
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              {variants.length > 1
+                ? variants.map((variant, index) => {
+                    return (
+                      <Button
+                        key={`variant-button-${index}`}
+                        variant="text"
+                        disabled={activeVariant === index}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setActiveVariant(index);
+                        }}
+                        sx={{
+                          fontSize: props.small ? '11px' : '15px',
+                          padding: '5px 2px',
+                          minWidth: '50px',
+                        }}
+                      >
+                        {variant.key?.replace(props.product.name['en-US'], '')}
+                      </Button>
+                    );
+                  })
+                : ''}
+            </Stack>
+            <Stack
+              direction="row"
+              width="100%"
               height={70}
               justifyContent="space-between"
               alignItems="center"
             >
-              <Typography variant="subtitle2">{props.product.name}</Typography>
-              {props.product.price !== undefined ? (
-                <PriceComponent price={props.product.price[0]} />
-              ) : (
-                ''
-              )}
+              <Typography variant="subtitle2">
+                {props.product.name['en-US']}
+              </Typography>
+              {prices !== undefined ? <PriceComponent price={prices[0]} /> : ''}
             </Stack>
           </Stack>
         </NavLink>

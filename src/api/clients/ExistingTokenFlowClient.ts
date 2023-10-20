@@ -29,12 +29,15 @@ export const apiExistingTokenRoot = createApiBuilderFromCtpClient(
   projectKey: 'eperfume',
 });
 
-export const apiRootCreateByToken = (): ByProjectKeyRequestBuilder => {
+export const apiRootCreateByToken = (props?: {
+  token: string;
+}): ByProjectKeyRequestBuilder => {
+  const token = props !== undefined ? props.token : tokenCache.get().token;
   return createApiBuilderFromCtpClient(
     new ClientBuilder()
       .withProjectKey(projectKey)
       .withHttpMiddleware(httpMiddlewareOptions)
-      .withExistingTokenFlow(`Bearer ${tokenCache.get().token}`, options)
+      .withExistingTokenFlow(`Bearer ${token}`, options)
       .build(),
   ).withProjectKey({
     projectKey: 'eperfume',

@@ -1,6 +1,5 @@
 import {
   type Customer,
-  type MyCustomerUpdateAction,
   type ClientResponse,
 } from '@commercetools/platform-sdk';
 import { apiRootCreateByToken } from '../../../clients/ExistingTokenFlowClient';
@@ -23,15 +22,3 @@ export const updatePassword = async (props: {
     })
     .execute();
 };
-
-// How to use
-
-// updatePassword({
-//   id: '3af6470b-59b5-4d4e-9a7b-81133a440499',
-//   currentPassword: '!1Aaaaab',
-//   newPassword: '!1Aaaaaa',
-// })
-//   .then((updateResp) => {
-//     console.log('updateResp', updateResp);
-//   })
-//   .catch(console.log);
